@@ -711,6 +711,15 @@ message(STATUS "psxrecomp: GL textured batching = ${PSX_GL_BATCH_IMPL}")
 # Defaults ON because local rewind is useful for every PSX title. If a title
 # deliberately opts out with -DPSX_REWIND=OFF, recomp-ui hides the Rewind
 # controls instead of exposing dead hotkeys.
+# Board VRAM (runtime/include/psx_vram_geometry.h). Retail PS1: 1 MB (1024x512).
+# The Konami System 573 GPU (CXD8561Q) has 2 MB (1024x1024). Applies to every
+# translation unit of the runtime so the GPU, renderers and snapshots agree.
+option(PSX_VRAM_2MB "2 MB VRAM (1024x1024) GPU, e.g. Konami System 573" OFF)
+if(PSX_VRAM_2MB)
+    add_compile_definitions(PSX_VRAM_LINES=1024)
+    message(STATUS "psxrecomp: 2 MB VRAM (1024x1024)")
+endif()
+
 option(PSX_REWIND "Build and expose local rewind support" ON)
 set(PSXRECOMP_HAS_RBENGINE_SNAP FALSE)
 set(PSXRECOMP_RBENGINE_SNAP_INCLUDE "")

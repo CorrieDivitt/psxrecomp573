@@ -12,6 +12,7 @@
  * cycles), which is included. This exclusion list is refined by the injected-divergence
  * and compiled-vs-compiled gates.
  */
+#include "psx_vram_geometry.h"
 #include "cosim_state.h"
 #include "psx_memory.h"
 #include <stdlib.h>
@@ -60,7 +61,7 @@ extern void gr_vram_transfer_out(int x, int y, int w, int h, uint16_t *dst);
 #define RAM_PAGES_CAP (PSX_MAIN_RAM_BACKING_BYTES / PAGE)
 #define RAM_PAGES  (RAM_SIZE / PAGE)
 #define VRAM_W 1024
-#define VRAM_H 512
+#define VRAM_H PSX_VRAM_HEIGHT
 #define VRAM_SIZE ((uint32_t)(VRAM_W * VRAM_H * 2))   /* 1 MB */
 #define VRAM_PAGES (VRAM_SIZE / PAGE)     /* 256 */
 

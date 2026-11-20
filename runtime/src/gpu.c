@@ -10,6 +10,7 @@
  * Reference: PSX-SPX, page graphicsprocessingunitgpu (Graphics Processing Unit).
  */
 
+#include "psx_vram_geometry.h"
 #include "gpu.h"
 #include "gpu_gl_renderer.h"
 #include "mod_texture_banks.h"
@@ -69,7 +70,7 @@ extern uint8_t  psx_read_byte(uint32_t addr);
 extern uint32_t psx_read_word(uint32_t addr);
 
 /* ---- VRAM ---- */
-static uint16_t vram[1024 * 512];
+static uint16_t vram[PSX_VRAM_WIDTH * PSX_VRAM_HEIGHT];
 
 /* ---- GP0 state machine ---- */
 
@@ -3798,7 +3799,7 @@ static uint32_t vram_write_remaining;          /* words remaining */
  * rectangle instead of hundreds of thousands of single-pixel callbacks. The
  * CPU-visible transfer remains ordered because GP0 accepts no next command
  * until this payload is complete. Maximum PS1 transfer = full VRAM (1 MiB). */
-static uint16_t vram_write_pixels[1024 * 512];
+static uint16_t vram_write_pixels[PSX_VRAM_WIDTH * PSX_VRAM_HEIGHT];
 
 /* Depth24 CPU→VRAM upload span (halfwords, exclusive end). See
  * gpu_depth24_rgb_limit — declared early so gpu_reset_state can clear it. */
@@ -3818,7 +3819,7 @@ static uint32_t s_d24_prev_disp_h = 0;  /* last GP1(07h) band height */
  * earlier scene left in VRAM and present black instead. Presentation only:
  * guest VRAM and raw scanout are untouched. Current snapshots retain the row
  * record so restoring a movie preserves both its pixels and its black bars. */
-static uint8_t s_d24_rows[512];
+static uint8_t s_d24_rows[PSX_VRAM_HEIGHT];
 static int s_d24_streaming;
 static void depth24_reset_rows(void) {
     memset(s_d24_rows, 0, sizeof(s_d24_rows));
@@ -3839,7 +3840,7 @@ static void gp0_commit_cpu_to_vram(void) {
     for (uint32_t row = 0; row < vram_write_h; row++)
         for (uint32_t col = 0; col < vram_write_w; col++)
             vram_write_pixels[row * vram_write_w + col] =
-                vram[((vram_write_y + row) & 511u) * 1024u +
+                vram[((vram_write_y + row) & PSX_VRAM_YMASK) * 1024u +
                      ((vram_write_x + col) & 1023u)];
     gr_vram_upload_commit(vram_write_x, vram_write_y,
                           vram_write_w, vram_write_h, vram_write_pixels);
@@ -3847,7 +3848,7 @@ static void gp0_commit_cpu_to_vram(void) {
      * movie survives even when no present has seen MDEC start yet. */
     if (gpu_display_is_depth24() && depth24_update_stream())
         for (uint32_t row = 0; row < vram_write_h; row++)
-            s_d24_rows[(vram_write_y + row) & 511u] = 1;
+            s_d24_rows[(vram_write_y + row) & PSX_VRAM_YMASK] = 1;
     depth24_note_upload(vram_write_x, vram_write_w);
     gp0_state = GP0_IDLE;
     vram_write_remaining = 0;
@@ -4024,7 +4025,7 @@ static void split_trace_note_draw_area(void) {
         return;
     if ((di.width & 1u) != 0)
         return;
-    if (di.display_x + di.width > 1024u || di.display_y + di.height > 512u)
+    if (di.display_x + di.width > 1024u || di.display_y + di.height > PSX_VRAM_HEIGHT)
         return;
     if (draw_area_right <= draw_area_left || draw_area_bottom <= draw_area_top)
         return;
@@ -4462,7 +4463,7 @@ uint32_t gpu_read_gpuread(void) {
     uint32_t value = 0;
     for (int i = 0; i < 2; i++) {
         uint16_t rx = (vram_read_x + vram_read_col) % 1024;
-        uint16_t ry = (vram_read_y + vram_read_row) % 512;
+        uint16_t ry = (vram_read_y + vram_read_row) & PSX_VRAM_YMASK;
         value |= (uint32_t)gr_vram_read((int)rx, (int)ry) << (i * 16);
 
         if (++vram_read_col == vram_read_w) {
@@ -4773,7 +4774,7 @@ void gpu_display_pixel_rgb_in(const uint16_t* image, const GpuDisplayInfo* di,
                               uint8_t* r, uint8_t* g, uint8_t* b) {
     if (di->depth24) {
         uint32_t byte_x = ((di->display_x & 1023u) * 2u) + x * 3u;
-        uint32_t vy = (di->display_y + y) & 511u;
+        uint32_t vy = (di->display_y + y) & PSX_VRAM_YMASK;
         /* No horizontal wrap for 24-bit DAC scanout: bytes past the 2048-byte
          * VRAM row are blank on hardware / accurate emulators, not sheared
          * from X=0. Wrapping here produced a flickering right-edge strip. */
@@ -4792,7 +4793,7 @@ void gpu_display_pixel_rgb_in(const uint16_t* image, const GpuDisplayInfo* di,
     }
 
     uint32_t vx = (di->display_x + x) & 1023u;
-    uint32_t vy = (di->display_y + y) & 511u;
+    uint32_t vy = (di->display_y + y) & PSX_VRAM_YMASK;
     gpu_rgb555_to_rgb888(image[vy * 1024u + vx], r, g, b);
 }
 
@@ -4819,7 +4820,7 @@ uint32_t gpu_display_pixel_argb(const GpuDisplayInfo* di, uint32_t x, uint32_t y
  * same byte-order shifts as gpu_display_pixel_rgb_in. */
 void gpu_depth24_present_row(const GpuDisplayInfo* di, uint32_t y, uint32_t* out,
                              uint32_t count) {
-    uint32_t vy = (di->display_y + y) & 511u;
+    uint32_t vy = (di->display_y + y) & PSX_VRAM_YMASK;
     if (depth24_update_stream() && !s_d24_rows[vy]) {
         for (uint32_t x = 0; x < count; x++) out[x] = 0xFF000000u;
         return;
@@ -5337,7 +5338,7 @@ static void raster_pixel(int32_t x, int32_t y, uint16_t color) {
     if (x < (int32_t)draw_area_left || x > (int32_t)draw_area_right) return;
     if (y < (int32_t)draw_area_top  || y > (int32_t)draw_area_bottom) return;
     uint32_t vx = (uint32_t)x & 1023u;
-    uint32_t vy = (uint32_t)y & 511u;
+    uint32_t vy = (uint32_t)y & PSX_VRAM_YMASK;
     uint32_t idx = vy * 1024 + vx;
     if (check_mask_bit && (vram[idx] & 0x8000u)) return;
     vram[idx] = color | (set_mask_bit ? 0x8000u : 0u);
@@ -5753,7 +5754,11 @@ static void gp0_exec_shaded_quad(void) {
  * Format: bits 0-3 = X base, bit 4 = Y base, bits 5-6 = semi-trans, bits 7-8 = color depth */
 static uint16_t current_texpage(void) {
     return (uint16_t)(texpage_x | (texpage_y << 4) |
-                      (semi_transparency << 5) | (texpage_colors << 7));
+                      (semi_transparency << 5) | (texpage_colors << 7)
+#if PSX_VRAM_2MB
+                      | (texture_disable << 11)   /* 2 MB: texture page Y base 2 */
+#endif
+                      );
 }
 
 /* Hardware: the texpage attribute word carried inside every textured polygon
@@ -5770,13 +5775,18 @@ static void set_tpage_from_poly(uint16_t tpage_word) {
     texpage_y         = (tpage_word >> 4) & 1;
     semi_transparency = (tpage_word >> 5) & 3;
     texpage_colors    = (tpage_word >> 7) & 3;
+#if PSX_VRAM_2MB
+    /* 2 MB GPU: bit 11 is texture page Y base 2 and latches like bit 4
+     * (MAME psxgpu type 2 decode_tpage; GPUSTAT.15). */
+    texture_disable   = (tpage_word >> 11) & 1;
+#endif
 }
 
 /* Helper: set up SW renderer state before a textured draw.
  * semi_trans: whether the primitive has semi-transparency enabled (from opcode bit)
  * raw_texture: 1 if this is a raw-texture opcode (bit 0 of GP0 opcode set) */
 static void setup_textured_draw(uint32_t color24, int semi_trans, int raw_texture) {
-    if (texture_disable) {
+    if (!PSX_VRAM_2MB && texture_disable) {
         /* GPUSTAT.15 set: the hardware draws textured primitives untextured.
          * No renderer path implements that yet; halt rather than texture. */
         psx_fatal_halt("GPU: textured draw with texture disable set (GP1(09h) + E1.11) is not implemented");
@@ -5823,12 +5833,12 @@ static int native_wide_projective_draw(void) {
     const uint16_t tpage=gp0_cmd_buf[2+stride]>>16;
     set_tpage_from_poly(tpage);
     const int semi=(op&2u)?(int)semi_transparency:-1;
-    gl_renderer_draw_projected_triangle(vertices,tpage&0x1ff,
-        (clut&63)*16,(clut>>6)&511,op&1u,semi,render_projective || s_texture_correction_enabled);
+    gl_renderer_draw_projected_triangle(vertices,tpage&PSX_TPAGE_MASK,
+        (clut&63)*16,PSX_CLUT_Y(clut),op&1u,semi,render_projective || s_texture_correction_enabled);
     if (n==4) {
         const PSXProjectedVertex second[3]={vertices[2],vertices[1],vertices[3]};
-        gl_renderer_draw_projected_triangle(second,tpage&0x1ff,
-            (clut&63)*16,(clut>>6)&511,op&1u,semi,render_projective || s_texture_correction_enabled);
+        gl_renderer_draw_projected_triangle(second,tpage&PSX_TPAGE_MASK,
+            (clut&63)*16,PSX_CLUT_Y(clut),op&1u,semi,render_projective || s_texture_correction_enabled);
     }
     return 1;
 }
@@ -5850,10 +5860,10 @@ static void gp0_exec_textured_tri(void) {
     u[2] = gp0_cmd_buf[6] & 0xFF;        v[2] = (gp0_cmd_buf[6] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
     /* Texpage from word 4 bits 16-31 */
     uint16_t tpage_word = (uint16_t)(gp0_cmd_buf[4] >> 16);
-    uint16_t tpage = tpage_word & 0x1FF;
+    uint16_t tpage = tpage_word & PSX_TPAGE_MASK;
     set_tpage_from_poly(tpage_word);   /* latches even for size-rejected polys */
     if (gpu_triangle_rejected(vx, vy, 0, 1, 2)) return;
     ws_auto_ui_transform_part(vx, vy, 3);
@@ -5894,9 +5904,9 @@ static void gp0_exec_textured_quad(void) {
     u[3] = gp0_cmd_buf[8] & 0xFF;  v[3] = (gp0_cmd_buf[8] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
     uint16_t tpage_word = (uint16_t)(gp0_cmd_buf[4] >> 16);
-    uint16_t tpage = tpage_word & 0x1FF;
+    uint16_t tpage = tpage_word & PSX_TPAGE_MASK;
     set_tpage_from_poly(tpage_word);   /* latches even for size-rejected polys */
     int rej_a = gpu_triangle_rejected(vx, vy, 0, 1, 2);
     int rej_b = gpu_triangle_rejected(vx, vy, 2, 1, 3);
@@ -6019,9 +6029,9 @@ static void gp0_exec_shaded_textured_tri(void) {
     u[2] = gp0_cmd_buf[8] & 0xFF;  v[2] = (gp0_cmd_buf[8] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
     uint16_t tpage_word = (uint16_t)(gp0_cmd_buf[5] >> 16);
-    uint16_t tpage = tpage_word & 0x1FF;
+    uint16_t tpage = tpage_word & PSX_TPAGE_MASK;
     set_tpage_from_poly(tpage_word);   /* latches even for size-rejected polys */
     if (gpu_triangle_rejected(vx, vy, 0, 1, 2)) return;
     ws_auto_ui_transform_part(vx, vy, 3);
@@ -6088,9 +6098,9 @@ static void gp0_exec_shaded_textured_quad(void) {
     u[3] = gp0_cmd_buf[11] & 0xFF;  v[3] = (gp0_cmd_buf[11] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
     uint16_t tpage_word = (uint16_t)(gp0_cmd_buf[5] >> 16);
-    uint16_t tpage = tpage_word & 0x1FF;
+    uint16_t tpage = tpage_word & PSX_TPAGE_MASK;
     set_tpage_from_poly(tpage_word);   /* latches even for size-rejected polys */
     int rej_a = gpu_triangle_rejected(vx, vy, 0, 1, 2);
     int rej_b = gpu_triangle_rejected(vx, vy, 2, 1, 3);
@@ -6298,7 +6308,7 @@ static void gp0_exec_textured_rect(void) {
     int v0 = (gp0_cmd_buf[2] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
     int w = gp0_cmd_buf[3] & 0x3FF;
     int h = (gp0_cmd_buf[3] >> 16) & 0x1FF;
     if (w > 1023) w = 1023;
@@ -6405,7 +6415,7 @@ static void gp0_exec_textured_dot(void) {
     int v0 = (gp0_cmd_buf[2] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
     setup_textured_draw(color24, semi_trans, raw_texture);
     gr_draw_textured_rect(x0, y0, 1, 1, u0, v0, clut_x, clut_y, current_texpage());
 }
@@ -6427,7 +6437,7 @@ static void gp0_exec_textured_8x8(void) {
     int v0 = (gp0_cmd_buf[2] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
 
     setup_textured_draw(color24, semi_trans, raw_texture);
     if (dw != 8 || ws_h != 8)
@@ -6478,7 +6488,7 @@ static void gp0_exec_textured_16x16(void) {
     int v0 = (gp0_cmd_buf[2] >> 8) & 0xFF;
     uint16_t clut = (uint16_t)(gp0_cmd_buf[2] >> 16);
     uint16_t clut_x = (clut & 0x3F) * 16;
-    uint16_t clut_y = (clut >> 6) & 0x1FF;
+    uint16_t clut_y = PSX_CLUT_Y(clut);
 
     const int dw = (ws_w && ws_w != 16) ? ws_w : 16;
     if (draw_area_out_rect(x0, y0, dw, ws_h)) return;
@@ -6514,9 +6524,9 @@ static void gp0_exec_fill_rect(void) {
     uint16_t color16 = rgb888_to_rgb555(color24);
 
     uint32_t dst_x = gp0_cmd_buf[1] & 0x3F0u;          /* X masked to 16-pixel alignment */
-    uint32_t dst_y = (gp0_cmd_buf[1] >> 16) & 0x1FFu;
+    uint32_t dst_y = (gp0_cmd_buf[1] >> 16) & PSX_VRAM_YMASK;
     uint32_t width = ((gp0_cmd_buf[2] & 0x3FFu) + 0xFu) & ~0xFu;  /* round up to 16 */
-    uint32_t height = (gp0_cmd_buf[2] >> 16) & 0x1FFu;
+    uint32_t height = (gp0_cmd_buf[2] >> 16) & PSX_VRAM_YMASK;
 
     /* Fill ignores draw area, mask bits, and draw offset — writes directly to
      * VRAM. Routed through the renderer so it also fills the hi-res
@@ -6553,8 +6563,15 @@ static void gp0_exec_draw_mode(void) {
     dither_enabled    = (param >> 9) & 1;
     gr_set_dither((int)dither_enabled);
     draw_to_display   = (param >> 10) & 1;
+#if PSX_VRAM_2MB
+    /* 2 MB GPU (CXD8561Q family): bit 11 is texture page Y base 2 (+512),
+     * not texture disable; GPUSTAT.15 mirrors it. MAME psxgpu type 2 treats
+     * GP1(09h) as unhandled, so it gates nothing here. */
+    texture_disable   = (param >> 11) & 1;
+#else
     /* Bit 11 only latches when GP1(09h) allowed it. */
     texture_disable   = texture_disable_allowed ? (param >> 11) & 1 : 0;
+#endif
     /* Sync semi-transparency to SW renderer — actual blending is per-primitive */
 }
 
@@ -6681,13 +6698,13 @@ static void gp0_exec_cpu_to_vram(void) {
      * Word 2: dimensions (W bits 0-9, H bits 16-24)
      * Followed by pixel data words */
     vram_write_x = gp0_cmd_buf[1] & 0x3FFu;
-    vram_write_y = (gp0_cmd_buf[1] >> 16) & 0x1FFu;
+    vram_write_y = (gp0_cmd_buf[1] >> 16) & PSX_VRAM_YMASK;
 
     uint32_t w = gp0_cmd_buf[2] & 0x3FFu;
-    uint32_t h = (gp0_cmd_buf[2] >> 16) & 0x1FFu;
-    /* 0 means max dimension */
+    uint32_t h = (gp0_cmd_buf[2] >> 16) & PSX_VRAM_YMASK;
+    /* 0 means max dimension (the full VRAM height: 512, or 1024 on 2 MB) */
     vram_write_w = (w == 0) ? 0x400 : (uint16_t)w;
-    vram_write_h = (h == 0) ? 0x200 : (uint16_t)h;
+    vram_write_h = (h == 0) ? PSX_VRAM_HEIGHT : (uint16_t)h;
     gr_vram_upload_begin(vram_write_x, vram_write_y, vram_write_w, vram_write_h);
 
     /* A full history retains old uploads; later transfers must not append
@@ -6778,12 +6795,12 @@ static void gp0_exec_vram_to_cpu(void) {
      * Word 2: dimensions
      * After this, data is read via GPUREAD */
     vram_read_x = gp0_cmd_buf[1] & 0x3FFu;
-    vram_read_y = (gp0_cmd_buf[1] >> 16) & 0x1FFu;
+    vram_read_y = (gp0_cmd_buf[1] >> 16) & PSX_VRAM_YMASK;
 
     uint32_t w = gp0_cmd_buf[2] & 0x3FFu;
-    uint32_t h = (gp0_cmd_buf[2] >> 16) & 0x1FFu;
+    uint32_t h = (gp0_cmd_buf[2] >> 16) & PSX_VRAM_YMASK;
     vram_read_w = (w == 0) ? 0x400 : (uint16_t)w;
-    vram_read_h = (h == 0) ? 0x200 : (uint16_t)h;
+    vram_read_h = (h == 0) ? PSX_VRAM_HEIGHT : (uint16_t)h;
 
     /* Record for debug */
     {
@@ -8008,13 +8025,13 @@ static void gp0_dispatch_command(uint8_t opcode) {
         case 0x9C: case 0x9D: case 0x9E: case 0x9F: {
             /* Word 1: source coords, Word 2: dest coords, Word 3: dimensions */
             int src_x = gp0_cmd_buf[1] & 0x3FF;
-            int src_y = (gp0_cmd_buf[1] >> 16) & 0x1FF;
+            int src_y = (gp0_cmd_buf[1] >> 16) & PSX_VRAM_YMASK;
             int dst_x = gp0_cmd_buf[2] & 0x3FF;
-            int dst_y = (gp0_cmd_buf[2] >> 16) & 0x1FF;
+            int dst_y = (gp0_cmd_buf[2] >> 16) & PSX_VRAM_YMASK;
             int w = gp0_cmd_buf[3] & 0x3FF;
-            int h = (gp0_cmd_buf[3] >> 16) & 0x1FF;
+            int h = (gp0_cmd_buf[3] >> 16) & PSX_VRAM_YMASK;
             if (w == 0) w = 0x400;
-            if (h == 0) h = 0x200;
+            if (h == 0) h = PSX_VRAM_HEIGHT;
             gr_copy_rect(src_x, src_y, dst_x, dst_y, w, h);
             break;
         }
@@ -8088,7 +8105,7 @@ void gpu_get_drawing_environment(GpuDrawingEnvironment* out) {
 }
 
 uint16_t gpu_vram_peek(int x, int y) {
-    if (x < 0 || x >= 1024 || y < 0 || y >= 512) return 0;
+    if (x < 0 || x >= 1024 || y < 0 || y >= PSX_VRAM_HEIGHT) return 0;
     /* Through the facade so the GL backend syncs its FBO down first. */
     return gr_vram_read(x, y);
 }
@@ -8108,7 +8125,7 @@ static void gpu_write_gp0_body(uint32_t val) {
         for (int i = 0; i < 2; i++) {
             uint16_t pixel = (uint16_t)(val >> (i * 16));
             uint16_t wx = (vram_write_x + vram_write_col) % 1024;
-            uint16_t wy = (vram_write_y + vram_write_row) % 512;
+            uint16_t wy = (vram_write_y + vram_write_row) & PSX_VRAM_YMASK;
 
             /* Respect mask bit settings. The check reads through the facade:
              * under the GL backend GPU-drawn mask bits live in the FBO, not
@@ -8378,9 +8395,9 @@ static void gp1_dma_direction(uint32_t val) {
 static void gp1_display_area_start(uint32_t val) {
     /* GP1(05h): Start of display area in VRAM
      * bits 0-9: X (in halfwords, 0-1023)
-     * bits 10-18: Y (0-511) */
+     * bits 10-18: Y (0-511); 10-19 (0-1023) on a 2 MB GPU (MAME type 2) */
     display_area_x = val & 0x3FF;
-    display_area_y = (val >> 10) & 0x1FF;
+    display_area_y = (val >> 10) & PSX_VRAM_YMASK;
     ws_note_display_base(display_area_x);  /* learn the display buffer set (native-wide) */
     gpu_timeline_note(GTL_DISP_START, display_area_x, display_area_y);
 }

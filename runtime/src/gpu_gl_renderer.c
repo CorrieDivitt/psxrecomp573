@@ -73,6 +73,7 @@
  * returns 0 and the runtime falls back to the pure software renderer — no
  * half-GL hybrid. */
 
+#include "psx_vram_geometry.h"
 #include "host_overlay.h"
 #include "gpu.h"
 #include "gpu_render.h"
@@ -6594,6 +6595,12 @@ void gl_renderer_forget_texture_bank_range(uint16_t first, uint32_t count) {
 }
 
 int gl_renderer_init_context(SDL_Window *win) {
+#if PSX_VRAM_2MB
+    /* This renderer still models 1024x512 VRAM (VRAM_H). A 2 MB build
+     * (PSX_VRAM_2MB, System 573) must not run on a 1 MB view of it. */
+    { extern void psx_fatal_halt(const char *reason);
+      psx_fatal_halt("GPU renderer: 2 MB VRAM (PSX_VRAM_2MB) is not supported by this backend yet; use the software renderer"); }
+#endif
     s_win = win;
     s_present_w = 0;
     s_present_h = 0;

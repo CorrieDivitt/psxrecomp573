@@ -1,3 +1,4 @@
+#include "psx_vram_geometry.h"
 #include "boot_state.h"
 #include "execution_profile.h"
 #include "fntrace.h"
@@ -60,7 +61,7 @@ static double boot_state_mono_ms(void) {
 
 #define SPAD_SIZE  (1024u)
 #define VRAM_W     1024
-#define VRAM_H     512
+#define VRAM_H     PSX_VRAM_HEIGHT
 #define VRAM_SIZE  ((uint32_t)(VRAM_W * VRAM_H * 2))  /* 1 MB, 16bpp */
 
 /* ---- core accessors (existing runtime modules) ---- */

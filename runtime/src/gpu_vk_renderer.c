@@ -17,6 +17,7 @@
  * via psx_fatal_halt rather than silently no-op (no stubs).
  */
 
+#include "psx_vram_geometry.h"
 #include "gpu.h"
 #include "gpu_render.h"
 #include "gpu_vk_renderer.h"
@@ -1398,6 +1399,12 @@ static inline uint16_t rgba8_to_rgb555(const uint8_t in[4]) {
 }
 
 int vk_renderer_init_context(SDL_Window *win) {
+#if PSX_VRAM_2MB
+    /* This renderer still models 1024x512 VRAM (VRAM_H). A 2 MB build
+     * (PSX_VRAM_2MB, System 573) must not run on a 1 MB view of it. */
+    { extern void psx_fatal_halt(const char *reason);
+      psx_fatal_halt("GPU renderer: 2 MB VRAM (PSX_VRAM_2MB) is not supported by this backend yet; use the software renderer"); }
+#endif
     s_win = win;
 #if defined(PSX_SDL3)
     if (!SDL_Vulkan_LoadLibrary(NULL))

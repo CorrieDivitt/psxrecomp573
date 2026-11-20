@@ -38,8 +38,9 @@
 /* Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-#define VRAM_WIDTH  1024
-#define VRAM_HEIGHT 512
+#include "psx_vram_geometry.h"
+#define VRAM_WIDTH  PSX_VRAM_WIDTH
+#define VRAM_HEIGHT PSX_VRAM_HEIGHT
 
 /* ------------------------------------------------------------------ */
 /* State                                                              */
@@ -346,7 +347,7 @@ static uint16_t texel_fetch(int u, int v, uint16_t texpage,
     }
 
     int tpx = (texpage & 0xF) * 64;
-    int tpy = ((texpage >> 4) & 1) * 256;
+    int tpy = (int)PSX_TPAGE_Y((unsigned)texpage);
     int depth = (texpage >> 7) & 3;
 
     switch (depth) {
