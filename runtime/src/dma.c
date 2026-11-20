@@ -149,17 +149,21 @@ void     cd_dma_log_get_entry(uint32_t idx, int *lba, uint32_t *dest, uint32_t *
 #endif
 #define DMA_GPU_CYCLES_PER_WORD       1u
 #define DMA_CDROM_CYCLES_PER_WORD     1u
-/* SPU DMA (ch4) per-word cost. Faithful to the Beetle/mednafen oracle, which
- * charges `extra_cyc_overhead = 47` per word plus the universal 1 cyc/word in
- * RunChannel (mednafen/psx/dma.cpp:267,294,456) => 48 cyc/word. Previously ch4
- * completed in ZERO cycles (instant complete_transfer), so the DMA-completion
- * IRQ fired the same cycle as the kick. Once the I-cache cycle model lands, the
- * BIOS SPU-init loop's instruction timing interleaves with that instant IRQ into
- * an exception re-entry storm (MMX6 boot wedge: kick ch4 -> 0-cyc done -> IRQ ->
- * ack -> re-kick, forever). Deferring completion the faithful ~48 cyc/word breaks
- * the storm and matches hardware (the SPU RAM payload still moves immediately;
- * only the busy-bit clear + completion IRQ are deferred). */
-#define DMA_SPU_CYCLES_PER_WORD      48u
+/* SPU DMA (ch4) per-word cost: psx-spx "DMA Channels" transfer-rate table,
+ * DMA4 SPU = 4 clks/word (0420h clocks per 100h words). The completion stays
+ * deferred (not 0 cycles), which is what breaks the MMX6 boot-wedge storm (kick
+ * ch4 -> 0-cyc done -> IRQ -> ack -> re-kick); the SPU RAM payload still moves
+ * immediately and only the busy-bit clear + completion IRQ wait.
+ *
+ * This was 48 (Beetle/mednafen: extra_cyc_overhead 47 + 1 in RunChannel). That
+ * is too slow for Konami's System 573 Fighting Mania, which works on hardware:
+ * its sound init does SpuWrite with no transfer callback, then installs one a
+ * few instructions later. The DMA-complete IRQ has to arrive in between, so
+ * libspu's DMA handler delivers EvSpCOMP; otherwise SpuIsTransferCompleted never
+ * returns 1 and the music engine waits in its first state forever (MAME shows
+ * the same silence). Measured in this runtime: the music engine starts at
+ * 4-32 cycles/word and stays stuck at 36 and above. */
+#define DMA_SPU_CYCLES_PER_WORD      4u
 
 /* DMA-execution provenance flags (read by memory.c's psx_write_word d44_note probe
  * for the MMX6 VSync-callback-pointer corruption hunt). g_dma_exec_depth>0 means a
