@@ -1578,6 +1578,10 @@ struct GameConfig {
     std::map<uint32_t,std::string> geometry_control_frames;
     // Explicit consumer closure: canonical scratch EA operations are not precision observers.
     std::set<uint32_t> geometry_scratch_frames;
+    // [game] boot = "board": the BIOS loads this program from the board's own
+    // storage (Konami System 573 onboard flash), so the title has no disc and
+    // the runtime must not ask for one. Default "disc".
+    bool boot_from_board = false;
 };
 
 // Effective clip_edge_width: explicit value, else screen_w_imms[0], else 320.

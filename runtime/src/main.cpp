@@ -1500,6 +1500,8 @@ extern "C" void psx_mod_set_savestate_blocked(int blocked) {
 static uint32_t      g_savestate_input_guard_min_until = 0;
 static uint32_t      g_savestate_input_guard_max_until = 0;
 static int           g_headless       = 0;   /* debug/CI frontend: no SDL window/audio */
+/* [game] boot = "board" (GameConfig::boot_from_board): no disc. */
+static bool          g_game_boot_from_board = false;
 /* Test frontend: the full windowed runtime (presenter, frame interpolation,
  * render passes) in a window that is never shown. For automated checks of
  * presentation features without putting a window on the desktop; drive it
@@ -19869,8 +19871,10 @@ int main(int argc, char** argv) {
                 deferred_overlay_capture_history = gc.runtime.overlay_capture_history;
                 deferred_overlay_capture_persist_dir = gc.runtime.overlay_capture_persist_dir;
             }
-            std::fprintf(stdout, "psxrecomp: loaded game config %s (%s, %s)\n",
-                         game_config_path, game_name.c_str(), game_id.c_str());
+            g_game_boot_from_board = gc.boot_from_board;
+            std::fprintf(stdout, "psxrecomp: loaded game config %s (%s, %s)%s\n",
+                         game_config_path, game_name.c_str(), game_id.c_str(),
+                         gc.boot_from_board ? " - boots from board storage, no disc" : "");
         } catch (const std::exception& ex) {
             std::fprintf(stderr, "psxrecomp: failed to load --game %s: %s\n",
                          game_config_path, ex.what());
@@ -21559,7 +21563,8 @@ int main(int argc, char** argv) {
         timing.success();
     }
 
-    if (game_config_path || disc_override_path || !resolved_disc.empty()) {
+    if ((game_config_path && !g_game_boot_from_board) || disc_override_path ||
+        !resolved_disc.empty()) {
         /* The disc check shows its own box for an image it cannot open or
          * that lacks its .sbi; a cancelled picker shows none. */
         const unsigned disc_messages = s_player_message_seq;

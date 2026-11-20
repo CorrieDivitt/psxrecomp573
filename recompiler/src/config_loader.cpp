@@ -3161,6 +3161,16 @@ GameConfig load_game_config(const fs::path& config_path_in) {
         /*ws_bg2d_init_func*/     ws_bg2d_init_func,
         /*ws_bg2d_packet_cap*/    ws_bg2d_packet_cap,
     };
+    if (game.contains("boot")) {
+        const std::string boot = toml::find<std::string>(game, "boot");
+        if (boot == "board") loaded.boot_from_board = true;
+        else if (boot != "disc")
+            throw std::runtime_error(fmt::format(
+                "{}: [game] boot must be \"disc\" or \"board\"", config_path.string()));
+        if (loaded.boot_from_board && !discs.empty())
+            throw std::runtime_error(fmt::format(
+                "{}: [game] boot = \"board\" takes no disc", config_path.string()));
+    }
     loaded.ws_cull_bgez_sites = std::move(ws_cull_bgez_sites);
     loaded.ws_cull_clip_edge_x_load_sites =
         std::move(ws_cull_clip_edge_x_load_sites);
