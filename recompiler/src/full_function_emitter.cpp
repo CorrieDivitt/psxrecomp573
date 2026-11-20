@@ -1054,7 +1054,7 @@ bool FullFunctionEmitter::emit_function(
                                        "    return;\n";
                         } else {
                             out += emit_irq_check_expr(fmt::format("cpu->gpr[{}]", static_cast<int>(rs)));
-                            out += fmt::format("    cpu->pc = cpu->gpr[{}]; return;\n",
+                            out += fmt::format("    if (cpu->gpr[{0}] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[{0}]; return;\n",
                                                static_cast<int>(rs));
                         }
                     } else {
@@ -1144,13 +1144,13 @@ bool FullFunctionEmitter::emit_function(
                                    "    cpu->pc = _t; psx_restore_state_escape(); return; }  /* longjmp-return */\n";
                         else if (cps)
                             out += emit_irq_check_expr("_t") +
-                                   "    cpu->pc = _t; return; }  /* CPS: publish $ra */\n";
+                                   "    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }  /* CPS: publish $ra */\n";
                         else
                             out += emit_irq_check_expr("_t") +
                                    "    return; }\n";
                     } else {
                         out += emit_irq_check_expr("_t");
-                        out += "    cpu->pc = _t; return; }\n";
+                        out += "    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }\n";
                     }
                 } else if (is_branch_kind(kind.c_str())) {
                     // Inline the orphaned delay slot from rom.
@@ -1339,7 +1339,7 @@ bool FullFunctionEmitter::emit_function(
                             register_cross_function_target(addr + 8);
                         }
                         out += emit_irq_check_expr("_t");
-                        out += "    cpu->pc = _t; return; }\n";
+                        out += "    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }\n";
                     } else {
                         /* _csp is captured AFTER the delay slot on purpose:
                          * the call contract's sp is the post-slot value (the
@@ -1522,7 +1522,7 @@ bool FullFunctionEmitter::emit_function(
                                            static_cast<int>(rd), return_addr);
                     }
                     out += emit_irq_check_expr("_t");
-                    out += "    cpu->pc = _t; return; }\n";
+                    out += "    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }\n";
                 } else {
                     out += "    { uint32_t _csp = cpu->gpr[29];\n";
                     if (rd != 0) {
@@ -1646,7 +1646,7 @@ bool FullFunctionEmitter::emit_function(
                                 }
                                 out += "        default:\n";
                                 out += emit_irq_check_expr(jr_tgt, "            ");
-                                out += fmt::format("            cpu->pc = {}; return;\n", jr_tgt);
+                                out += fmt::format("            if ({0} == 0u) g_psx_pc_zero_jump = 1; cpu->pc = {0}; return;\n", jr_tgt);
                                 out += "    }\n";
                                 emitted_switch = true;
                             }
@@ -1655,7 +1655,9 @@ bool FullFunctionEmitter::emit_function(
                     if (!emitted_switch) {
                         // Tail call: set cpu->pc and return; dispatch loop re-dispatches.
                         out += emit_irq_check_expr(jr_tgt);
-                        out += fmt::format("    cpu->pc = {}; return;\n", jr_tgt);
+                        /* Non-$ra target 0 is a real jump to guest PC 0
+                         * (g_psx_pc_zero_jump, cpu_state.h), not a return. */
+                        out += fmt::format("    if ({0} == 0u) g_psx_pc_zero_jump = 1; cpu->pc = {0}; return;\n", jr_tgt);
                     }
                 }
             }
@@ -2477,6 +2479,14 @@ void FullFunctionEmitter::emit_dispatch(
     out += "            g_psx_call_bail = 0;\n";
     out += "            g_psx_bail_flattened++;\n";
     out += "            addr = cpu->pc;\n";
+    out += "            continue;\n";
+    out += "        }\n";
+    out += "        if (cpu->pc == 0 && g_psx_pc_zero_jump) {\n";
+    out += "            /* A real register jump to guest PC 0 (RAM 0 holds the\n";
+    out += "             * kernel's exception-vector stub), not a return:\n";
+    out += "             * dispatch it like any other tail target. */\n";
+    out += "            g_psx_pc_zero_jump = 0;\n";
+    out += "            addr = 0;\n";
     out += "            continue;\n";
     out += "        }\n";
     out += "        if (cpu->pc == 0) {\n";

@@ -319,6 +319,13 @@ extern uint32_t *g_psx_last_store_pc_p;
 #define g_debug_last_store_pc (*g_psx_last_store_pc_p)
 #else
 extern int      g_psx_call_bail;
+/* Guest PC 0 is a real target, not only the "returned" sentinel: both 573
+ * kernels (700A01/700B01) copy their exception-vector stub to RAM 0, and the
+ * program ROM calls NULL table entries that land there. A recompiled BIOS
+ * register jump whose target is 0 sets this before publishing cpu->pc = 0;
+ * the dispatch trampoline consumes it and dispatches address 0 instead of
+ * treating the transfer as a return. Defined in traps.c. */
+extern int      g_psx_pc_zero_jump;
 extern uint64_t g_psx_bail_first;      /* contract violations detected      */
 extern uint64_t g_psx_bail_resolved;   /* unwinds resolved at a call site   */
 extern uint64_t g_psx_bail_flattened;  /* unwinds flattened at outermost    */

@@ -1604,7 +1604,7 @@ label_BFC000FC:
     { uint32_t _t = cpu->gpr[3];
     cpu->gpr[31] = 0xBFC00118u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00118:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -1753,7 +1753,7 @@ label_BFC00134:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC0013Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0013C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -6237,7 +6237,7 @@ label_BFC005EC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC00610u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00610:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -6714,7 +6714,7 @@ label_BFC00678:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC00690u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00690:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -7381,7 +7381,7 @@ label_BFC00734:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC00744u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00744:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -7455,7 +7455,7 @@ label_BFC00744:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC00758u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00758:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -7930,7 +7930,7 @@ label_BFC007C0:
     { uint32_t _t = cpu->gpr[23];
     cpu->gpr[31] = 0xBFC007D8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC007D8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -8360,7 +8360,7 @@ label_BFC00834:
     { uint32_t _t = cpu->gpr[22];
     cpu->gpr[31] = 0xBFC00848u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00848:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -8985,7 +8985,7 @@ label_BFC00894:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC008D4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC008D4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -9336,7 +9336,7 @@ label_BFC008E0:
     { uint32_t _t = cpu->gpr[21];
     cpu->gpr[31] = 0xBFC0093Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0093C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -9805,7 +9805,7 @@ label_BFC009B8:
     { uint32_t _t = cpu->gpr[21];
     cpu->gpr[31] = 0xBFC009C0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC009C0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -9879,7 +9879,7 @@ label_BFC009C0:
     { uint32_t _t = cpu->gpr[21];
     cpu->gpr[31] = 0xBFC009D4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC009D4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -10207,7 +10207,7 @@ label_BFC00A0C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC00A28u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00A28:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -11577,7 +11577,7 @@ label_BFC00B60:
     { uint32_t _t = cpu->gpr[30];
     cpu->gpr[31] = 0xBFC00B74u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00B74:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -13312,7 +13312,7 @@ label_BFC00D14:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC00D40u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00D40:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -13972,7 +13972,7 @@ label_BFC00DDC:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC00DF0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00DF0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -14172,7 +14172,7 @@ label_BFC00E0C:
     { uint32_t _t = cpu->gpr[23];
     cpu->gpr[31] = 0xBFC00E20u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00E20:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -14875,7 +14875,7 @@ label_BFC00E98:
     if (psx_delay_BFC00ED8) {
         psx_delay_BFC00ED8 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -15129,7 +15129,7 @@ label_BFC00EE0:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC00F28u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00F28:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -15470,7 +15470,7 @@ label_BFC00F70:
     if (psx_delay_BFC00F84) {
         psx_delay_BFC00F84 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -15558,7 +15558,7 @@ label_BFC00F8C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC00FA0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC00FA0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -16053,7 +16053,7 @@ label_BFC00FE8:
     if (psx_delay_BFC01024) {
         psx_delay_BFC01024 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 label_BFC0102C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -16530,7 +16530,7 @@ label_BFC010A8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC010B4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC010B4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -18728,7 +18728,7 @@ label_BFC012E0:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC012F8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC012F8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -20369,7 +20369,7 @@ label_BFC01480:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01498u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01498:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -21373,7 +21373,7 @@ label_BFC01570:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01594u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01594:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -21802,7 +21802,7 @@ label_BFC015E0:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01604u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01604:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -22231,7 +22231,7 @@ label_BFC01650:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01674u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01674:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -22857,7 +22857,7 @@ label_BFC016E0:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC0171Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0171C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -24276,7 +24276,7 @@ label_BFC0185C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01888u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01888:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -26673,7 +26673,7 @@ label_BFC01AFC:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC01B04u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01B04:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -28281,7 +28281,7 @@ label_BFC01C7C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01C88u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01C88:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -30434,7 +30434,7 @@ label_BFC01EB8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01EC4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01EC4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -31188,7 +31188,7 @@ label_BFC01F68:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC01F74u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC01F74:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -35960,7 +35960,7 @@ label_BFC02448:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC02454u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02454:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -39595,7 +39595,7 @@ label_BFC027DC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC027F0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC027F0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -40844,7 +40844,7 @@ label_BFC02928:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC02954u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02954:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -42905,7 +42905,7 @@ label_BFC02B3C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC02B4Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02B4C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -44378,7 +44378,7 @@ label_BFC02CB8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC02CE4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02CE4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -45449,7 +45449,7 @@ label_BFC02DD8:
     if (psx_delay_BFC02DE4) {
         psx_delay_BFC02DE4 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -45616,7 +45616,7 @@ label_BFC02DEC:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02E18u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02E18:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -45675,7 +45675,7 @@ label_BFC02E18:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02E28u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02E28:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -45734,7 +45734,7 @@ label_BFC02E28:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02E38u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02E38:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -45793,7 +45793,7 @@ label_BFC02E38:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02E48u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02E48:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -45852,7 +45852,7 @@ label_BFC02E48:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02E58u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02E58:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -45929,7 +45929,7 @@ label_BFC02E58:
     if (psx_delay_BFC02E68) {
         psx_delay_BFC02E68 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -46124,7 +46124,7 @@ label_BFC02E70:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC02EA0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02EA0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46234,7 +46234,7 @@ label_BFC02EA0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02EC0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02EC0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46344,7 +46344,7 @@ label_BFC02EC0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02EE0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02EE0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46454,7 +46454,7 @@ label_BFC02EE0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F00u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F00:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46564,7 +46564,7 @@ label_BFC02F00:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F20u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F20:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46674,7 +46674,7 @@ label_BFC02F20:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F40u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F40:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46745,7 +46745,7 @@ label_BFC02F40:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F54u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F54:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46792,7 +46792,7 @@ label_BFC02F54:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F60u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F60:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46839,7 +46839,7 @@ label_BFC02F60:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F6Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F6C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46886,7 +46886,7 @@ label_BFC02F6C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F78u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F78:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -46933,7 +46933,7 @@ label_BFC02F78:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02F84u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02F84:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -47238,7 +47238,7 @@ label_BFC02FD0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC02FD8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC02FD8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -47595,7 +47595,7 @@ label_BFC03020:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03028u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03028:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -47740,7 +47740,7 @@ label_BFC03040:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC0304Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0304C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -47972,7 +47972,7 @@ label_BFC03078:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03088u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03088:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -48058,7 +48058,7 @@ label_BFC03090:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC0309Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0309C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -48160,7 +48160,7 @@ label_BFC030A4:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC030B4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC030B4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -48282,7 +48282,7 @@ label_BFC030BC:
     if (psx_delay_BFC030C8) {
         psx_delay_BFC030C8 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -59140,7 +59140,7 @@ label_BFC03B70:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC03B78u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03B78:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -59285,7 +59285,7 @@ label_BFC03B90:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03B9Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03B9C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -59442,7 +59442,7 @@ label_BFC03BB4:
     { uint32_t _t = cpu->gpr[22];
     cpu->gpr[31] = 0xBFC03BC4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03BC4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -59587,7 +59587,7 @@ label_BFC03BDC:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03BE8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03BE8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -59673,7 +59673,7 @@ label_BFC03BF0:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03BFCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03BFC:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -59759,7 +59759,7 @@ label_BFC03C04:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03C10u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03C10:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -59941,7 +59941,7 @@ label_BFC03C28:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC03C38u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03C38:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -60137,7 +60137,7 @@ label_BFC03C6C:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03C78u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03C78:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -60249,7 +60249,7 @@ label_BFC03C84:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC03C90u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03C90:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -60391,7 +60391,7 @@ label_BFC03CA0:
     { uint32_t _t = cpu->gpr[22];
     cpu->gpr[31] = 0xBFC03CB0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03CB0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -60517,7 +60517,7 @@ label_BFC03CB8:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03CD0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03CD0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -60607,7 +60607,7 @@ label_BFC03CD8:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC03CE4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03CE4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -61071,7 +61071,7 @@ label_BFC03D28:
     { uint32_t _t = cpu->gpr[25];
     cpu->gpr[31] = 0xBFC03D64u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03D64:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -61259,7 +61259,7 @@ label_BFC03D64:
     if (psx_delay_BFC03D98) {
         psx_delay_BFC03D98 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -61387,7 +61387,7 @@ label_BFC03DA0:
     { uint32_t _t = cpu->gpr[25];
     cpu->gpr[31] = 0xBFC03DC0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03DC0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -61491,7 +61491,7 @@ label_BFC03DC0:
     if (psx_delay_BFC03DD8) {
         psx_delay_BFC03DD8 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -63310,7 +63310,7 @@ label_BFC03F80:
     { uint32_t _t = cpu->gpr[3];
     cpu->gpr[31] = 0xBFC03FA8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC03FA8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -63468,7 +63468,7 @@ label_BFC03FB0:
     if (psx_delay_BFC03FCC) {
         psx_delay_BFC03FCC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -64048,7 +64048,7 @@ label_BFC0403C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04064u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04064:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -64808,7 +64808,7 @@ label_BFC0410C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC04134u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04134:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -64885,7 +64885,7 @@ label_BFC04134:
     if (psx_delay_BFC04144) {
         psx_delay_BFC04144 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -65901,7 +65901,7 @@ label_BFC0423C:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC04244u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04244:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -66318,7 +66318,7 @@ label_BFC042A8:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC042B0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC042B0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -66436,7 +66436,7 @@ label_BFC042BC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC042D0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC042D0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -67103,7 +67103,7 @@ label_BFC0435C:
     if (psx_delay_BFC0436C) {
         psx_delay_BFC0436C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -69351,7 +69351,7 @@ label_BFC0457C:
     if (psx_delay_BFC04594) {
         psx_delay_BFC04594 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -69978,7 +69978,7 @@ label_BFC04628:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC04638u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04638:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -70016,7 +70016,7 @@ label_BFC04638:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC04640u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04640:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -70073,7 +70073,7 @@ label_BFC04640:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04650u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04650:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -70457,7 +70457,7 @@ label_BFC046A8:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC046B8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC046B8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -71171,7 +71171,7 @@ label_BFC04738:
     { uint32_t _t = cpu->gpr[3];
     cpu->gpr[31] = 0xBFC04770u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04770:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -72637,7 +72637,7 @@ label_BFC048C0:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC048D0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC048D0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -73206,7 +73206,7 @@ label_BFC04948:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04958u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04958:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -73898,7 +73898,7 @@ label_BFC049F4:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04A04u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04A04:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -74467,7 +74467,7 @@ label_BFC04A7C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04A8Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04A8C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -75008,7 +75008,7 @@ label_BFC04AFC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04B14u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04B14:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -75903,7 +75903,7 @@ label_BFC04BE8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04BF4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04BF4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -76607,7 +76607,7 @@ label_BFC04C84:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC04C9Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC04C9C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -80886,7 +80886,7 @@ label_BFC05088:
     { uint32_t _t = cpu->gpr[3];
     cpu->gpr[31] = 0xBFC050B8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC050B8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -81636,7 +81636,7 @@ label_BFC05148:
     { uint32_t _t = cpu->gpr[3];
     cpu->gpr[31] = 0xBFC05170u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC05170:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -85662,7 +85662,7 @@ label_BFC05594:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC055B4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC055B4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -97940,7 +97940,7 @@ label_BFC06138:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC06150u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06150:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -98555,7 +98555,7 @@ label_BFC061CC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC061F4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC061F4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -98903,7 +98903,7 @@ label_BFC0622C:
     if (psx_delay_BFC06240) {
         psx_delay_BFC06240 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -100059,7 +100059,7 @@ label_BFC06324:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC06348u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06348:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -100405,7 +100405,7 @@ label_BFC0637C:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC063A0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC063A0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -100573,7 +100573,7 @@ label_BFC063B8:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC063CCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC063CC:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -100818,7 +100818,7 @@ label_BFC063E4:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC0640Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0640C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -101017,7 +101017,7 @@ label_BFC06430:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC0643Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0643C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -101168,7 +101168,7 @@ label_BFC06458:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC0646Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0646C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -101226,7 +101226,7 @@ label_BFC0646C:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC0647Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0647C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -103416,7 +103416,7 @@ label_BFC06684:
     { uint32_t _t = cpu->gpr[10];
     cpu->gpr[31] = 0xBFC06694u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06694:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -104183,7 +104183,7 @@ label_BFC06768:
     { uint32_t _t = cpu->gpr[21];
     cpu->gpr[31] = 0xBFC0677Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0677C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -104441,7 +104441,7 @@ label_BFC067AC:
     { uint32_t _t = cpu->gpr[21];
     cpu->gpr[31] = 0xBFC067C8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC067C8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -106026,7 +106026,7 @@ label_BFC06950:
     if (psx_delay_BFC06958) {
         psx_delay_BFC06958 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[26]);
-    cpu->pc = cpu->gpr[26]; return;
+    if (cpu->gpr[26] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[26]; return;
     }
 }
 
@@ -106081,7 +106081,7 @@ label_BFC06960:
     if (psx_delay_BFC06964) {
         psx_delay_BFC06964 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[8]);
-    cpu->pc = cpu->gpr[8]; return;
+    if (cpu->gpr[8] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[8]; return;
     }
 }
 
@@ -106136,7 +106136,7 @@ label_BFC06970:
     if (psx_delay_BFC06974) {
         psx_delay_BFC06974 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[8]);
-    cpu->pc = cpu->gpr[8]; return;
+    if (cpu->gpr[8] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[8]; return;
     }
 }
 
@@ -106191,7 +106191,7 @@ label_BFC06980:
     if (psx_delay_BFC06984) {
         psx_delay_BFC06984 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[8]);
-    cpu->pc = cpu->gpr[8]; return;
+    if (cpu->gpr[8] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[8]; return;
     }
 }
 
@@ -106247,7 +106247,7 @@ label_BFC06990:
     if (psx_delay_BFC06994) {
         psx_delay_BFC06994 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -106913,7 +106913,7 @@ label_BFC06A10:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC06A38u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 }
 
@@ -107023,7 +107023,7 @@ label_BFC06A38:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC06A50u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06A50:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -110117,7 +110117,7 @@ label_BFC06CE4:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC06CF4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06CF4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -110155,7 +110155,7 @@ label_BFC06CF4:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC06CFCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06CFC:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -110216,7 +110216,7 @@ label_BFC06CFC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC06D0Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06D0C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -110348,7 +110348,7 @@ label_BFC06D18:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC06D30u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06D30:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -111265,7 +111265,7 @@ label_BFC06E1C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC06E34u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06E34:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -111351,7 +111351,7 @@ label_BFC06E3C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC06E48u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06E48:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -111401,7 +111401,7 @@ label_BFC06E48:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC06E54u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06E54:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -111542,7 +111542,7 @@ label_BFC06E6C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC06E78u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06E78:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -112471,7 +112471,7 @@ label_BFC06F54:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC06F68u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06F68:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -113025,7 +113025,7 @@ label_BFC06FE0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC06FF8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC06FF8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -113111,7 +113111,7 @@ label_BFC07000:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC0700Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0700C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -113173,7 +113173,7 @@ label_BFC0700C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC0701Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0701C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -113326,7 +113326,7 @@ label_BFC07038:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC07044u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07044:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -113670,7 +113670,7 @@ label_BFC07074:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC070A0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC070A0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -114572,7 +114572,7 @@ label_BFC07178:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC07194u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07194:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -114694,7 +114694,7 @@ label_BFC0719C:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0xBFC071B4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC071B4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -117574,7 +117574,7 @@ label_BFC07468:
     if (psx_delay_BFC07474) {
         psx_delay_BFC07474 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 label_BFC0747C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -117930,7 +117930,7 @@ label_BFC074C0:
     if (psx_delay_BFC074CC) {
         psx_delay_BFC074CC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 label_BFC074D4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -118332,7 +118332,7 @@ label_BFC07520:
     if (psx_delay_BFC07538) {
         psx_delay_BFC07538 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 label_BFC07540:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -118800,7 +118800,7 @@ label_BFC07578:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC075C0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC075C0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -118862,7 +118862,7 @@ label_BFC075C0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC075D0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC075D0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -118924,7 +118924,7 @@ label_BFC075D0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC075E0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC075E0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -119034,7 +119034,7 @@ label_BFC075E0:
     if (psx_delay_BFC075FC) {
         psx_delay_BFC075FC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -120153,7 +120153,7 @@ label_BFC076F4:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC07704u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 }
 
@@ -123861,7 +123861,7 @@ label_BFC07ACC:
     if (psx_delay_BFC07AF4) {
         psx_delay_BFC07AF4 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 label_BFC07AFC:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -123911,7 +123911,7 @@ label_BFC07AFC:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC07B08u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07B08:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -124198,7 +124198,7 @@ label_BFC07B48:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC07B50u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07B50:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -124327,7 +124327,7 @@ label_BFC07B68:
     { uint32_t _t = cpu->gpr[19];
     cpu->gpr[31] = 0xBFC07B70u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07B70:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -125266,7 +125266,7 @@ label_BFC07C84:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC07C8Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07C8C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -125342,7 +125342,7 @@ label_BFC07C94:
     { uint32_t _t = cpu->gpr[18];
     cpu->gpr[31] = 0xBFC07C9Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07C9C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -126074,7 +126074,7 @@ label_BFC07D3C:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0xBFC07D44u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07D44:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -126472,7 +126472,7 @@ label_BFC07D94:
     if (psx_delay_BFC07DA0) {
         psx_delay_BFC07DA0 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -126552,7 +126552,7 @@ label_BFC07DA8:
     if (psx_delay_BFC07DB4) {
         psx_delay_BFC07DB4 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -128612,7 +128612,7 @@ label_BFC07FB8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC07FC8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC07FC8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -128826,7 +128826,7 @@ label_BFC07FDC:
     if (psx_delay_BFC08000) {
         psx_delay_BFC08000 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 label_BFC08008:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -132988,7 +132988,7 @@ label_BFC08440:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC08448u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC08448:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -133136,7 +133136,7 @@ label_BFC08464:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0xBFC0846Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0846C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -134045,7 +134045,7 @@ label_BFC08540:
     { uint32_t _t = cpu->gpr[22];
     cpu->gpr[31] = 0xBFC08550u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC08550:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -138976,7 +138976,7 @@ label_BFC08998:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC089A8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC089A8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -139181,7 +139181,7 @@ label_BFC089C8:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC089DCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC089DC:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -141601,7 +141601,7 @@ label_BFC08C34:
     if (psx_delay_BFC08C48) {
         psx_delay_BFC08C48 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[15]);
-    cpu->pc = cpu->gpr[15]; return;
+    if (cpu->gpr[15] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[15]; return;
     }
 label_BFC08C50:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -141805,7 +141805,7 @@ label_BFC08C58:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC08C84u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC08C84:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -144006,7 +144006,7 @@ label_BFC08E78:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC08E88u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC08E88:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -144105,7 +144105,7 @@ label_BFC08E90:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC08EA0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC08EA0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -144390,7 +144390,7 @@ label_BFC08ED0:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC08EE0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC08EE0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -146624,7 +146624,7 @@ label_BFC090B8:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC090C8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC090C8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -146720,7 +146720,7 @@ label_BFC090D0:
     { uint32_t _t = cpu->gpr[20];
     cpu->gpr[31] = 0xBFC090E0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC090E0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -165508,7 +165508,7 @@ label_BFC0B468:
     if (psx_delay_BFC0B47C) {
         psx_delay_BFC0B47C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -166041,7 +166041,7 @@ label_BFC0B4F8:
     if (psx_delay_BFC0B50C) {
         psx_delay_BFC0B50C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -167949,7 +167949,7 @@ label_BFC0B70C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x80031218u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0B718:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -168632,7 +168632,7 @@ label_BFC0B7B8:
     if (psx_delay_BFC0B7CC) {
         psx_delay_BFC0B7CC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -171669,7 +171669,7 @@ label_BFC0BB64:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x8003166Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0BB6C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -171817,7 +171817,7 @@ label_BFC0BB84:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x8003168Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC0BB8C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -188485,7 +188485,7 @@ label_BFC0D08C:
     if (psx_delay_BFC0D09C) {
         psx_delay_BFC0D09C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[3]);
-    cpu->pc = cpu->gpr[3]; return;
+    if (cpu->gpr[3] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[3]; return;
     }
 }
 
@@ -199499,7 +199499,7 @@ label_BFC0DCE4:
     if (psx_delay_BFC0DCF8) {
         psx_delay_BFC0DCF8 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[3]);
-    cpu->pc = cpu->gpr[3]; return;
+    if (cpu->gpr[3] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[3]; return;
     }
 }
 
@@ -201162,7 +201162,7 @@ label_BFC0DE84:
     if (psx_delay_BFC0DE98) {
         psx_delay_BFC0DE98 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -202953,7 +202953,7 @@ label_BFC0E050:
     if (psx_delay_BFC0E054) {
         psx_delay_BFC0E054 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -203363,7 +203363,7 @@ label_BFC1E540:
             goto label_BFC1E59C;
         default:
             PSX_BLOCK_EDGE(cpu, psx_jrt_BFC1E574);
-            cpu->pc = psx_jrt_BFC1E574; return;
+            if (psx_jrt_BFC1E574 == 0u) g_psx_pc_zero_jump = 1; cpu->pc = psx_jrt_BFC1E574; return;
     }
     }
 label_BFC1E58C:
@@ -204433,7 +204433,7 @@ label_BFC1E6E0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x00000720u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E6F4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204486,7 +204486,7 @@ label_BFC1E6F4:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x00000730u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E704:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204539,7 +204539,7 @@ label_BFC1E704:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x00000740u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E714:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204592,7 +204592,7 @@ label_BFC1E714:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x00000750u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E724:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204684,7 +204684,7 @@ label_BFC1E724:
     if (psx_delay_BFC1E740) {
         psx_delay_BFC1E740 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -204824,7 +204824,7 @@ label_BFC1E748:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x0000079Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E770:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204880,7 +204880,7 @@ label_BFC1E770:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x000007ACu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E780:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204936,7 +204936,7 @@ label_BFC1E780:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x000007BCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E790:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -204992,7 +204992,7 @@ label_BFC1E790:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x000007CCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E7A0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -205048,7 +205048,7 @@ label_BFC1E7A0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x000007DCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E7B0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -205104,7 +205104,7 @@ label_BFC1E7B0:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x000007ECu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E7C0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -205240,7 +205240,7 @@ label_BFC1E7DC:
     if (psx_delay_BFC1E7DC) {
         psx_delay_BFC1E7DC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -206411,7 +206411,7 @@ label_BFC1E91C:
     if (psx_delay_BFC1E944) {
         psx_delay_BFC1E944 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -206808,7 +206808,7 @@ label_BFC1E9AC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000009F8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1E9CC:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -207092,7 +207092,7 @@ label_BFC1E9FC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00000A48u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1EA1C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -207301,7 +207301,7 @@ label_BFC1EA38:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00000A84u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1EA58:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -208057,7 +208057,7 @@ label_BFC1EB2C:
     if (psx_delay_BFC1EB48) {
         psx_delay_BFC1EB48 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -208753,7 +208753,7 @@ label_BFC1EBDC:
     { uint32_t _pgx1 = cpu->gpr[29]; cpu->gpr[29] = (uint32_t)((int32_t)cpu->gpr[29] + (32));
     PGXP_ALU(0x27BD0020u, cpu->gpr[29], _pgx1, 0x00000020u); }
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }  /* CPS: publish $ra */
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }  /* CPS: publish $ra */
 }
 
 void OpenBIOS_func_00000C14(CPUState* cpu) {
@@ -208983,7 +208983,7 @@ label_BFC1EC00:
     { uint32_t _pgx1 = cpu->gpr[4]; cpu->gpr[4] = (uint32_t)((int32_t)cpu->gpr[4] + (3));
     PGXP_ALU(0x24840003u, cpu->gpr[4], _pgx1, 0x00000003u); }
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
 }
 
 void OpenBIOS_func_00000C38(CPUState* cpu) {
@@ -211242,7 +211242,7 @@ label_BFC1EE08:
     if (psx_delay_BFC1EE1C) {
         psx_delay_BFC1EE1C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 label_BFC1EE24:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -214494,7 +214494,7 @@ label_BFC1F148:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00001188u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1F15C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -214862,7 +214862,7 @@ label_BFC1F1AC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000011ECu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC1F1C0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -223659,7 +223659,7 @@ label_BFC1FBD0:
 #endif
     /* nop */
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }  /* CPS: publish $ra */
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }  /* CPS: publish $ra */
 }
 
 void OpenBIOS_func_00001C00(CPUState* cpu) {
@@ -223933,7 +223933,7 @@ label_BFC1FC04:
 #endif
     /* nop */
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }  /* CPS: publish $ra */
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }  /* CPS: publish $ra */
 }
 
 void OpenBIOS_func_00001C34(CPUState* cpu) {
@@ -228040,7 +228040,7 @@ label_BFC20034:
     { uint32_t _pgx1 = cpu->gpr[29]; cpu->gpr[29] = (uint32_t)((int32_t)cpu->gpr[29] + (24));
     PGXP_ALU(0x27BD0018u, cpu->gpr[29], _pgx1, 0x00000018u); }
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
 }
 
 void OpenBIOS_func_00002070(CPUState* cpu) {
@@ -234422,7 +234422,7 @@ label_BFC2069C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000026D4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC206A8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -235121,7 +235121,7 @@ label_BFC2074C:
     if (psx_delay_BFC20768) {
         psx_delay_BFC20768 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[25]);
-    cpu->pc = cpu->gpr[25]; return;
+    if (cpu->gpr[25] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[25]; return;
     }
 }
 
@@ -236843,7 +236843,7 @@ label_BFC20908:
     { uint32_t _t = cpu->gpr[17];
     cpu->gpr[31] = 0x0000293Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC20910:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -236956,7 +236956,7 @@ label_BFC20920:
     { uint32_t _t = cpu->gpr[16];
     cpu->gpr[31] = 0x00002954u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC20928:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -237625,7 +237625,7 @@ label_BFC209A0:
     { uint32_t sr = cpu->cop0[12]; cpu->cop0[12] = (sr & 0xFFFFFFC0u) | ((sr >> 2) & 0x0Fu); } /* rfe */
     psx_rfe_mark_escape();
     PSX_BLOCK_EDGE(cpu, cpu->gpr[26]);
-    cpu->pc = cpu->gpr[26]; return;
+    if (cpu->gpr[26] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[26]; return;
 }
 
 void OpenBIOS_func_00002A80(CPUState* cpu) {
@@ -237718,7 +237718,7 @@ label_BFC20A54:
     if (psx_delay_BFC20A6C) {
         psx_delay_BFC20A6C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -237812,7 +237812,7 @@ label_BFC20A74:
     if (psx_delay_BFC20A8C) {
         psx_delay_BFC20A8C = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -237906,7 +237906,7 @@ label_BFC20A94:
     if (psx_delay_BFC20AAC) {
         psx_delay_BFC20AAC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -237990,7 +237990,7 @@ label_BFC20AB4:
     if (psx_delay_BFC20AC8) {
         psx_delay_BFC20AC8 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -238073,7 +238073,7 @@ label_BFC20AD0:
     if (psx_delay_BFC20AE0) {
         psx_delay_BFC20AE0 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[2]);
-    cpu->pc = cpu->gpr[2]; return;
+    if (cpu->gpr[2] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[2]; return;
     }
 }
 
@@ -238123,7 +238123,7 @@ label_BFC20AE8:
     if (psx_delay_BFC20AEC) {
         psx_delay_BFC20AEC = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[10]);
-    cpu->pc = cpu->gpr[10]; return;
+    if (cpu->gpr[10] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[10]; return;
     }
 }
 
@@ -238557,7 +238557,7 @@ label_BFC20B64:
     if (psx_delay_BFC20B78) {
         psx_delay_BFC20B78 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[5]);
-    cpu->pc = cpu->gpr[5]; return;
+    if (cpu->gpr[5] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[5]; return;
     }
 }
 
@@ -239398,7 +239398,7 @@ label_BFC20C68:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00002CCCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC20CA0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -241611,7 +241611,7 @@ label_BFC20F4C:
     if (psx_delay_BFC20F68) {
         psx_delay_BFC20F68 = 0;
     PSX_BLOCK_EDGE(cpu, cpu->gpr[6]);
-    cpu->pc = cpu->gpr[6]; return;
+    if (cpu->gpr[6] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[6]; return;
     }
 }
 
@@ -242001,7 +242001,7 @@ label_BFC20FE0:
     { uint32_t _pgx1 = cpu->gpr[29]; cpu->gpr[29] = (uint32_t)((int32_t)cpu->gpr[29] + (24));
     PGXP_ALU(0x27BD0018u, cpu->gpr[29], _pgx1, 0x00000018u); }
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }  /* CPS: publish $ra */
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }  /* CPS: publish $ra */
 }
 
 void OpenBIOS_func_00003010(CPUState* cpu) {
@@ -242755,7 +242755,7 @@ label_BFC21070:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000030C8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC2109C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -244374,7 +244374,7 @@ label_BFC21270:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000032CCu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC212A0:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -245985,7 +245985,7 @@ label_BFC2148C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000034C8u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC2149C:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -246188,7 +246188,7 @@ label_BFC214C8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00003504u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC214D8:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -247679,7 +247679,7 @@ label_BFC21678:
     { uint32_t sr = cpu->cop0[12]; cpu->cop0[12] = (sr & 0xFFFFFFC0u) | ((sr >> 2) & 0x0Fu); } /* rfe */
     psx_rfe_mark_escape();
     PSX_BLOCK_EDGE(cpu, cpu->gpr[26]);
-    cpu->pc = cpu->gpr[26]; return;
+    if (cpu->gpr[26] == 0u) g_psx_pc_zero_jump = 1; cpu->pc = cpu->gpr[26]; return;
 }
 
 void OpenBIOS_func_000036D8(CPUState* cpu) {
@@ -249304,7 +249304,7 @@ label_BFC21868:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x000038C0u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC21894:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -249628,7 +249628,7 @@ label_BFC218CC:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x0000392Cu;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC21900:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -250405,7 +250405,7 @@ label_BFC219C4:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00003A20u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC219F4:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -255316,7 +255316,7 @@ label_BFC21F1C:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00003FA4u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC21F78:
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -258291,7 +258291,7 @@ label_BFC222F8:
     { uint32_t _t = cpu->gpr[2];
     cpu->gpr[31] = 0x00004334u;
     PSX_BLOCK_EDGE(cpu, _t);
-    cpu->pc = _t; return; }
+    if (_t == 0u) g_psx_pc_zero_jump = 1; cpu->pc = _t; return; }
     }
 label_BFC22308:
 #ifndef PSX_NO_DEBUG_TOOLS

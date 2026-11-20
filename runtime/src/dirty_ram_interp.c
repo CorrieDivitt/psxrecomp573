@@ -47,6 +47,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+void psx_fatal_halt(const char *reason);  /* crash_trace.h */
 
 uint64_t g_dirty_ram_blocks_run = 0;
 uint64_t g_dirty_ram_insns_run  = 0;
@@ -1820,6 +1821,9 @@ static int exec_one_fetched_inner(CPUState *cpu, uint32_t pc, uint32_t insn,
         }
         case 0x08: { /* JR rs */
             uint32_t target = cpu->gpr[rs];
+            /* cpu->pc = 0 is the C-return sentinel; an interpreted transfer
+             * to guest PC 0 has no path that keeps it a transfer yet. */
+            if (target == 0u) psx_fatal_halt("dirty-RAM interp: JR to guest PC 0 is not supported");
             if (target & 3) return interp_exception(cpu, 4, target, pc);  /* LoadAddressError */
             exec_delay_slot(cpu, pc + 4);
             cosim_exec_one_transfer_hook(pc + 4);
@@ -1831,6 +1835,7 @@ static int exec_one_fetched_inner(CPUState *cpu, uint32_t pc, uint32_t insn,
         }
         case 0x09: { /* JALR rd, rs */
             uint32_t target = cpu->gpr[rs];
+            if (target == 0u) psx_fatal_halt("dirty-RAM interp: JALR to guest PC 0 is not supported");
             if (target & 3) return interp_exception(cpu, 4, target, pc);  /* LoadAddressError */
             uint32_t return_pc = pc + 8;
             /* JALR writes the encoded rd exactly.  The one-operand assembler

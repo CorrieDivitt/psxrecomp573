@@ -1,7 +1,7 @@
 {
   "schema": "psxrecomp phase2 seeds",
   "source": "Ghidra 12.1.4 analysis of 700b01.22g via FM_Bios700B01.java (Fighting-Mania-VR)",
-  "seed_count": 1096,
+  "seed_count": 1188,
   "seeds": [
     {
       "address": "0xBFC00000",
@@ -2514,9 +2514,34 @@
       "rationale": "direct target 0x80010EC0 from emitted code"
     },
     {
+      "address": "0xBFC297E0",
+      "label": "mat_80010FE0",
+      "rationale": "GX700 CHECK builds 0x80010FE0 with lui/addiu at 0x80010F90; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC2981C",
       "label": "ghidra_BFC2981C",
       "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC29870",
+      "label": "ptr_80011070",
+      "rationale": "GX700 CHECK data word at 0x8001D194 points to 0x80011070, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC29A80",
+      "label": "ptr_80011280",
+      "rationale": "GX700 CHECK data word at 0x8001D19C points to 0x80011280, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC29ABC",
+      "label": "ptr_800112BC",
+      "rationale": "GX700 CHECK data word at 0x8001D198 points to 0x800112BC, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2A044",
+      "label": "mat_80011844",
+      "rationale": "GX700 CHECK builds 0x80011844 with lui/addiu at 0x8001124C; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC2AD7C",
@@ -2774,9 +2799,59 @@
       "rationale": "direct target 0x800146B4 from emitted code"
     },
     {
+      "address": "0xBFC2CEBC",
+      "label": "ptr_800146BC",
+      "rationale": "GX700 CHECK data word at 0x8001D5E0 points to 0x800146BC, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2CED4",
+      "label": "ptr_800146D4",
+      "rationale": "GX700 CHECK data word at 0x8001D5D4 points to 0x800146D4, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2CFB4",
+      "label": "ptr_800147B4",
+      "rationale": "GX700 CHECK data word at 0x8001D5B4 points to 0x800147B4, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2D1E4",
+      "label": "ptr_800149E4",
+      "rationale": "GX700 CHECK data word at 0x8001D5C8 points to 0x800149E4, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2D420",
+      "label": "ptr_80014C20",
+      "rationale": "GX700 CHECK data word at 0x8001D5C4 points to 0x80014C20, after a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC2D6A0",
       "label": "ghidra_BFC2D6A0",
       "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2D6C4",
+      "label": "ptr_80014EC4",
+      "rationale": "GX700 CHECK data word at 0x8001D5D0 points to 0x80014EC4, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2D6D8",
+      "label": "ptr_80014ED8",
+      "rationale": "GX700 CHECK data word at 0x8001D5BC points to 0x80014ED8, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2D718",
+      "label": "ptr_80014F18",
+      "rationale": "GX700 CHECK data word at 0x8001D5C0 points to 0x80014F18, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2D760",
+      "label": "ptr_80014F60",
+      "rationale": "GX700 CHECK data word at 0x8001D5D8 points to 0x80014F60, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2D790",
+      "label": "ptr_80014F90",
+      "rationale": "GX700 CHECK data word at 0x8001D5AC points to 0x80014F90, after a jr $ra epilogue"
     },
     {
       "address": "0xBFC2D7B4",
@@ -2862,6 +2937,11 @@
       "address": "0xBFC2E160",
       "label": "xfn_80015960",
       "rationale": "direct target 0x80015960 from emitted code"
+    },
+    {
+      "address": "0xBFC2E580",
+      "label": "mat_80015D80",
+      "rationale": "GX700 CHECK builds 0x80015D80 with lui/addiu at 0x80015A14; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC2E5A8",
@@ -3134,6 +3214,11 @@
       "rationale": "Ghidra function start (gx700_check block)"
     },
     {
+      "address": "0xBFC2F27C",
+      "label": "mat_80016A7C",
+      "rationale": "GX700 CHECK builds 0x80016A7C with lui/addiu at 0x80016A04; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC2F2B0",
       "label": "ghidra_BFC2F2B0",
       "rationale": "Ghidra function start (gx700_check block)"
@@ -3162,6 +3247,16 @@
       "address": "0xBFC2F57C",
       "label": "ghidra_BFC2F57C",
       "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F5B4",
+      "label": "mat_80016DB4",
+      "rationale": "GX700 CHECK builds 0x80016DB4 with lui/addiu at 0x80016D28; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC2F61C",
+      "label": "mat_80016E1C",
+      "rationale": "GX700 CHECK builds 0x80016E1C with lui/addiu at 0x80016D34; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC2F680",
@@ -3299,6 +3394,11 @@
       "rationale": "Ghidra function start (gx700_check block)"
     },
     {
+      "address": "0xBFC30074",
+      "label": "ptr_80017874",
+      "rationale": "GX700 CHECK data word at 0x8001E908 points to 0x80017874, after a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC300EC",
       "label": "ghidra_BFC300EC",
       "rationale": "Ghidra function start (gx700_check block)"
@@ -3334,6 +3434,16 @@
       "rationale": "Ghidra function start (gx700_check block)"
     },
     {
+      "address": "0xBFC30238",
+      "label": "mat_80017A38",
+      "rationale": "GX700 CHECK builds 0x80017A38 with lui/addiu at 0x80017A14; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC302A4",
+      "label": "mat_80017AA4",
+      "rationale": "GX700 CHECK builds 0x80017AA4 with lui/addiu at 0x80017A24; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC302D0",
       "label": "ghidra_BFC302D0",
       "rationale": "Ghidra function start (gx700_check block)"
@@ -3342,6 +3452,16 @@
       "address": "0xBFC30300",
       "label": "ghidra_BFC30300",
       "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC3034C",
+      "label": "mat_80017B4C",
+      "rationale": "GX700 CHECK builds 0x80017B4C with lui/addiu at 0x80017B28; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC304CC",
+      "label": "gx700_fn_80017CCC",
+      "rationale": "GX700 CHECK 0x800172B0 jalr through the runtime-filled table at *(0x8001E910)+4 -> 0x80017CCC (fail-fast miss)"
     },
     {
       "address": "0xBFC30578",
@@ -3404,6 +3524,11 @@
       "rationale": "direct target 0x80018394 from emitted code"
     },
     {
+      "address": "0xBFC30BB0",
+      "label": "mat_800183B0",
+      "rationale": "GX700 CHECK builds 0x800183B0 with lui/addiu at 0x80017F04; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC3107C",
       "label": "ghidra_BFC3107C",
       "rationale": "Ghidra function start (gx700_check block)"
@@ -3449,6 +3574,11 @@
       "rationale": "Ghidra function start (gx700_check block)"
     },
     {
+      "address": "0xBFC31720",
+      "label": "ptr_80018F20",
+      "rationale": "GX700 CHECK data word at 0x8001EAEC points to 0x80018F20, after a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC31B58",
       "label": "ghidra_BFC31B58",
       "rationale": "Ghidra function start (gx700_check block)"
@@ -3457,6 +3587,26 @@
       "address": "0xBFC31BC8",
       "label": "xfn_800193C8",
       "rationale": "direct target 0x800193C8 from emitted code"
+    },
+    {
+      "address": "0xBFC31C70",
+      "label": "ptr_80019470",
+      "rationale": "GX700 CHECK data word at 0x8001EADC points to 0x80019470, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC31D20",
+      "label": "ptr_80019520",
+      "rationale": "GX700 CHECK data word at 0x8001EAE8 points to 0x80019520, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC31DF0",
+      "label": "ptr_800195F0",
+      "rationale": "GX700 CHECK data word at 0x8001EAE4 points to 0x800195F0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC31ED0",
+      "label": "ptr_800196D0",
+      "rationale": "GX700 CHECK data word at 0x8001EAF0 points to 0x800196D0, after a jr $ra epilogue"
     },
     {
       "address": "0xBFC31EE0",
@@ -3569,6 +3719,16 @@
       "rationale": "direct target 0x8001B120 from emitted code"
     },
     {
+      "address": "0xBFC33930",
+      "label": "mat_8001B130",
+      "rationale": "GX700 CHECK builds 0x8001B130 with lui/addiu at 0x8001B094; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC33A20",
+      "label": "mat_8001B220",
+      "rationale": "GX700 CHECK builds 0x8001B220 with lui/addiu at 0x8001B0A4; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC33A34",
       "label": "ghidra_BFC33A34",
       "rationale": "Ghidra function start (gx700_check block)"
@@ -3607,6 +3767,11 @@
       "address": "0xBFC34D18",
       "label": "ghidra_BFC34D18",
       "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC358A4",
+      "label": "mat_8001D0A4",
+      "rationale": "GX700 CHECK builds 0x8001D0A4 with lui/addiu at 0x80011450; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC61CE4",
@@ -3694,9 +3859,34 @@
       "rationale": "direct target 0x80381DCC from emitted code"
     },
     {
+      "address": "0xBFC625E4",
+      "label": "mat_80381DE4",
+      "rationale": "Boot shell builds 0x80381DE4 with lui/addiu at 0x80381D3C; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC62620",
       "label": "ghidra_BFC62620",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC62674",
+      "label": "ptr_80381E74",
+      "rationale": "Boot shell data word at 0x80394CE4 points to 0x80381E74, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC62734",
+      "label": "ptr_80381F34",
+      "rationale": "Boot shell data word at 0x80394CE8 points to 0x80381F34, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC62A90",
+      "label": "ptr_80382290",
+      "rationale": "Boot shell data word at 0x80394CEC points to 0x80382290, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC62ACC",
+      "label": "mat_803822CC",
+      "rationale": "Boot shell builds 0x803822CC with lui/addiu at 0x80381F0C; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC62EEC",
@@ -4489,9 +4679,59 @@
       "rationale": "direct target 0x80387BC0 from emitted code"
     },
     {
+      "address": "0xBFC683C8",
+      "label": "ptr_80387BC8",
+      "rationale": "Boot shell data word at 0x80395218 points to 0x80387BC8, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC683E0",
+      "label": "ptr_80387BE0",
+      "rationale": "Boot shell data word at 0x8039520C points to 0x80387BE0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC684C0",
+      "label": "ptr_80387CC0",
+      "rationale": "Boot shell data word at 0x803951EC points to 0x80387CC0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC686F0",
+      "label": "ptr_80387EF0",
+      "rationale": "Boot shell data word at 0x80395200 points to 0x80387EF0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6892C",
+      "label": "ptr_8038812C",
+      "rationale": "Boot shell data word at 0x803951FC points to 0x8038812C, after a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC68BAC",
       "label": "ghidra_BFC68BAC",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC68BD0",
+      "label": "ptr_803883D0",
+      "rationale": "Boot shell data word at 0x80395208 points to 0x803883D0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC68BE4",
+      "label": "ptr_803883E4",
+      "rationale": "Boot shell data word at 0x803951F4 points to 0x803883E4, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC68C24",
+      "label": "ptr_80388424",
+      "rationale": "Boot shell data word at 0x803951F8 points to 0x80388424, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC68C6C",
+      "label": "ptr_8038846C",
+      "rationale": "Boot shell data word at 0x80395210 points to 0x8038846C, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC68C9C",
+      "label": "ptr_8038849C",
+      "rationale": "Boot shell data word at 0x803951E4 points to 0x8038849C, after a jr $ra epilogue"
     },
     {
       "address": "0xBFC68CC0",
@@ -4579,6 +4819,11 @@
       "rationale": "direct target 0x80388E6C from emitted code"
     },
     {
+      "address": "0xBFC69A8C",
+      "label": "mat_8038928C",
+      "rationale": "Boot shell builds 0x8038928C with lui/addiu at 0x80388F20; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC69AB4",
       "label": "ghidra_BFC69AB4",
       "rationale": "Ghidra function start (boot_shell block)"
@@ -4649,6 +4894,11 @@
       "rationale": "Ghidra function start (boot_shell block)"
     },
     {
+      "address": "0xBFC69EB8",
+      "label": "mat_803896B8",
+      "rationale": "Boot shell builds 0x803896B8 with lui/addiu at 0x80389640; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC69EEC",
       "label": "ghidra_BFC69EEC",
       "rationale": "Ghidra function start (boot_shell block)"
@@ -4677,6 +4927,16 @@
       "address": "0xBFC6A1B8",
       "label": "ghidra_BFC6A1B8",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A1F0",
+      "label": "mat_803899F0",
+      "rationale": "Boot shell builds 0x803899F0 with lui/addiu at 0x80389964; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6A258",
+      "label": "mat_80389A58",
+      "rationale": "Boot shell builds 0x80389A58 with lui/addiu at 0x80389970; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC6A2BC",
@@ -4814,6 +5074,11 @@
       "rationale": "Ghidra function start (boot_shell block)"
     },
     {
+      "address": "0xBFC6ACB0",
+      "label": "ptr_8038A4B0",
+      "rationale": "Boot shell data word at 0x803964A0 points to 0x8038A4B0, after a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC6AD28",
       "label": "ghidra_BFC6AD28",
       "rationale": "Ghidra function start (boot_shell block)"
@@ -4849,6 +5114,16 @@
       "rationale": "Ghidra function start (boot_shell block)"
     },
     {
+      "address": "0xBFC6AE74",
+      "label": "mat_8038A674",
+      "rationale": "Boot shell builds 0x8038A674 with lui/addiu at 0x8038A650; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6AEE0",
+      "label": "mat_8038A6E0",
+      "rationale": "Boot shell builds 0x8038A6E0 with lui/addiu at 0x8038A660; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC6AF0C",
       "label": "ghidra_BFC6AF0C",
       "rationale": "Ghidra function start (boot_shell block)"
@@ -4857,6 +5132,16 @@
       "address": "0xBFC6AF3C",
       "label": "ghidra_BFC6AF3C",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AF88",
+      "label": "mat_8038A788",
+      "rationale": "Boot shell builds 0x8038A788 with lui/addiu at 0x8038A764; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6B108",
+      "label": "mat_8038A908",
+      "rationale": "Boot shell builds 0x8038A908 with lui/addiu at 0x8038A774; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC6B1B4",
@@ -4917,6 +5202,11 @@
       "address": "0xBFC6B7D0",
       "label": "xfn_8038AFD0",
       "rationale": "direct target 0x8038AFD0 from emitted code"
+    },
+    {
+      "address": "0xBFC6B7EC",
+      "label": "mat_8038AFEC",
+      "rationale": "Boot shell builds 0x8038AFEC with lui/addiu at 0x8038AB40; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC6BCB8",
@@ -5134,6 +5424,16 @@
       "rationale": "direct target 0x8038CFFC from emitted code"
     },
     {
+      "address": "0xBFC6D80C",
+      "label": "mat_8038D00C",
+      "rationale": "Boot shell builds 0x8038D00C with lui/addiu at 0x8038CF70; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6D8FC",
+      "label": "mat_8038D0FC",
+      "rationale": "Boot shell builds 0x8038D0FC with lui/addiu at 0x8038CF80; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC6D910",
       "label": "ghidra_BFC6D910",
       "rationale": "Ghidra function start (boot_shell block)"
@@ -5182,6 +5482,131 @@
       "address": "0xBFC6E2C4",
       "label": "ghidra_BFC6E2C4",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6EB60",
+      "label": "ptr_8038E360",
+      "rationale": "Boot shell data word at 0x803978F8 points to 0x8038E360, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EB94",
+      "label": "ptr_8038E394",
+      "rationale": "Boot shell data word at 0x803978FC points to 0x8038E394, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EC04",
+      "label": "ptr_8038E404",
+      "rationale": "Boot shell data word at 0x80397900 points to 0x8038E404, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EC34",
+      "label": "ptr_8038E434",
+      "rationale": "Boot shell data word at 0x80397904 points to 0x8038E434, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EC64",
+      "label": "ptr_8038E464",
+      "rationale": "Boot shell data word at 0x80397908 points to 0x8038E464, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6ED38",
+      "label": "ptr_8038E538",
+      "rationale": "Boot shell data word at 0x8039790C points to 0x8038E538, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6ED68",
+      "label": "ptr_8038E568",
+      "rationale": "Boot shell data word at 0x80397910 points to 0x8038E568, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6ED9C",
+      "label": "ptr_8038E59C",
+      "rationale": "Boot shell data word at 0x80397914 points to 0x8038E59C, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EDD0",
+      "label": "ptr_8038E5D0",
+      "rationale": "Boot shell data word at 0x80397918 points to 0x8038E5D0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EE04",
+      "label": "ptr_8038E604",
+      "rationale": "Boot shell data word at 0x8039791C points to 0x8038E604, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EE20",
+      "label": "ptr_8038E620",
+      "rationale": "Boot shell data word at 0x80397920 points to 0x8038E620, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EE74",
+      "label": "ptr_8038E674",
+      "rationale": "Boot shell data word at 0x80397948 points to 0x8038E674, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EECC",
+      "label": "ptr_8038E6CC",
+      "rationale": "Boot shell data word at 0x80397924 points to 0x8038E6CC, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EEF0",
+      "label": "ptr_8038E6F0",
+      "rationale": "Boot shell data word at 0x80397928 points to 0x8038E6F0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EF14",
+      "label": "ptr_8038E714",
+      "rationale": "Boot shell data word at 0x8039792C points to 0x8038E714, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EF38",
+      "label": "ptr_8038E738",
+      "rationale": "Boot shell data word at 0x80397930 points to 0x8038E738, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6EFAC",
+      "label": "ptr_8038E7AC",
+      "rationale": "Boot shell data word at 0x80397958 points to 0x8038E7AC, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F024",
+      "label": "ptr_8038E824",
+      "rationale": "Boot shell data word at 0x80397934 points to 0x8038E824, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F064",
+      "label": "ptr_8038E864",
+      "rationale": "Boot shell data word at 0x8039795C points to 0x8038E864, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F0A8",
+      "label": "ptr_8038E8A8",
+      "rationale": "Boot shell data word at 0x80397938 points to 0x8038E8A8, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F0CC",
+      "label": "ptr_8038E8CC",
+      "rationale": "Boot shell data word at 0x8039793C points to 0x8038E8CC, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F0F0",
+      "label": "ptr_8038E8F0",
+      "rationale": "Boot shell data word at 0x80397940 points to 0x8038E8F0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F114",
+      "label": "ptr_8038E914",
+      "rationale": "Boot shell data word at 0x80397944 points to 0x8038E914, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F3B0",
+      "label": "ptr_8038EBB0",
+      "rationale": "Boot shell data word at 0x803978D0 points to 0x8038EBB0, after a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC6F3B8",
+      "label": "mat_8038EBB8",
+      "rationale": "Boot shell builds 0x8038EBB8 with lui/addiu at 0x80383098; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC6FBA8",
@@ -5404,6 +5829,21 @@
       "rationale": "direct target 0x80392E34 from emitted code"
     },
     {
+      "address": "0xBFC7365C",
+      "label": "mat_80392E5C",
+      "rationale": "Boot shell builds 0x80392E5C with lui/addiu at 0x80392D20; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC73670",
+      "label": "mat_80392E70",
+      "rationale": "Boot shell builds 0x80392E70 with lui/addiu at 0x80392D2C; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC736B4",
+      "label": "mat_80392EB4",
+      "rationale": "Boot shell builds 0x80392EB4 with lui/addiu at 0x80392D38; target follows a jr $ra epilogue"
+    },
+    {
       "address": "0xBFC736C0",
       "label": "ghidra_BFC736C0",
       "rationale": "Ghidra function start (boot_shell block)"
@@ -5437,6 +5877,21 @@
       "address": "0xBFC73928",
       "label": "ghidra_BFC73928",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73B28",
+      "label": "mat_80393328",
+      "rationale": "Boot shell builds 0x80393328 with lui/addiu at 0x80393068; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC73BC8",
+      "label": "mat_803933C8",
+      "rationale": "Boot shell builds 0x803933C8 with lui/addiu at 0x80393074; target follows a jr $ra epilogue"
+    },
+    {
+      "address": "0xBFC73BD0",
+      "label": "mat_803933D0",
+      "rationale": "Boot shell builds 0x803933D0 with lui/addiu at 0x80393080; target follows a jr $ra epilogue"
     },
     {
       "address": "0xBFC73CDC",
@@ -5482,6 +5937,11 @@
       "address": "0xBFC7510C",
       "label": "ghidra_BFC7510C",
       "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC751EC",
+      "label": "ptr_803949EC",
+      "rationale": "Boot shell data word at 0x80394D04 points to 0x803949EC, after a jr $ra epilogue"
     }
   ]
 }

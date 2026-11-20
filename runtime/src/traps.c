@@ -103,6 +103,7 @@ int psx_is_dispatchable(uint32_t pc)
 
 /* Dispatch call contract state (see cpu_state.h for the model). */
 int      g_psx_call_bail      = 0;
+int      g_psx_pc_zero_jump   = 0;  /* cpu_state.h */
 uint64_t g_psx_bail_first     = 0;
 uint64_t g_psx_bail_resolved  = 0;
 uint64_t g_psx_bail_flattened = 0;
@@ -1116,6 +1117,22 @@ int psx_syscall(CPUState* cpu, uint32_t code) {
      */
     uint32_t func = cpu->gpr[4]; /* $a0 = syscall function number */
     uint32_t sr = cpu->cop0[12];
+
+    if (func == 1 || func == 2) {
+        /* The direct path below skips the kernel's exception handler, but the
+         * architectural state must still be what the hardware leaves behind:
+         * the SYSCALL exception set EPC to the SYSCALL instruction and
+         * Cause.ExcCode to 8 (BD clear; the emitter publishes the SYSCALL's
+         * own PC in cpu->pc before the call), and the kernel's
+         * ReturnFromException exits through `lw k0, EPC slot; jr k0; rfe`
+         * with the slot advanced to EPC+4 for a syscall. Software reads these
+         * leftovers: the System 573 program ROM calls NULL table entries that
+         * land in the RAM-0 vector stub, and the kernel then resolves that
+         * spurious entry from the stale Cause/EPC (MAME trace, 700B01). */
+        cpu->cop0[14] = cpu->pc;
+        cpu->cop0[13] = (cpu->cop0[13] & ~(0x80000000u | 0x7Cu)) | (8u << 2);
+        cpu->gpr[26]  = cpu->pc + 4u;
+    }
 
     switch (func) {
         case 1: /* EnterCriticalSection: disable interrupts */

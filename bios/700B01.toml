@@ -82,7 +82,24 @@ runtime_base = "0x80380000"     # GX700 CHECK Exec, pc 0x803847C0
 dispatch_key = "rom"
 kernel_bless = false
 
-# No install slots yet: they are measured on a live boot of a game whose libapi
-# patches the kernel (SCPH1001.toml lists the retail ones). No runtime exports:
+# Kernel-RAM ranges overwritten at run time (CLAUDE.md rule 18). Measured on a
+# live boot (fm-runtime, debug server read_ram of RAM 0x500-0x7500 against ROM
+# 0xBFC10000): GX700 CHECK's Psy-Q libapi NOPs the kernel pad driver's clear
+# routine in two places (the RemovePatchPad / ChgclrPAD family; the first is
+# the same address and length as SCPH1001.toml's slot). Every patched word
+# reads 0x00000000. RAM 0x6D20+ also differs, but that is kernel data past
+# the last code word (ROM 0x16F40 = RAM 0x7440), not code.
+
+[[recompiler.install_slots]]
+ram_addr = "0x00004964"         # pad driver clear routine, 11 words NOP'd
+len      = "0x2C"
+resume    = "fallthrough"
+
+[[recompiler.install_slots]]
+ram_addr = "0x000049FC"         # second pad routine, 9 words NOP'd
+len      = "0x24"
+resume    = "fallthrough"
+
+# No runtime exports:
 # the boot-skip and kernel-call HLE anchors are absent until verified on this
 # image, so both tiers are structurally unavailable.

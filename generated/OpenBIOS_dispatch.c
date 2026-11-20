@@ -9309,6 +9309,14 @@ static void psx_dispatch_impl(CPUState* cpu, uint32_t addr, uint32_t stop_addr) 
             addr = cpu->pc;
             continue;
         }
+        if (cpu->pc == 0 && g_psx_pc_zero_jump) {
+            /* A real register jump to guest PC 0 (RAM 0 holds the
+             * kernel's exception-vector stub), not a return:
+             * dispatch it like any other tail target. */
+            g_psx_pc_zero_jump = 0;
+            addr = 0;
+            continue;
+        }
         if (cpu->pc == 0) {
             if (stop_addr != 0 &&
                 (cpu->gpr[29] != sp_at_call ||
