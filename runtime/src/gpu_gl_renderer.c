@@ -200,7 +200,7 @@ static inline void glcap_forget(void) { s_glcap_blend = s_glcap_stencil = -1; }
 #endif
 
 #define VRAM_W 1024
-#define VRAM_H 512
+#define VRAM_H PSX_VRAM_HEIGHT
 /* GL_MAX_INTERNAL_SCALE (the compile-time ceiling) lives in gpu_render.h; the
  * effective scale is clamped to the driver and memory limits at init. */
 #ifndef PSXGL_MAX_RENDERBUFFER_SIZE
@@ -1830,7 +1830,7 @@ static const char *GEO_VS =
     "    float l = u_xcenter - h, r = u_xcenter + h;\n"
     "    if (xb < l) xb = l + (xb-l)*s; else if (xb > r) xb = r + (xb-r)*s;\n"
     "  } else xb = (xb - u_xcenter)*u_xscale + u_xcenter;\n"
-    "  gl_Position = vec4(((xb+u_shift+u_xoff)/u_xhalf - 1.0) * w, ((a_pos.y+u_shift)/256.0 - 1.0) * w, zn * w, w); }\n";
+    "  gl_Position = vec4(((xb+u_shift+u_xoff)/u_xhalf - 1.0) * w, ((a_pos.y+u_shift)/" PSX_VRAM_HALF_H_S " - 1.0) * w, zn * w, w); }\n";
 static const char *GEO_FS =
     "#version 330\n"
     "noperspective in vec4 v_col; smooth in vec3 v_col_p; flat in int v_cp; out vec4 frag;\n"
@@ -1923,7 +1923,7 @@ static const char *TEX_VS =
     "  if (a_col.a > 1.5) { uint bits = floatBitsToUint(a_col.a); cp = float((bits >> 1u) & 1u); sz = uintBitsToFloat(bits & 0xfffffff8u) - 2.0; }\n"
     "  if (sz > 0.5) { zn = 1.0 - 512.0 / (max(sz * (1.0 - u_zbias) - (u_zbias > 0.0 ? 48.0 : 0.0), 1.0) + 256.0); if (a_q <= 0.0 && cp > 0.5) w = sz / 1024.0; }\n"
     "  v_cp = int(cp); v_b3d = sz > 0.5 ? 1.0 : 0.0;\n"
-    "  vec2 ndc = vec2((xb+u_shift+u_xoff)/u_xhalf - 1.0, (a_pos.y+u_shift)/256.0 - 1.0);\n"
+    "  vec2 ndc = vec2((xb+u_shift+u_xoff)/u_xhalf - 1.0, (a_pos.y+u_shift)/" PSX_VRAM_HALF_H_S " - 1.0);\n"
     "  gl_Position = vec4(ndc * w, zn * w, w); }\n";
 static const char *TEX_FS =
     "#version 330\n"
@@ -1954,12 +1954,12 @@ static const char *TEX_FS =
     "uniform int u_aniso;     /* [video] anisotropic_filtering, 1..16 */\n"
     "uniform float u_shift;\n"
     "int vram_at(int x, int y){\n"
-    "  ivec2 p = ivec2(x & 1023, y & 511);\n"
+    "  ivec2 p = ivec2(x & 1023, y & " PSX_VRAM_YMASK_S ");\n"
     "  if (any(greaterThanEqual(p, textureSize(u_vram, 0)))) return 0;\n"
     "  return int(texelFetch(u_vram, p, 0).r);\n"
     "}\n"
     "int palette_at(int x, int y){\n"
-    "  ivec2 p = ivec2(x & 1023, y & 511);\n"
+    "  ivec2 p = ivec2(x & 1023, y & " PSX_VRAM_YMASK_S ");\n"
     "  if (any(greaterThanEqual(p, textureSize(u_palette, 0)))) return 0;\n"
     "  return int(texelFetch(u_palette, p, 0).r);\n"
     "}\n"
@@ -2237,7 +2237,7 @@ static const char *BLIT_VS =
     "layout(location=0) in vec2 a_pos;   /* native VRAM px */\n"
     "uniform float u_shift;\n"
     "void main(){\n"
-    "  gl_Position = vec4((a_pos.x+u_shift)/512.0 - 1.0, (a_pos.y+u_shift)/256.0 - 1.0, 0.0, 1.0); }\n";
+    "  gl_Position = vec4((a_pos.x+u_shift)/512.0 - 1.0, (a_pos.y+u_shift)/" PSX_VRAM_HALF_H_S " - 1.0, 0.0, 1.0); }\n";
 /* The same blit into the windowed high-resolution surface: its viewport is the
  * window (W*S px), so x is translated by u_xoff and clipped at u_xhalf like
  * the native-wide passes. A separate program keeps BLIT_VS (the canonical
@@ -2249,7 +2249,7 @@ static const char *BLIT_VS_HI =
     "uniform float u_xoff;\n"
     "uniform float u_xhalf;\n"
     "void main(){\n"
-    "  gl_Position = vec4((a_pos.x+u_shift+u_xoff)/u_xhalf - 1.0, (a_pos.y+u_shift)/256.0 - 1.0, 0.0, 1.0); }\n";
+    "  gl_Position = vec4((a_pos.x+u_shift+u_xoff)/u_xhalf - 1.0, (a_pos.y+u_shift)/" PSX_VRAM_HALF_H_S " - 1.0, 0.0, 1.0); }\n";
 static const char *BLIT_FS =
     "#version 330\n"
     "out vec4 frag;\n"
@@ -4947,7 +4947,7 @@ static void gpu_textured_triangle(const int *xs, const int *ys,
     }
     s_scene_prims_tex++;
     int base_x = (texpage & 0xF) * 64;
-    int base_y = ((texpage >> 4) & 1) * 256;
+    int base_y = (int)PSX_TPAGE_Y((unsigned)texpage);
     int depth  = (texpage >> 7) & 3; if (depth > 2) depth = 2;
 
     flush_cpu_upload();   /* if a CPU->VRAM upload is pending it flushes the batch first */
@@ -5701,7 +5701,7 @@ static int depth24_is_fb_transfer(int x, int y, int w, int h) {
     /* Must target the CRTC scanout band (halfword coords). */
     {
         int dx = (int)(di.display_x & 1023u);
-        int dy = (int)(di.display_y & 511u);
+        int dy = (int)(di.display_y & PSX_VRAM_YMASK);
         int x0 = x & (VRAM_W - 1), y0 = y & (VRAM_H - 1);
         if (x0 + w <= dx || x0 >= dx + fb_w || y0 + h <= dy || y0 >= dy + fb_h)
             return 0;
@@ -5726,7 +5726,7 @@ static void depth24_mark_scanout_band(void) {
     if (fb_w < 8) fb_w = 8;
     if (fb_h < 1) fb_h = 1;
     x0 = (int)(di.display_x & 1023u);
-    y0 = (int)(di.display_y & 511u);
+    y0 = (int)(di.display_y & PSX_VRAM_YMASK);
     x1 = x0 + fb_w - 1;
     y1 = y0 + fb_h - 1;
     if (x1 > VRAM_W - 1) x1 = VRAM_W - 1;
@@ -6595,12 +6595,6 @@ void gl_renderer_forget_texture_bank_range(uint16_t first, uint32_t count) {
 }
 
 int gl_renderer_init_context(SDL_Window *win) {
-#if PSX_VRAM_2MB
-    /* This renderer still models 1024x512 VRAM (VRAM_H). A 2 MB build
-     * (PSX_VRAM_2MB, System 573) must not run on a 1 MB view of it. */
-    { extern void psx_fatal_halt(const char *reason);
-      psx_fatal_halt("GPU renderer: 2 MB VRAM (PSX_VRAM_2MB) is not supported by this backend yet; use the software renderer"); }
-#endif
     s_win = win;
     s_present_w = 0;
     s_present_h = 0;
@@ -7427,7 +7421,7 @@ static const char *FB_FS =
     "uniform int u_accurate;    /* the surfaces' colour basis, as TEX_FS */\n"
     "void main(){\n"
     "  vec2 n = gl_FragCoord.xy / u_dst_scale + u_src_delta;\n"
-    "  float ss = float(textureSize(u_src, 0).y) / 512.0;\n"
+    "  float ss = float(textureSize(u_src, 0).y) / " PSX_VRAM_H_S ";\n"
     "  vec4 c = texelFetch(u_src, ivec2(n * ss), 0);\n"
     "  if (c.a < 0.5 && c.rgb == vec3(0.0)) discard;   /* texel 0x0000 */\n"
     "  /* The centre samples packed 5-bit VRAM (PACK_FS); truncating the same\n"
@@ -11383,7 +11377,7 @@ static void rtb_vram_transfer_out(int x, int y, int w, int h, uint16_t *d) {
         for (int j = 0; j < h; ++j)
             for (int i = 0; i < w; ++i)
                 d[(size_t)j * w + i] =
-                    s_rth_vram_pub[((y + j) & 511) * VRAM_W + ((x + i) & 1023)];
+                    s_rth_vram_pub[((y + j) & (VRAM_H - 1)) * VRAM_W + ((x + i) & 1023)];
         return;
     }
     GL_RT_SYNC("vram_transfer_out"); glb_vram_transfer_out(x, y, w, h, d); }
@@ -11762,7 +11756,7 @@ static void rth_ring_capture_now(const int32_t *a) {
     const uint32_t frame = (uint32_t)a[0];
     const int wide = a[1], base_x = a[2], disp_y = a[3], disp_h = a[4];
     const int cx = a[5], cy = a[6], cw = a[7], ch = a[8];
-    size_t need = (size_t)1024 * 4 * 512 * 4;
+    size_t need = (size_t)1024 * 4 * VRAM_H * 4;
     if ((size_t)cw * s_out_scale * ch * s_out_scale > need)
         need = (size_t)cw * s_out_scale * ch * s_out_scale;
     if (cap < need) {
@@ -11772,8 +11766,8 @@ static void rth_ring_capture_now(const int32_t *a) {
     }
     if (wide) {
         int w = 0, h = 0;
-        if (glb_wide_dump_full(buf, (int)cap, &w, &h, base_x) > 0 && h >= 512) {
-            const int sc = h / 512, y0 = disp_y * sc, rows = disp_h * sc;
+        if (glb_wide_dump_full(buf, (int)cap, &w, &h, base_x) > 0 && h >= VRAM_H) {
+            const int sc = h / VRAM_H, y0 = disp_y * sc, rows = disp_h * sc;
             if (y0 + rows <= h) {
                 present_image_ring_push_argb(frame, buf + (size_t)y0 * w, w, rows, w);
                 return;

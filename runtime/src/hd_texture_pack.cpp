@@ -1,3 +1,4 @@
+#include "psx_vram_geometry.h"
 #include "hd_texture_pack.h"
 #include "texture_pack_preload.hpp"
 
@@ -1426,7 +1427,7 @@ int hd_texture_pack_match_draw(HdTexturePack* pack,
     }
     HdTextureDrawQuery query{};
     query.page_x = static_cast<uint16_t>((texpage & 0xFu) * 64u);
-    query.page_y = static_cast<uint16_t>(((texpage >> 4) & 1u) * 256u);
+    query.page_y = static_cast<uint16_t>(PSX_TPAGE_Y(texpage));
     query.depth = depth;
     query.u_first = u_first; query.u_last = u_last;
     query.v_first = v_first; query.v_last = v_last;

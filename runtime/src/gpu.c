@@ -6286,7 +6286,7 @@ static void ws_feedback_rect_reveal(int x, int y, int w, int h, int u, int v,
     int32_t src_x0 = (int32_t)(tp & 0xF) * 64 + u;
     int src_base = ws_fb_base_holding(src_x0, width);
     if (src_base < 0) return;
-    int32_t src_y = (int32_t)((tp >> 4) & 1) * 256 + v;
+    int32_t src_y = (int32_t)PSX_TPAGE_Y((unsigned)tp) + v;
     WsFeedbackSpan spans[2];
     int count = ws_feedback_rect_spans(x, w, src_x0, (int32_t)draw_area_left,
                                        width, margin, spans);

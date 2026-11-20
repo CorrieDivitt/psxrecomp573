@@ -1,3 +1,4 @@
+#include "psx_vram_geometry.h"
 #include "psx_path_utf8.h"
 #include "gpu_hd_textures.h"
 #include "gpu_gl_renderer.h"
@@ -106,7 +107,7 @@ bool make_query(uint16_t texpage, uint16_t cx, uint16_t cy, const int limits[4],
     }
     query = {};
     query.page_x = (texpage & 15u) * 64u;
-    query.page_y = ((texpage >> 4) & 1u) * 256u;
+    query.page_y = PSX_TPAGE_Y(texpage);
     query.depth = (texpage >> 7) & 3u;
     query.u_first = static_cast<uint8_t>(first[0]);
     query.u_last = static_cast<uint8_t>(last[0]);

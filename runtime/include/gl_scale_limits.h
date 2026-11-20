@@ -15,10 +15,11 @@
  * back to the software renderer) lost far more than the resolution. */
 #pragma once
 
+#include "psx_vram_geometry.h"
 #include <stdint.h>
 
 #define PSX_GL_VRAM_W 1024
-#define PSX_GL_VRAM_H 512
+#define PSX_GL_VRAM_H PSX_VRAM_HEIGHT
 
 /* RGBA8 colour + D24S8 depth-stencil per internal pixel. The copy scratch is
  * sized lazily to the largest copy, so it is not part of the fixed cost. */

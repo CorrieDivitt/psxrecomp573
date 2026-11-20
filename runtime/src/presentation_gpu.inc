@@ -317,7 +317,7 @@ static void pgpu_texture_vertices(float *vertices,const PsxPresentationTriangle 
         const PsxPresentationDrawVertex *v=&tri->vertices[j];float *out=vertices+j*TEXV;
         out[0]=(float)v->x;out[1]=(float)v->y;out[2]=v->uv[0];out[3]=v->uv[1];
         for(unsigned k=0;k<3;++k)out[4+k]=v->color[k];out[7]=1;
-        out[8]=(m->texpage&15)*64;out[9]=((m->texpage>>4)&1)*256;
+        out[8]=(m->texpage&15)*64;out[9]=(int)PSX_TPAGE_Y((unsigned)m->texpage);
         out[10]=m->clut_x;out[11]=m->clut_y;out[12]=(m->texpage>>7)&3;
         out[13]=(m->flags&PSX_PRESENTATION_RAW_TEXTURE)!=0;
         for(unsigned k=0;k<4;++k)out[14+k]=m->uv_limits[k];
@@ -544,3 +544,4 @@ int psx_presentation_gpu_test_versions(void) {
     return 0;
 #endif
 }
+

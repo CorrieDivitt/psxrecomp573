@@ -35,6 +35,17 @@
 #define PSX_TPAGE_MASK   0x1FFu
 #endif
 
+/* The same numbers as GLSL source text, for shader string literals. */
+#if PSX_VRAM_2MB
+#define PSX_VRAM_YMASK_S  "1023"
+#define PSX_VRAM_HALF_H_S "512.0"
+#define PSX_VRAM_H_S      "1024.0"
+#else
+#define PSX_VRAM_YMASK_S  "511"
+#define PSX_VRAM_HALF_H_S "256.0"
+#define PSX_VRAM_H_S      "512.0"
+#endif
+
 /* Texture page Y base in VRAM lines. */
 #define PSX_TPAGE_Y(tpage) \
     ((((tpage) >> 4) & 1u) * 256u + (PSX_VRAM_2MB ? (((tpage) >> 11) & 1u) * 512u : 0u))
