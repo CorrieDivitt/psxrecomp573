@@ -89,6 +89,12 @@ typedef struct {
      * next to the build and hides the entire BIOS-selection surface
      * (no picker, no bios.cfg, no launcher row). */
     int         image_bundled;
+
+    /* Profile [program] main_ram_bytes: DRAM of the board this image boots
+     * (Konami System 573: 4 MiB). 0 = retail 2 MiB; older generated C that
+     * predates the field zero-fills it. memory_init() applies it as the board
+     * geometry; an explicit RAM request (the 8 MB mod) still wins. */
+    uint32_t    main_ram_bytes;
 } PsxBiosImageInfo;
 
 /* Assigned from the active backend at selection; not const for that

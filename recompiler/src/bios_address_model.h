@@ -154,6 +154,12 @@ public:
     bool     has_rom_keyed_ram_window() const { return rom_keyed_idx_ >= 0; }
     uint32_t rom_keyed_ram_lo() const;         // inclusive
     uint32_t rom_keyed_ram_hi_incl() const;    // INCLUSIVE (matches emitted text)
+    // Every dispatch_key="rom" RAM window, in profile order. A BIOS can load
+    // more than one shell-like program into RAM (System 573: GX700 CHECK at
+    // 0x10000 and the boot shell at 0x380000); a game may later run code in
+    // any of them. Returns C text "(p >= lo && p <= hi) || ..." over `var`,
+    // or "0" when there is none.
+    std::string emit_rom_keyed_ram_cond_c(const char* var) const;
 
     // --- emitted-C text generators (same table as the C++ methods) --------
 

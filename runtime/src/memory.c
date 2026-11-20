@@ -1472,6 +1472,13 @@ static uint32_t s_bios_checksum = 0;
 uint32_t memory_get_bios_checksum(void) { return s_bios_checksum; }
 
 void memory_init(const char* bios_path) {
+    if (!psx_ram_set_board_bytes(psx_bios_image.main_ram_bytes)) {
+        static char reason[96];
+        snprintf(reason, sizeof(reason), "BIOS image %s declares unsupported main RAM 0x%X",
+                 psx_bios_image.image_id ? psx_bios_image.image_id : "?",
+                 (unsigned)psx_bios_image.main_ram_bytes);
+        psx_fatal_halt(reason);
+    }
     psx_ram_apply_size_request();
     memset(ram, 0, sizeof(ram));
     memset(scratchpad, 0, sizeof(scratchpad));

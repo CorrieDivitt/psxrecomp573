@@ -1,7 +1,7 @@
 {
   "schema": "psxrecomp phase2 seeds",
   "source": "Ghidra 12.1.4 analysis of 700b01.22g via FM_Bios700B01.java (Fighting-Mania-VR)",
-  "seed_count": 944,
+  "seed_count": 1096,
   "seeds": [
     {
       "address": "0xBFC00000",
@@ -27,6 +27,11 @@
       "address": "0xBFC003F0",
       "label": "kernel_copy_second_half",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0045C",
+      "label": "kernel_boot_after_post",
+      "rationale": "POST tail (0xBFC18214) jr $t0 with lui/ori 0xBFC0045C: resumes the kernel boot (BSS clear) after the RAM test"
     },
     {
       "address": "0xBFC004C0",
@@ -99,6 +104,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC01C2C",
+      "label": "flushcache_uncached_entry",
+      "rationale": "FlushCache (0xBFC01C10) jr $k0 = 0xBFC01C2C|0xA0000000: continues in the uncached alias of itself"
+    },
+    {
       "address": "0xBFC01D50",
       "label": "ghidra_BFC01D50",
       "rationale": "Ghidra function start (ram block)"
@@ -114,6 +124,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC01DF8",
+      "label": "tbl_BFC01DF8",
+      "rationale": "code pointer 0xBFC01DF8 in ROM table 0x465C-0x4960 (word at 0x4704)"
+    },
+    {
       "address": "0xBFC01E70",
       "label": "ghidra_BFC01E70",
       "rationale": "Ghidra function start (ram block)"
@@ -122,6 +137,11 @@
       "address": "0xBFC01F7C",
       "label": "ghidra_BFC01F7C",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02114",
+      "label": "tbl_BFC02114",
+      "rationale": "code pointer 0xBFC02114 in ROM table 0x465C-0x4960 (word at 0x4744)"
     },
     {
       "address": "0xBFC0214C",
@@ -137,6 +157,21 @@
       "address": "0xBFC023F4",
       "label": "ghidra_BFC023F4",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02490",
+      "label": "tbl_BFC02490",
+      "rationale": "code pointer 0xBFC02490 in ROM table 0x465C-0x4960 (word at 0x473C)"
+    },
+    {
+      "address": "0xBFC024F0",
+      "label": "tbl_BFC024F0",
+      "rationale": "code pointer 0xBFC024F0 in ROM table 0x465C-0x4960 (word at 0x471C)"
+    },
+    {
+      "address": "0xBFC02520",
+      "label": "tbl_BFC02520",
+      "rationale": "code pointer 0xBFC02520 in ROM table 0x465C-0x4960 (word at 0x4720)"
     },
     {
       "address": "0xBFC02530",
@@ -174,6 +209,16 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC02C08",
+      "label": "tbl_BFC02C08",
+      "rationale": "code pointer 0xBFC02C08 in ROM table 0x465C-0x4960 (word at 0x4698)"
+    },
+    {
+      "address": "0xBFC02C24",
+      "label": "tbl_BFC02C24",
+      "rationale": "code pointer 0xBFC02C24 in ROM table 0x465C-0x4960 (word at 0x469C)"
+    },
+    {
       "address": "0xBFC02C40",
       "label": "ghidra_BFC02C40",
       "rationale": "Ghidra function start (ram block)"
@@ -192,6 +237,21 @@
       "address": "0xBFC02E40",
       "label": "ghidra_BFC02E40",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02E7C",
+      "label": "tbl_BFC02E7C",
+      "rationale": "code pointer 0xBFC02E7C in ROM table 0x465C-0x4960 (word at 0x470C)"
+    },
+    {
+      "address": "0xBFC02EB8",
+      "label": "tbl_BFC02EB8",
+      "rationale": "code pointer 0xBFC02EB8 in ROM table 0x465C-0x4960 (word at 0x4710)"
+    },
+    {
+      "address": "0xBFC02F40",
+      "label": "tbl_BFC02F40",
+      "rationale": "code pointer 0xBFC02F40 in ROM table 0x465C-0x4960 (word at 0x4714)"
     },
     {
       "address": "0xBFC02FB0",
@@ -239,6 +299,16 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC034F0",
+      "label": "tbl_BFC034F0",
+      "rationale": "code pointer 0xBFC034F0 in ROM table 0x465C-0x4960 (word at 0x46B8)"
+    },
+    {
+      "address": "0xBFC03578",
+      "label": "tbl_BFC03578",
+      "rationale": "code pointer 0xBFC03578 in ROM table 0x465C-0x4960 (word at 0x46BC)"
+    },
+    {
       "address": "0xBFC03600",
       "label": "ghidra_BFC03600",
       "rationale": "Ghidra function start (ram block)"
@@ -259,9 +329,49 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC037C0",
+      "label": "tbl_BFC037C0",
+      "rationale": "code pointer 0xBFC037C0 in ROM table 0x465C-0x4960 (word at 0x46D0)"
+    },
+    {
+      "address": "0xBFC03804",
+      "label": "tbl_BFC03804",
+      "rationale": "code pointer 0xBFC03804 in ROM table 0x465C-0x4960 (word at 0x46D4)"
+    },
+    {
+      "address": "0xBFC0386C",
+      "label": "tbl_BFC0386C",
+      "rationale": "code pointer 0xBFC0386C in ROM table 0x465C-0x4960 (word at 0x46D8)"
+    },
+    {
+      "address": "0xBFC038B0",
+      "label": "tbl_BFC038B0",
+      "rationale": "code pointer 0xBFC038B0 in ROM table 0x465C-0x4960 (word at 0x46DC)"
+    },
+    {
+      "address": "0xBFC03918",
+      "label": "tbl_BFC03918",
+      "rationale": "code pointer 0xBFC03918 in ROM table 0x465C-0x4960 (word at 0x46E0)"
+    },
+    {
+      "address": "0xBFC03984",
+      "label": "tbl_BFC03984",
+      "rationale": "code pointer 0xBFC03984 in ROM table 0x465C-0x4960 (word at 0x46E4)"
+    },
+    {
+      "address": "0xBFC039EC",
+      "label": "tbl_BFC039EC",
+      "rationale": "code pointer 0xBFC039EC in ROM table 0x465C-0x4960 (word at 0x46E8)"
+    },
+    {
       "address": "0xBFC03A54",
       "label": "ghidra_BFC03A54",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03B84",
+      "label": "tbl_BFC03B84",
+      "rationale": "code pointer 0xBFC03B84 in ROM table 0x465C-0x4960 (word at 0x46F0)"
     },
     {
       "address": "0xBFC03C58",
@@ -344,6 +454,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC04480",
+      "label": "tbl_BFC04480",
+      "rationale": "code pointer 0xBFC04480 in ROM table 0x465C-0x4960 (word at 0x4794)"
+    },
+    {
       "address": "0xBFC04498",
       "label": "ghidra_BFC04498",
       "rationale": "Ghidra function start (ram block)"
@@ -399,6 +514,16 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC04F54",
+      "label": "tbl_BFC04F54",
+      "rationale": "code pointer 0xBFC04F54 in ROM table 0x465C-0x4960 (word at 0x48D4)"
+    },
+    {
+      "address": "0xBFC04F7C",
+      "label": "tbl_BFC04F7C",
+      "rationale": "code pointer 0xBFC04F7C in ROM table 0x465C-0x4960 (word at 0x48D0)"
+    },
+    {
       "address": "0xBFC04FB0",
       "label": "ghidra_BFC04FB0",
       "rationale": "Ghidra function start (ram block)"
@@ -442,6 +567,11 @@
       "address": "0xBFC055E4",
       "label": "ghidra_BFC055E4",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05624",
+      "label": "tbl_BFC05624",
+      "rationale": "code pointer 0xBFC05624 in ROM table 0x465C-0x4960 (word at 0x4660)"
     },
     {
       "address": "0xBFC05640",
@@ -594,6 +724,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC08014",
+      "label": "tbl_BFC08014",
+      "rationale": "code pointer 0xBFC08014 in ROM table 0x465C-0x4960 (word at 0x481C)"
+    },
+    {
       "address": "0xBFC08020",
       "label": "ghidra_BFC08020",
       "rationale": "Ghidra function start (ram block)"
@@ -629,6 +764,41 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC0860C",
+      "label": "tbl_BFC0860C",
+      "rationale": "code pointer 0xBFC0860C in ROM table 0x9EA8-0x9F10 (word at 0x9EB4)"
+    },
+    {
+      "address": "0xBFC08744",
+      "label": "tbl_BFC08744",
+      "rationale": "code pointer 0xBFC08744 in ROM table 0x9EA8-0x9F10 (word at 0x9EB8)"
+    },
+    {
+      "address": "0xBFC088A4",
+      "label": "tbl_BFC088A4",
+      "rationale": "code pointer 0xBFC088A4 in ROM table 0x9EA8-0x9F10 (word at 0x9EC0)"
+    },
+    {
+      "address": "0xBFC08988",
+      "label": "tbl_BFC08988",
+      "rationale": "code pointer 0xBFC08988 in ROM table 0x9EA8-0x9F10 (word at 0x9EC4)"
+    },
+    {
+      "address": "0xBFC08994",
+      "label": "tbl_BFC08994",
+      "rationale": "code pointer 0xBFC08994 in ROM table 0x9EA8-0x9F10 (word at 0x9EC8)"
+    },
+    {
+      "address": "0xBFC089DC",
+      "label": "tbl_BFC089DC",
+      "rationale": "code pointer 0xBFC089DC in ROM table 0x9EA8-0x9F10 (word at 0x9EB0)"
+    },
+    {
+      "address": "0xBFC089F0",
+      "label": "tbl_BFC089F0",
+      "rationale": "code pointer 0xBFC089F0 in ROM table 0x9EA8-0x9F10 (word at 0x9EBC)"
+    },
+    {
       "address": "0xBFC08F40",
       "label": "ghidra_BFC08F40",
       "rationale": "Ghidra function start (ram block)"
@@ -647,6 +817,11 @@
       "address": "0xBFC09090",
       "label": "ghidra_BFC09090",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0912C",
+      "label": "tbl_BFC0912C",
+      "rationale": "code pointer 0xBFC0912C in ROM table 0x465C-0x4960 (word at 0x4914)"
     },
     {
       "address": "0xBFC09144",
@@ -724,6 +899,31 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC09B00",
+      "label": "tbl_BFC09B00",
+      "rationale": "code pointer 0xBFC09B00 in ROM table 0x465C-0x4960 (word at 0x4930)"
+    },
+    {
+      "address": "0xBFC09B34",
+      "label": "tbl_BFC09B34",
+      "rationale": "code pointer 0xBFC09B34 in ROM table 0x9EA8-0x9F10 (word at 0x9ED0)"
+    },
+    {
+      "address": "0xBFC09B4C",
+      "label": "tbl_BFC09B4C",
+      "rationale": "code pointer 0xBFC09B4C in ROM table 0x9EA8-0x9F10 (word at 0x9ED8)"
+    },
+    {
+      "address": "0xBFC09B58",
+      "label": "tbl_BFC09B58",
+      "rationale": "code pointer 0xBFC09B58 in ROM table 0x9EA8-0x9F10 (word at 0x9EDC)"
+    },
+    {
+      "address": "0xBFC09B74",
+      "label": "tbl_BFC09B74",
+      "rationale": "code pointer 0xBFC09B74 in ROM table 0x9EA8-0x9F10 (word at 0x9EE0)"
+    },
+    {
       "address": "0xBFC09BA0",
       "label": "ghidra_BFC09BA0",
       "rationale": "Ghidra function start (ram block)"
@@ -747,6 +947,51 @@
       "address": "0xBFC09BE0",
       "label": "ghidra_BFC09BE0",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09BF0",
+      "label": "tbl_BFC09BF0",
+      "rationale": "code pointer 0xBFC09BF0 in ROM table 0x465C-0x4960 (word at 0x4748)"
+    },
+    {
+      "address": "0xBFC09C00",
+      "label": "tbl_BFC09C00",
+      "rationale": "code pointer 0xBFC09C00 in ROM table 0x465C-0x4960 (word at 0x4760)"
+    },
+    {
+      "address": "0xBFC09C10",
+      "label": "tbl_BFC09C10",
+      "rationale": "code pointer 0xBFC09C10 in ROM table 0x465C-0x4960 (word at 0x479C)"
+    },
+    {
+      "address": "0xBFC09C20",
+      "label": "tbl_BFC09C20",
+      "rationale": "code pointer 0xBFC09C20 in ROM table 0x465C-0x4960 (word at 0x47A0)"
+    },
+    {
+      "address": "0xBFC09C30",
+      "label": "tbl_BFC09C30",
+      "rationale": "code pointer 0xBFC09C30 in ROM table 0x465C-0x4960 (word at 0x47A8)"
+    },
+    {
+      "address": "0xBFC09C40",
+      "label": "tbl_BFC09C40",
+      "rationale": "code pointer 0xBFC09C40 in ROM table 0x465C-0x4960 (word at 0x47AC)"
+    },
+    {
+      "address": "0xBFC09C50",
+      "label": "tbl_BFC09C50",
+      "rationale": "code pointer 0xBFC09C50 in ROM table 0x465C-0x4960 (word at 0x48C0)"
+    },
+    {
+      "address": "0xBFC09C60",
+      "label": "tbl_BFC09C60",
+      "rationale": "code pointer 0xBFC09C60 in ROM table 0x465C-0x4960 (word at 0x48C8)"
+    },
+    {
+      "address": "0xBFC09C70",
+      "label": "tbl_BFC09C70",
+      "rationale": "code pointer 0xBFC09C70 in ROM table 0x465C-0x4960 (word at 0x48CC)"
     },
     {
       "address": "0xBFC09C80",
@@ -834,6 +1079,26 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC09DC0",
+      "label": "tbl_BFC09DC0",
+      "rationale": "code pointer 0xBFC09DC0 in ROM table 0x465C-0x4960 (word at 0x47CC)"
+    },
+    {
+      "address": "0xBFC09DD0",
+      "label": "tbl_BFC09DD0",
+      "rationale": "code pointer 0xBFC09DD0 in ROM table 0x465C-0x4960 (word at 0x47D0)"
+    },
+    {
+      "address": "0xBFC09DE0",
+      "label": "tbl_BFC09DE0",
+      "rationale": "code pointer 0xBFC09DE0 in ROM table 0x465C-0x4960 (word at 0x47D4)"
+    },
+    {
+      "address": "0xBFC09DF0",
+      "label": "tbl_BFC09DF0",
+      "rationale": "code pointer 0xBFC09DF0 in ROM table 0x465C-0x4960 (word at 0x47D8)"
+    },
+    {
       "address": "0xBFC09E00",
       "label": "ghidra_BFC09E00",
       "rationale": "Ghidra function start (ram block)"
@@ -894,14 +1159,124 @@
       "rationale": "Ghidra function start (kernel_ram block)"
     },
     {
+      "address": "0xBFC10040",
+      "label": "tbl_BFC10040",
+      "rationale": "code pointer 0x00000540 in ROM table 0x10174-0x10790 (word at 0x101E4)"
+    },
+    {
+      "address": "0xBFC10098",
+      "label": "kernel_bss_clear",
+      "rationale": "kernel ramtext RAM 0x598 (A0/B0/C0 call-vector dispatcher or BSS clear), reached through the 0xA0/0xB0/0xC0 stubs; ran interpreted until seeded"
+    },
+    {
+      "address": "0xBFC100C4",
+      "label": "kernel_a0_dispatch",
+      "rationale": "kernel ramtext RAM 0x5C4 (A0/B0/C0 call-vector dispatcher or BSS clear), reached through the 0xA0/0xB0/0xC0 stubs; ran interpreted until seeded"
+    },
+    {
+      "address": "0xBFC100E0",
+      "label": "kernel_b0_dispatch",
+      "rationale": "kernel ramtext RAM 0x5E0 (A0/B0/C0 call-vector dispatcher or BSS clear), reached through the 0xA0/0xB0/0xC0 stubs; ran interpreted until seeded"
+    },
+    {
+      "address": "0xBFC10100",
+      "label": "kernel_c0_dispatch",
+      "rationale": "kernel ramtext RAM 0x600 (A0/B0/C0 call-vector dispatcher or BSS clear), reached through the 0xA0/0xB0/0xC0 stubs; ran interpreted until seeded"
+    },
+    {
+      "address": "0xBFC1015C",
+      "label": "tbl_BFC1015C",
+      "rationale": "code pointer 0x0000065C in ROM table 0x10174-0x10790 (word at 0x104CC)"
+    },
+    {
+      "address": "0xBFC10168",
+      "label": "tbl_BFC10168",
+      "rationale": "code pointer 0x00000668 in ROM table 0x10174-0x10790 (word at 0x104D0)"
+    },
+    {
+      "address": "0xBFC10780",
+      "label": "tbl_BFC10780",
+      "rationale": "code pointer 0x00000C80 in ROM table 0x10174-0x10790 (word at 0x1018C)"
+    },
+    {
+      "address": "0xBFC109B0",
+      "label": "tbl_BFC109B0",
+      "rationale": "code pointer 0x00000EB0 in ROM table 0x10174-0x10790 (word at 0x10190)"
+    },
+    {
+      "address": "0xBFC10A20",
+      "label": "tbl_BFC10A20",
+      "rationale": "code pointer 0x00000F20 in ROM table 0x10174-0x10790 (word at 0x103D8)"
+    },
+    {
+      "address": "0xBFC10A2C",
+      "label": "tbl_BFC10A2C",
+      "rationale": "code pointer 0x00000F2C in ROM table 0x10174-0x10790 (word at 0x103D4)"
+    },
+    {
+      "address": "0xBFC10A40",
+      "label": "tbl_BFC10A40",
+      "rationale": "code pointer 0x00000F40 in ROM table 0x10174-0x10790 (word at 0x103D0)"
+    },
+    {
+      "address": "0xBFC10C3C",
+      "label": "tbl_BFC10C3C",
+      "rationale": "code pointer 0x0000113C in ROM table 0x10174-0x10790 (word at 0x10194)"
+    },
+    {
       "address": "0xBFC10C74",
       "label": "ghidra_BFC10C74",
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC10F08",
+      "label": "tbl_BFC10F08",
+      "rationale": "code pointer 0x00001408 in ROM table 0x10174-0x10790 (word at 0x10378)"
+    },
+    {
+      "address": "0xBFC10F20",
+      "label": "tbl_BFC10F20",
+      "rationale": "code pointer 0x00001420 in ROM table 0x10174-0x10790 (word at 0x1017C)"
+    },
+    {
+      "address": "0xBFC10F44",
+      "label": "tbl_BFC10F44",
+      "rationale": "code pointer 0x00001444 in ROM table 0x10174-0x10790 (word at 0x10180)"
+    },
+    {
       "address": "0xBFC11008",
       "label": "ghidra_BFC11008",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC110D8",
+      "label": "tbl_BFC110D8",
+      "rationale": "code pointer 0x000015D8 in ROM table 0x10174-0x10790 (word at 0x1019C)"
+    },
+    {
+      "address": "0xBFC110F8",
+      "label": "tbl_BFC110F8",
+      "rationale": "code pointer 0x000015F8 in ROM table 0x10174-0x10790 (word at 0x1037C)"
+    },
+    {
+      "address": "0xBFC111A0",
+      "label": "tbl_BFC111A0",
+      "rationale": "code pointer 0x000016A0 in ROM table 0x10174-0x10790 (word at 0x10380)"
+    },
+    {
+      "address": "0xBFC111D8",
+      "label": "tbl_BFC111D8",
+      "rationale": "code pointer 0x000016D8 in ROM table 0x10174-0x10790 (word at 0x10384)"
+    },
+    {
+      "address": "0xBFC1121C",
+      "label": "tbl_BFC1121C",
+      "rationale": "code pointer 0x0000171C in ROM table 0x10174-0x10790 (word at 0x10388)"
+    },
+    {
+      "address": "0xBFC11250",
+      "label": "tbl_BFC11250",
+      "rationale": "code pointer 0x00001750 in ROM table 0x10174-0x10790 (word at 0x1038C)"
     },
     {
       "address": "0xBFC11288",
@@ -949,6 +1324,26 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC11554",
+      "label": "tbl_BFC11554",
+      "rationale": "code pointer 0x00001A54 in ROM table 0x1674C-0x167E0 (word at 0x16754)"
+    },
+    {
+      "address": "0xBFC1158C",
+      "label": "tbl_BFC1158C",
+      "rationale": "code pointer 0x00001A8C in ROM table 0x1674C-0x167E0 (word at 0x16758)"
+    },
+    {
+      "address": "0xBFC115A0",
+      "label": "tbl_BFC115A0",
+      "rationale": "code pointer 0x00001AA0 in ROM table 0x1674C-0x167E0 (word at 0x1675C)"
+    },
+    {
+      "address": "0xBFC115CC",
+      "label": "tbl_BFC115CC",
+      "rationale": "code pointer 0x00001ACC in ROM table 0x1674C-0x167E0 (word at 0x16750)"
+    },
+    {
       "address": "0xBFC11620",
       "label": "ghidra_BFC11620",
       "rationale": "Ghidra function start (ram block)"
@@ -959,14 +1354,64 @@
       "rationale": "Ghidra function start (kernel_ram block)"
     },
     {
+      "address": "0xBFC1175C",
+      "label": "tbl_BFC1175C",
+      "rationale": "code pointer 0x00001C5C in ROM table 0x10174-0x10790 (word at 0x103F4)"
+    },
+    {
+      "address": "0xBFC11800",
+      "label": "tbl_BFC11800",
+      "rationale": "code pointer 0x00001D00 in ROM table 0x10174-0x10790 (word at 0x10184)"
+    },
+    {
       "address": "0xBFC1188C",
       "label": "ghidra_BFC1188C",
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC1191C",
+      "label": "tbl_BFC1191C",
+      "rationale": "code pointer 0x00001E1C in ROM table 0x10174-0x10790 (word at 0x10398)"
+    },
+    {
+      "address": "0xBFC11944",
+      "label": "tbl_BFC11944",
+      "rationale": "code pointer 0x00001E44 in ROM table 0x10174-0x10790 (word at 0x1039C)"
+    },
+    {
+      "address": "0xBFC119C8",
+      "label": "tbl_BFC119C8",
+      "rationale": "code pointer 0x00001EC8 in ROM table 0x10174-0x10790 (word at 0x103A0)"
+    },
+    {
+      "address": "0xBFC11A10",
+      "label": "tbl_BFC11A10",
+      "rationale": "code pointer 0x00001F10 in ROM table 0x10174-0x10790 (word at 0x103A4)"
+    },
+    {
+      "address": "0xBFC11A4C",
+      "label": "tbl_BFC11A4C",
+      "rationale": "code pointer 0x00001F4C in ROM table 0x10174-0x10790 (word at 0x103A8)"
+    },
+    {
+      "address": "0xBFC11A88",
+      "label": "tbl_BFC11A88",
+      "rationale": "code pointer 0x00001F88 in ROM table 0x10174-0x10790 (word at 0x10188)"
+    },
+    {
       "address": "0xBFC11B18",
       "label": "ghidra_BFC11B18",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11BA8",
+      "label": "tbl_BFC11BA8",
+      "rationale": "code pointer 0x000020A8 in ROM table 0x10174-0x10790 (word at 0x103B0)"
+    },
+    {
+      "address": "0xBFC11BD4",
+      "label": "tbl_BFC11BD4",
+      "rationale": "code pointer 0x000020D4 in ROM table 0x10174-0x10790 (word at 0x103B4)"
     },
     {
       "address": "0xBFC11C8C",
@@ -977,6 +1422,16 @@
       "address": "0xBFC11F58",
       "label": "ghidra_BFC11F58",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12224",
+      "label": "tbl_BFC12224",
+      "rationale": "code pointer 0x00002724 in ROM table 0x10174-0x10790 (word at 0x101A4)"
+    },
+    {
+      "address": "0xBFC1228C",
+      "label": "tbl_BFC1228C",
+      "rationale": "code pointer 0x0000278C in ROM table 0x10174-0x10790 (word at 0x101A8)"
     },
     {
       "address": "0xBFC122A0",
@@ -1029,6 +1484,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC129EC",
+      "label": "tbl_BFC129EC",
+      "rationale": "code pointer 0x00002EEC in ROM table 0x10174-0x10790 (word at 0x104C4)"
+    },
+    {
       "address": "0xBFC129FC",
       "label": "ghidra_BFC129FC",
       "rationale": "Ghidra function start (ram block)"
@@ -1074,6 +1534,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC1302C",
+      "label": "tbl_BFC1302C",
+      "rationale": "code pointer 0x0000352C in ROM table 0x10174-0x10790 (word at 0x101D4)"
+    },
+    {
       "address": "0xBFC13070",
       "label": "ghidra_BFC13070",
       "rationale": "Ghidra function start (ram block)"
@@ -1114,9 +1579,19 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC13570",
+      "label": "tbl_BFC13570",
+      "rationale": "code pointer 0x00003A70 in ROM table 0x10174-0x10790 (word at 0x10480)"
+    },
+    {
       "address": "0xBFC135AC",
       "label": "ghidra_BFC135AC",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC1372C",
+      "label": "tbl_BFC1372C",
+      "rationale": "code pointer 0x00003C2C in ROM table 0x10174-0x10790 (word at 0x10490)"
     },
     {
       "address": "0xBFC137E0",
@@ -1129,9 +1604,24 @@
       "rationale": "Ghidra function start (kernel_ram block)"
     },
     {
+      "address": "0xBFC1395C",
+      "label": "tbl_BFC1395C",
+      "rationale": "code pointer 0x00003E5C in ROM table 0x10174-0x10790 (word at 0x101DC)"
+    },
+    {
+      "address": "0xBFC13968",
+      "label": "tbl_BFC13968",
+      "rationale": "code pointer 0x00003E68 in ROM table 0x10174-0x10790 (word at 0x101E8)"
+    },
+    {
       "address": "0xBFC13980",
       "label": "ghidra_BFC13980",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13A04",
+      "label": "tbl_BFC13A04",
+      "rationale": "code pointer 0x00003F04 in ROM table 0x10174-0x10790 (word at 0x101C8)"
     },
     {
       "address": "0xBFC13AF0",
@@ -1167,6 +1657,11 @@
       "address": "0xBFC13E60",
       "label": "ghidra_BFC13E60",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13ED0",
+      "label": "tbl_BFC13ED0",
+      "rationale": "code pointer 0x000043D0 in ROM table 0x10174-0x10790 (word at 0x104E0)"
     },
     {
       "address": "0xBFC13EE8",
@@ -1214,6 +1709,11 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC1483C",
+      "label": "tbl_BFC1483C",
+      "rationale": "code pointer 0x00004D3C in ROM table 0x10174-0x10790 (word at 0x104B4)"
+    },
+    {
       "address": "0xBFC14A90",
       "label": "ghidra_BFC14A90",
       "rationale": "Ghidra function start (ram block)"
@@ -1229,14 +1729,184 @@
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC14D44",
+      "label": "tbl_BFC14D44",
+      "rationale": "code pointer 0x00005244 in ROM table 0x1674C-0x167E0 (word at 0x16760)"
+    },
+    {
+      "address": "0xBFC14DC4",
+      "label": "tbl_BFC14DC4",
+      "rationale": "code pointer 0x000052C4 in ROM table 0x1674C-0x167E0 (word at 0x16764)"
+    },
+    {
+      "address": "0xBFC14DF8",
+      "label": "tbl_BFC14DF8",
+      "rationale": "code pointer 0x000052F8 in ROM table 0x1674C-0x167E0 (word at 0x16768)"
+    },
+    {
+      "address": "0xBFC14E98",
+      "label": "tbl_BFC14E98",
+      "rationale": "code pointer 0x00005398 in ROM table 0x1674C-0x167E0 (word at 0x1676C)"
+    },
+    {
+      "address": "0xBFC14ED4",
+      "label": "tbl_BFC14ED4",
+      "rationale": "code pointer 0x000053D4 in ROM table 0x1674C-0x167E0 (word at 0x16770)"
+    },
+    {
+      "address": "0xBFC14F2C",
+      "label": "tbl_BFC14F2C",
+      "rationale": "code pointer 0x0000542C in ROM table 0x1674C-0x167E0 (word at 0x16774)"
+    },
+    {
+      "address": "0xBFC14F88",
+      "label": "tbl_BFC14F88",
+      "rationale": "code pointer 0x00005488 in ROM table 0x1674C-0x167E0 (word at 0x16778)"
+    },
+    {
+      "address": "0xBFC14FCC",
+      "label": "tbl_BFC14FCC",
+      "rationale": "code pointer 0x000054CC in ROM table 0x1674C-0x167E0 (word at 0x1677C)"
+    },
+    {
+      "address": "0xBFC14FFC",
+      "label": "tbl_BFC14FFC",
+      "rationale": "code pointer 0x000054FC in ROM table 0x1674C-0x167E0 (word at 0x16780)"
+    },
+    {
+      "address": "0xBFC15038",
+      "label": "tbl_BFC15038",
+      "rationale": "code pointer 0x00005538 in ROM table 0x1674C-0x167E0 (word at 0x16784)"
+    },
+    {
+      "address": "0xBFC151E8",
+      "label": "tbl_BFC151E8",
+      "rationale": "code pointer 0x000056E8 in ROM table 0x1674C-0x167E0 (word at 0x16788)"
+    },
+    {
+      "address": "0xBFC15268",
+      "label": "tbl_BFC15268",
+      "rationale": "code pointer 0x00005768 in ROM table 0x1674C-0x167E0 (word at 0x1678C)"
+    },
+    {
+      "address": "0xBFC1529C",
+      "label": "tbl_BFC1529C",
+      "rationale": "code pointer 0x0000579C in ROM table 0x1674C-0x167E0 (word at 0x16790)"
+    },
+    {
+      "address": "0xBFC15334",
+      "label": "tbl_BFC15334",
+      "rationale": "code pointer 0x00005834 in ROM table 0x1674C-0x167E0 (word at 0x16794)"
+    },
+    {
+      "address": "0xBFC15370",
+      "label": "tbl_BFC15370",
+      "rationale": "code pointer 0x00005870 in ROM table 0x1674C-0x167E0 (word at 0x16798)"
+    },
+    {
+      "address": "0xBFC153B4",
+      "label": "tbl_BFC153B4",
+      "rationale": "code pointer 0x000058B4 in ROM table 0x1674C-0x167E0 (word at 0x1679C)"
+    },
+    {
+      "address": "0xBFC153E8",
+      "label": "tbl_BFC153E8",
+      "rationale": "code pointer 0x000058E8 in ROM table 0x1674C-0x167E0 (word at 0x167A0)"
+    },
+    {
+      "address": "0xBFC15418",
+      "label": "tbl_BFC15418",
+      "rationale": "code pointer 0x00005918 in ROM table 0x1674C-0x167E0 (word at 0x167A4)"
+    },
+    {
+      "address": "0xBFC15454",
+      "label": "tbl_BFC15454",
+      "rationale": "code pointer 0x00005954 in ROM table 0x1674C-0x167E0 (word at 0x167A8)"
+    },
+    {
+      "address": "0xBFC15490",
+      "label": "tbl_BFC15490",
+      "rationale": "code pointer 0x00005990 in ROM table 0x1674C-0x167E0 (word at 0x167AC)"
+    },
+    {
+      "address": "0xBFC15500",
+      "label": "tbl_BFC15500",
+      "rationale": "code pointer 0x00005A00 in ROM table 0x1674C-0x167E0 (word at 0x167B0)"
+    },
+    {
+      "address": "0xBFC15558",
+      "label": "tbl_BFC15558",
+      "rationale": "code pointer 0x00005A58 in ROM table 0x1674C-0x167E0 (word at 0x167B4)"
+    },
+    {
+      "address": "0xBFC155B0",
+      "label": "tbl_BFC155B0",
+      "rationale": "code pointer 0x00005AB0 in ROM table 0x1674C-0x167E0 (word at 0x167B8)"
+    },
+    {
+      "address": "0xBFC156A4",
+      "label": "tbl_BFC156A4",
+      "rationale": "code pointer 0x00005BA4 in ROM table 0x1674C-0x167E0 (word at 0x167BC)"
+    },
+    {
+      "address": "0xBFC15724",
+      "label": "tbl_BFC15724",
+      "rationale": "code pointer 0x00005C24 in ROM table 0x1674C-0x167E0 (word at 0x167C0)"
+    },
+    {
+      "address": "0xBFC15758",
+      "label": "tbl_BFC15758",
+      "rationale": "code pointer 0x00005C58 in ROM table 0x1674C-0x167E0 (word at 0x167C4)"
+    },
+    {
+      "address": "0xBFC15848",
+      "label": "tbl_BFC15848",
+      "rationale": "code pointer 0x00005D48 in ROM table 0x1674C-0x167E0 (word at 0x167C8)"
+    },
+    {
       "address": "0xBFC158A8",
       "label": "ghidra_BFC158A8",
       "rationale": "Ghidra function start (ram block)"
     },
     {
+      "address": "0xBFC15930",
+      "label": "tbl_BFC15930",
+      "rationale": "code pointer 0x00005E30 in ROM table 0x10174-0x10790 (word at 0x104D4)"
+    },
+    {
+      "address": "0xBFC15950",
+      "label": "tbl_BFC15950",
+      "rationale": "code pointer 0x00005E50 in ROM table 0x10174-0x10790 (word at 0x104B0)"
+    },
+    {
+      "address": "0xBFC15A04",
+      "label": "tbl_BFC15A04",
+      "rationale": "code pointer 0x00005F04 in ROM table 0x10174-0x10790 (word at 0x104AC)"
+    },
+    {
+      "address": "0xBFC15AB8",
+      "label": "tbl_BFC15AB8",
+      "rationale": "code pointer 0x00005FB8 in ROM table 0x10174-0x10790 (word at 0x104A8)"
+    },
+    {
+      "address": "0xBFC15B5C",
+      "label": "tbl_BFC15B5C",
+      "rationale": "code pointer 0x0000605C in ROM table 0x10174-0x10790 (word at 0x104E4)"
+    },
+    {
+      "address": "0xBFC15B70",
+      "label": "tbl_BFC15B70",
+      "rationale": "code pointer 0x00006070 in ROM table 0x10174-0x10790 (word at 0x104E8)"
+    },
+    {
       "address": "0xBFC15B9C",
       "label": "ghidra_BFC15B9C",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC15CC4",
+      "label": "tbl_BFC15CC4",
+      "rationale": "code pointer 0x000061C4 in ROM table 0x10174-0x10790 (word at 0x103CC)"
     },
     {
       "address": "0xBFC160E0",
@@ -1247,6 +1917,36 @@
       "address": "0xBFC16170",
       "label": "ghidra_BFC16170",
       "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC161C4",
+      "label": "tbl_BFC161C4",
+      "rationale": "code pointer 0x000066C4 in ROM table 0x1674C-0x167E0 (word at 0x167D0)"
+    },
+    {
+      "address": "0xBFC162B8",
+      "label": "tbl_BFC162B8",
+      "rationale": "code pointer 0x000067B8 in ROM table 0x1674C-0x167E0 (word at 0x167D4)"
+    },
+    {
+      "address": "0xBFC16370",
+      "label": "tbl_BFC16370",
+      "rationale": "code pointer 0x00006870 in ROM table 0x1674C-0x167E0 (word at 0x167D8)"
+    },
+    {
+      "address": "0xBFC16428",
+      "label": "tbl_BFC16428",
+      "rationale": "code pointer 0x00006928 in ROM table 0x1674C-0x167E0 (word at 0x167DC)"
+    },
+    {
+      "address": "0xBFC16550",
+      "label": "tbl_BFC16550",
+      "rationale": "code pointer 0x00006A50 in ROM table 0x10174-0x10790 (word at 0x104BC)"
+    },
+    {
+      "address": "0xBFC16560",
+      "label": "tbl_BFC16560",
+      "rationale": "code pointer 0x00006A60 in ROM table 0x10174-0x10790 (word at 0x104DC)"
     },
     {
       "address": "0xBFC16580",
@@ -1292,6 +1992,66 @@
       "address": "0xBFC16650",
       "label": "ghidra_BFC16650",
       "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC16690",
+      "label": "tbl_BFC16690",
+      "rationale": "code pointer 0x00006B90 in ROM table 0x10174-0x10790 (word at 0x101A0)"
+    },
+    {
+      "address": "0xBFC166A0",
+      "label": "tbl_BFC166A0",
+      "rationale": "code pointer 0x00006BA0 in ROM table 0x10174-0x10790 (word at 0x103DC)"
+    },
+    {
+      "address": "0xBFC166B0",
+      "label": "tbl_BFC166B0",
+      "rationale": "code pointer 0x00006BB0 in ROM table 0x10174-0x10790 (word at 0x103E0)"
+    },
+    {
+      "address": "0xBFC166C0",
+      "label": "tbl_BFC166C0",
+      "rationale": "code pointer 0x00006BC0 in ROM table 0x10174-0x10790 (word at 0x103E4)"
+    },
+    {
+      "address": "0xBFC166D0",
+      "label": "tbl_BFC166D0",
+      "rationale": "code pointer 0x00006BD0 in ROM table 0x10174-0x10790 (word at 0x103E8)"
+    },
+    {
+      "address": "0xBFC166E0",
+      "label": "tbl_BFC166E0",
+      "rationale": "code pointer 0x00006BE0 in ROM table 0x10174-0x10790 (word at 0x103EC)"
+    },
+    {
+      "address": "0xBFC166F0",
+      "label": "tbl_BFC166F0",
+      "rationale": "code pointer 0x00006BF0 in ROM table 0x10174-0x10790 (word at 0x103F0)"
+    },
+    {
+      "address": "0xBFC16700",
+      "label": "tbl_BFC16700",
+      "rationale": "code pointer 0x00006C00 in ROM table 0x10174-0x10790 (word at 0x103F8)"
+    },
+    {
+      "address": "0xBFC16710",
+      "label": "tbl_BFC16710",
+      "rationale": "code pointer 0x00006C10 in ROM table 0x10174-0x10790 (word at 0x103FC)"
+    },
+    {
+      "address": "0xBFC16720",
+      "label": "tbl_BFC16720",
+      "rationale": "code pointer 0x00006C20 in ROM table 0x10174-0x10790 (word at 0x10400)"
+    },
+    {
+      "address": "0xBFC16730",
+      "label": "tbl_BFC16730",
+      "rationale": "code pointer 0x00006C30 in ROM table 0x10174-0x10790 (word at 0x1041C)"
+    },
+    {
+      "address": "0xBFC16740",
+      "label": "tbl_BFC16740",
+      "rationale": "code pointer 0x00006C40 in ROM table 0x10174-0x10790 (word at 0x10420)"
     },
     {
       "address": "0xBFC18000",

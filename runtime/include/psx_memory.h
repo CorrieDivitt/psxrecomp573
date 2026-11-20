@@ -59,6 +59,8 @@ int      psx_ram_8mb_active(void);
 /* psxrecomp573: request 2, 4 or 8 MiB before memory_init(). Returns 0 for
  * any other size. */
 int      psx_set_main_ram_bytes(uint32_t bytes);
+/* Board DRAM from the active BIOS image (main_ram_bytes); 0 = retail. */
+int      psx_ram_set_board_bytes(uint32_t bytes);
 void     psx_ram_reset_size_request(void);
 /* memory_init(): latch the requested geometry for this boot. */
 void     psx_ram_apply_size_request(void);

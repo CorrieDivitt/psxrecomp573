@@ -8969,6 +8969,7 @@ static const PsxBiosImageInfo OpenBIOS_psx_bios_image = {
     "fabe498fbf224e4721f12f31b6f5fe0659205e341dc4e5c5f91b9bd1a1011c57",
     "OPENBIOS",
     1,                               /* image_bundled */
+    0x00200000u,                        /* main_ram_bytes */
 };
 
 static const PsxNativeStub OpenBIOS_psx_bios_native_stubs[3] = {
@@ -9211,7 +9212,7 @@ static void psx_dispatch_impl(CPUState* cpu, uint32_t addr, uint32_t stop_addr) 
         extern int fntrace_is_game_started(void);
         extern int dirty_ram_text_native_ok(uint32_t phys);
         int game_shell_overlap = fntrace_is_game_started() &&
-            game_phys >= 0x00030000u && game_phys <= 0x00043D43u;
+            ((game_phys >= 0x00030000u && game_phys <= 0x00043D43u));
         /* Shell-window addresses the loaded game EXE image covers with
          * matching bytes are GAME code, not the BIOS shell — route them to
          * the game path even when the game-start latch (a dispatch to
@@ -9223,7 +9224,7 @@ static void psx_dispatch_impl(CPUState* cpu, uint32_t addr, uint32_t stop_addr) 
          * bytes (differ from the game image -> not routed here -> shell
          * dispatches); post-load it holds the game EXE (matches -> game path). */
         int game_text_in_shell_window =
-            game_phys >= 0x00030000u && game_phys <= 0x00043D43u &&
+            ((game_phys >= 0x00030000u && game_phys <= 0x00043D43u)) &&
             psx_game_address_in_text(addr) && dirty_ram_text_native_ok(game_phys);
         if (!found && (game_shell_overlap || game_text_in_shell_window ||
             (psx_game_address_in_text(addr) && dirty_ram_is_dirty(game_phys)))) {

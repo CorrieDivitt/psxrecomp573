@@ -349,6 +349,16 @@ int main(int argc, char** argv) {
         expect_eq(m.normalize(0x80781550u), 0x1FC61D50u, "573.normalize mirror", 0x80781550u);
         // Below the window: plain RAM key, not folded to 2 MiB.
         expect_eq(m.normalize(0x80300000u), 0x00300000u, "573.normalize ram", 0x80300000u);
+        // Both ROM-keyed windows reach the game-overlap guard, not just the first.
+        cfg.address_copies.insert(cfg.address_copies.begin(),
+            mk("GX700 CHECK", 0x1FC28800u, 0x1FC38800u, 0x00010000u, 0x80010000u, false, false));
+        BiosAddressModel two = BiosAddressModel::from_config(cfg);
+        const std::string cond = two.emit_rom_keyed_ram_cond_c("p");
+        if (cond.find("0x00010000u") == std::string::npos ||
+            cond.find("0x00397FFFu") == std::string::npos) {
+            std::fprintf(stderr, "FAIL: rom-keyed guard misses a window: %s\n", cond.c_str());
+            g_failures++;
+        }
 
         // Retail default (2 MiB) keeps the old fold.
         BiosAddressModel r = BiosAddressModel::from_config(minimal_cfg());

@@ -3875,6 +3875,11 @@ static uint32_t check_mask_bit;    /* bit 12 */
 static uint32_t interlace_field;   /* bit 13 */
 static uint32_t reverse_flag;      /* bit 14 */
 static uint32_t texture_disable;   /* bit 15 */
+/* GP1(09h) "New Texture Disable" (psx-spx GPU, GP1(09h)): bit 0 = allow
+ * GP0(E1h) bit 11 to disable texturing. Only the arcade-board GPU variants
+ * (Konami System 573, ZN) are written this way; the 573 BIOS sets it at
+ * reset vector +0x5C. Reset clears it. */
+static uint32_t texture_disable_allowed;
 
 /* Draw area (set by GP0(E3h)/GP0(E4h)) */
 static uint32_t draw_area_left, draw_area_top;
@@ -4273,6 +4278,7 @@ static void gpu_reset_state(int clear_vram) {
     interlace_field = 0;
     reverse_flag = 0;
     texture_disable = 0;
+    texture_disable_allowed = 0;
 
     draw_area_left = 0;
     draw_area_top = 0;
@@ -5770,6 +5776,11 @@ static void set_tpage_from_poly(uint16_t tpage_word) {
  * semi_trans: whether the primitive has semi-transparency enabled (from opcode bit)
  * raw_texture: 1 if this is a raw-texture opcode (bit 0 of GP0 opcode set) */
 static void setup_textured_draw(uint32_t color24, int semi_trans, int raw_texture) {
+    if (texture_disable) {
+        /* GPUSTAT.15 set: the hardware draws textured primitives untextured.
+         * No renderer path implements that yet; halt rather than texture. */
+        psx_fatal_halt("GPU: textured draw with texture disable set (GP1(09h) + E1.11) is not implemented");
+    }
     uint32_t r = (color24 >> 0) & 0xFF;
     uint32_t g = (color24 >> 8) & 0xFF;
     uint32_t b = (color24 >> 16) & 0xFF;
@@ -6542,8 +6553,8 @@ static void gp0_exec_draw_mode(void) {
     dither_enabled    = (param >> 9) & 1;
     gr_set_dither((int)dither_enabled);
     draw_to_display   = (param >> 10) & 1;
-    /* GP1(09h) is unsupported and halts, so permission stays reset. */
-    texture_disable   = 0;
+    /* Bit 11 only latches when GP1(09h) allowed it. */
+    texture_disable   = texture_disable_allowed ? (param >> 11) & 1 : 0;
     /* Sync semi-transparency to SW renderer — actual blending is per-primitive */
 }
 
@@ -8491,6 +8502,7 @@ void gpu_write_gp1(uint32_t val) {
         case 0x06: gp1_h_display_range(val); break;
         case 0x07: gp1_v_display_range(val); break;
         case 0x08: gp1_display_mode(val); break;
+        case 0x09: texture_disable_allowed = val & 1u; break;
         case 0x10: case 0x11: case 0x12: case 0x13:
         case 0x14: case 0x15: case 0x16: case 0x17:
         case 0x18: case 0x19: case 0x1A: case 0x1B:
@@ -8508,7 +8520,7 @@ void gpu_write_gp1(uint32_t val) {
 /* ---- boot snapshot: complete GPU register state (see boot_state.h) ---- */
 #define GPU_SNAP_FIELDS(X) \
     X(texpage_x) X(texpage_y) X(semi_transparency) X(texpage_colors) \
-    X(dither_enabled) X(draw_to_display) X(texture_disable) X(texture_window_value) \
+    X(dither_enabled) X(draw_to_display) X(texture_disable) X(texture_disable_allowed) X(texture_window_value) \
     X(set_mask_bit) X(check_mask_bit) \
     X(interlace_field) X(reverse_flag) \
     X(draw_area_left) X(draw_area_top) X(draw_area_right) X(draw_area_bottom) \

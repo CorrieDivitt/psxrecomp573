@@ -104,6 +104,11 @@ typedef PfxDebugLive PfxLive;
 static PfxLive s_pfx_live[PFX_LIVE_MAX];
 static int s_pfx_nlive = 0;
 static SDL_SpinLock s_pfx_live_lock = 0;
+/* SDL2 names the spinlock calls SDL_AtomicLock/Unlock; SDL3 renamed them. */
+#if SDL_MAJOR_VERSION < 3
+#define SDL_LockSpinlock   SDL_AtomicLock
+#define SDL_UnlockSpinlock SDL_AtomicUnlock
+#endif
 void psx_host_set_post_uniform(const char *name, float x, float y, float z, float w) {
     if (!name || !name[0] || strlen(name) >= sizeof s_pfx_live[0].name ||
         !isfinite(x) || !isfinite(y) || !isfinite(z) || !isfinite(w)) return;

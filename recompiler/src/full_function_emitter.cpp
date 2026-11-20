@@ -2134,9 +2134,11 @@ void FullFunctionEmitter::emit_dispatch(
             "    \"{}\",\n"
             "    \"{}\",\n"
             "    {},                               /* image_bundled */\n"
+            "    0x{:08X}u,                        /* main_ram_bytes */\n"
             "}};\n\n",
             g_sym_prefix, kb_lo, kb_hi, kb_off, sep, der,
-            rom.size(), crc, wsum, bios_sha256, id, bundled);
+            rom.size(), crc, wsum, bios_sha256, id, bundled,
+            g_bios_profile ? g_bios_profile->main_ram_bytes : 0x00200000u);
     }
     // --- Runtime-installed BIOS call-vector stubs ---
     // Every PSX BIOS installs the A0/B0/C0 ABI gates as a 16-byte stub that
@@ -2362,9 +2364,7 @@ void FullFunctionEmitter::emit_dispatch(
     out += "        extern int dirty_ram_text_native_ok(uint32_t phys);\n";
     if (addr_model().has_rom_keyed_ram_window()) {
         out += "        int game_shell_overlap = fntrace_is_game_started() &&\n";
-        out += fmt::format(
-            "            game_phys >= 0x{:08X}u && game_phys <= 0x{:08X}u;\n",
-            addr_model().rom_keyed_ram_lo(), addr_model().rom_keyed_ram_hi_incl());
+        out += "            " + addr_model().emit_rom_keyed_ram_cond_c("game_phys") + ";\n";
     } else {
         /* No ROM-keyed RAM copy window (a BIOS with no shell relocation):
          * nothing for a game to collide with. */
@@ -2382,9 +2382,7 @@ void FullFunctionEmitter::emit_dispatch(
     out += "         * dispatches); post-load it holds the game EXE (matches -> game path). */\n";
     if (addr_model().has_rom_keyed_ram_window()) {
         out += "        int game_text_in_shell_window =\n";
-        out += fmt::format(
-            "            game_phys >= 0x{:08X}u && game_phys <= 0x{:08X}u &&\n",
-            addr_model().rom_keyed_ram_lo(), addr_model().rom_keyed_ram_hi_incl());
+        out += "            " + addr_model().emit_rom_keyed_ram_cond_c("game_phys") + " &&\n";
         out += "            psx_game_address_in_text(addr) && dirty_ram_text_native_ok(game_phys);\n";
     } else {
         out += "        int game_text_in_shell_window = 0;\n";

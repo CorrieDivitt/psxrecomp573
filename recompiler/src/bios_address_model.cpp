@@ -265,6 +265,16 @@ uint32_t BiosAddressModel::rom_keyed_ram_lo() const {
 uint32_t BiosAddressModel::rom_keyed_ram_hi_incl() const {
     return copies_[rom_keyed_idx_].ram_hi() - 1u;
 }
+std::string BiosAddressModel::emit_rom_keyed_ram_cond_c(const char* var) const {
+    std::string out;
+    for (const BiosAddrCopy& c : copies_) {
+        if (c.key_is_ram) continue;
+        if (!out.empty()) out += " ||\n            ";
+        out += fmt::format("({} >= 0x{:08X}u && {} <= 0x{:08X}u)",
+                           var, c.ram_lo, var, c.ram_hi() - 1u);
+    }
+    return out.empty() ? std::string("0") : "(" + out + ")";
+}
 
 // ---------------------------------------------------------------------------
 // Emitted-C text
