@@ -109,8 +109,10 @@ extern int      mdec_snapshot_validate(const uint8_t* p, uint32_t len);
  * RAM geometry, execution implementation and enabled host-provider schemas.
  * Reject incompatible snapshots before any section changes the live machine. */
 #define BOOT_STATE_RAM_8MB_COOKIE 0x384D4252u  /* "RBM8" */
+#define BOOT_STATE_RAM_4MB_COOKIE 0x344D4252u  /* "RBM4" (psxrecomp573) */
 static uint32_t boot_state_ram_cookie(void) {
-    return psx_ram_8mb_active() ? BOOT_STATE_RAM_8MB_COOKIE : 0u;
+    if (psx_ram_8mb_active()) return BOOT_STATE_RAM_8MB_COOKIE;
+    return memory_get_ram_bytes() == PSX_MAIN_RAM_BOARD_4MB_BYTES ? BOOT_STATE_RAM_4MB_COOKIE : 0u;
 }
 static uint32_t boot_state_layout_cookie(void) {
     return psx_mod_memory_layout_cookie() ^ boot_state_ram_cookie() ^ PSX_EXECUTION_COOKIE ^

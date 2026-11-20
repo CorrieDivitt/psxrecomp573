@@ -8,6 +8,7 @@
  *   Everything else         — fatal abort (unmapped)
  */
 
+#include "psx_exp1.h"
 #include "cpu_state.h"
 #include "cdrom.h"
 #include "crash_trace.h"
@@ -124,6 +125,30 @@ uint32_t psx_mod_memory_alloc(uint32_t size, uint32_t alignment) {
     mod_memory_used = start + size;
     return 0x9F000000u + start;
 }
+
+
+/* Expansion 1 device (psx_exp1.h). NULL keeps the retail open bus. */
+static psx_exp1_device s_exp1_device;
+static int s_exp1_registered;
+
+void psx_exp1_register(const psx_exp1_device *device) {
+    if (device && device->read && device->write) {
+        s_exp1_device = *device;
+        s_exp1_registered = 1;
+    } else {
+        memset(&s_exp1_device, 0, sizeof s_exp1_device);
+        s_exp1_registered = 0;
+    }
+}
+
+const psx_exp1_device *psx_exp1_device_get(void) {
+    return s_exp1_registered ? &s_exp1_device : NULL;
+}
+
+#define EXP1_READ(phys, size) \
+    (s_exp1_registered ? s_exp1_device.read(s_exp1_device.user, (phys), (size)) : 0u)
+#define EXP1_WRITE(phys, value, size) \
+    do { if (s_exp1_registered) s_exp1_device.write(s_exp1_device.user, (phys), (uint32_t)(value), (size)); } while (0)
 
 static int mod_memory_offset(uint32_t phys, uint32_t width, uint32_t *offset) {
     uint32_t off;
@@ -1993,6 +2018,7 @@ static uint32_t psx_read_word_raw(uint32_t addr) {
         }
     }
     if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) {
+        if (s_exp1_registered) return EXP1_READ(phys, 4);
         return 0xFFFFFFFFu;
     }
     if (phys >= 0x1F800000u && phys <= 0x1F8003FFu) {
@@ -2391,7 +2417,7 @@ static void psx_write_word_raw(uint32_t addr, uint32_t val) {
             return;
         }
     }
-    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) return;
+    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) { EXP1_WRITE(phys, val, 4); return; }
     if (phys >= 0x1F800000u && phys <= 0x1F8003FFu) {
         uint32_t off = phys - 0x1F800000u;
         debug_server_trace_write_check(phys,
@@ -2451,7 +2477,8 @@ static uint16_t psx_read_half_raw(uint32_t addr) {
             return (uint16_t)mod_memory[off] |
                    ((uint16_t)mod_memory[off + 1u] << 8);
     }
-    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) return 0xFFFFu;
+    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu)
+        return s_exp1_registered ? (uint16_t)EXP1_READ(phys, 2) : 0xFFFFu;
     if (phys >= 0x1F800000u && phys <= 0x1F8003FFu) {
         uint32_t off = phys - 0x1F800000u;
         return (uint16_t)scratchpad[off] | ((uint16_t)scratchpad[off + 1] << 8);
@@ -2526,7 +2553,7 @@ static void psx_write_half_raw(uint32_t addr, uint16_t val) {
             return;
         }
     }
-    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) return;
+    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) { EXP1_WRITE(phys, val, 2); return; }
     if (phys >= 0x1F800000u && phys <= 0x1F8003FFu) {
         uint32_t off = phys - 0x1F800000u;
         debug_server_trace_write_check(phys,
@@ -2577,7 +2604,8 @@ static uint8_t psx_read_byte_raw(uint32_t addr) {
         uint32_t off;
         if (mod_memory_offset(phys, 1u, &off)) return mod_memory[off];
     }
-    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) return 0xFFu;
+    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu)
+        return s_exp1_registered ? (uint8_t)EXP1_READ(phys, 1) : 0xFFu;
     if (phys >= 0x1F800000u && phys <= 0x1F8003FFu) {
         return scratchpad[phys - 0x1F800000u];
     }
@@ -2903,7 +2931,7 @@ static void psx_write_byte_raw(uint32_t addr, uint8_t val) {
             return;
         }
     }
-    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) return;
+    if (phys >= 0x1F000000u && phys <= 0x1F7FFFFFu) { EXP1_WRITE(phys, val, 1); return; }
     if (phys >= 0x1F800000u && phys <= 0x1F8003FFu) {
         debug_server_trace_write_check(phys, (uint32_t)scratchpad[phys - 0x1F800000u],
                                        (uint32_t)val, 1);

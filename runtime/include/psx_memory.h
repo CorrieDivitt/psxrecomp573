@@ -37,6 +37,7 @@ extern "C" {
  * live size only, so retail savestates and netplay digests are unchanged. */
 #define PSX_MAIN_RAM_RETAIL_BYTES   0x00200000u
 #define PSX_MAIN_RAM_EXPANDED_BYTES 0x00800000u
+#define PSX_MAIN_RAM_BOARD_4MB_BYTES 0x00400000u  /* psxrecomp573: System 573 */
 #define PSX_MAIN_RAM_WINDOW_BYTES   0x00800000u
 #define PSX_MAIN_RAM_BACKING_BYTES  PSX_MAIN_RAM_EXPANDED_BYTES
 
@@ -55,6 +56,9 @@ uint32_t memory_get_ram_bytes(void);
 void memory_control_get(uint32_t out[PSX_MEMORY_CONTROL_WORDS]);
 void memory_control_set(const uint32_t in[PSX_MEMORY_CONTROL_WORDS]);
 int      psx_ram_8mb_active(void);
+/* psxrecomp573: request 2, 4 or 8 MiB before memory_init(). Returns 0 for
+ * any other size. */
+int      psx_set_main_ram_bytes(uint32_t bytes);
 void     psx_ram_reset_size_request(void);
 /* memory_init(): latch the requested geometry for this boot. */
 void     psx_ram_apply_size_request(void);

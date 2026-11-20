@@ -70,6 +70,9 @@ enum {
 #endif
 
 void sio_init(void);
+/* psxrecomp573: value SIO1_STAT (0x1F801054) reads as, for boards that use
+ * SIO1's modem lines (System 573 cartridge: DSR, bit 7). Default 0 (retail). */
+void sio1_set_board_status(uint16_t stat);
 
 /* MMIO read/write (0x1F801040-0x1F80104E) */
 uint32_t sio_read(uint32_t addr);

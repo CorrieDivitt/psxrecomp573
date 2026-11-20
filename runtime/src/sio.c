@@ -42,6 +42,12 @@ static uint16_t sio_baud;
 static uint16_t sio1_mode;
 static uint16_t sio1_ctrl;
 static uint16_t sio1_baud;
+/* psxrecomp573: SIO1 status for boards that use its modem lines. The System
+ * 573 security cartridge drives DSR (bit 7) to report that it is plugged in.
+ * 0 keeps the retail behaviour (status reads as zero). */
+static uint16_t sio1_stat_board;
+
+void sio1_set_board_status(uint16_t stat) { sio1_stat_board = stat; }
 static uint32_t sio_debug_poll_counter;
 
 static void sio_debug_poll_maybe(void) {
@@ -2460,6 +2466,9 @@ uint32_t sio_read(uint32_t addr) {
 
     case 0x1F80104E: /* SIO_BAUD */
         return sio_baud;
+
+    case 0x1F801054: /* SIO1_STAT */
+        return sio1_stat_board;
 
     case 0x1F801058: /* SIO1_MODE */
         return sio1_mode;

@@ -1100,6 +1100,27 @@ add_test(NAME sio_dualshock_config_replies_test COMMAND sio_dualshock_config_rep
         target_link_libraries(psx_ram_runtime_map_test PRIVATE ZLIB::ZLIB)
         add_test(NAME psx_ram_runtime_map_test COMMAND psx_ram_runtime_map_test)
 
+        # psxrecomp573: Expansion 1 device hook and 4 MiB main RAM through the
+        # REAL memory.c accessors. Same link set as psx_ram_runtime_map_test.
+        add_executable(psx_exp1_test
+            tests/test_psx_exp1.c
+            tests/psx_ram_runtime_map_stubs.c
+            src/memory.c
+            src/text_source_guard.c
+            src/crc32.c
+            src/dma.c
+            src/gpu_timeline.c
+            src/boot_state.c
+            src/mod_snapshot.c
+            src/psx_ram_geometry.c)
+        target_include_directories(psx_exp1_test PRIVATE include src)
+        target_compile_options(psx_exp1_test PRIVATE
+            -O2 -flto -ffunction-sections -fdata-sections -Wno-lto-type-mismatch)
+        target_link_options(psx_exp1_test PRIVATE
+            -flto -Wl,--gc-sections -Wno-lto-type-mismatch)
+        target_link_libraries(psx_exp1_test PRIVATE ZLIB::ZLIB)
+        add_test(NAME psx_exp1_test COMMAND psx_exp1_test)
+
         # Cache-isolated (SR.IsC) CPU stores through the REAL memory.c store
         # paths and the REAL psx_icache.c tag model, against Beetle's
         # WriteMemory IsC branch: FlushCache invalidation, tag-test valid bits,

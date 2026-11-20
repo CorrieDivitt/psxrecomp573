@@ -18,25 +18,36 @@
 uint32_t g_psx_ram_size = PSX_MAIN_RAM_RETAIL_BYTES;
 uint32_t g_psx_ram_mask = PSX_MAIN_RAM_RETAIL_BYTES - 1u;
 
-static int s_ram_8mb_requested;
+static uint32_t s_ram_bytes_requested;   /* 0 = retail */
 
 uint32_t memory_get_ram_bytes(void) { return g_psx_ram_size; }
 int psx_ram_8mb_active(void) {
-    return g_psx_ram_size > PSX_MAIN_RAM_RETAIL_BYTES;
+    return g_psx_ram_size == PSX_MAIN_RAM_EXPANDED_BYTES;
 }
 
 void psx_ram_reset_size_request(void) {
-    s_ram_8mb_requested = 0;
+    s_ram_bytes_requested = 0;
 }
 
 int psx_mod_set_main_ram_8mb(int enabled) {
-    s_ram_8mb_requested = enabled ? 1 : 0;
+    s_ram_bytes_requested = enabled ? PSX_MAIN_RAM_EXPANDED_BYTES : 0u;
+    return 1;
+}
+
+/* psxrecomp573: boards with other DRAM sizes (Konami System 573: 4 MiB)
+ * request their geometry the same way. Only 2, 4 and 8 MiB decode cleanly
+ * in the 8 MiB window. */
+int psx_set_main_ram_bytes(uint32_t bytes) {
+    if (bytes != PSX_MAIN_RAM_RETAIL_BYTES && bytes != PSX_MAIN_RAM_BOARD_4MB_BYTES &&
+        bytes != PSX_MAIN_RAM_EXPANDED_BYTES)
+        return 0;
+    s_ram_bytes_requested = bytes == PSX_MAIN_RAM_RETAIL_BYTES ? 0u : bytes;
     return 1;
 }
 
 void psx_ram_apply_size_request(void) {
-    const uint32_t bytes = s_ram_8mb_requested ? PSX_MAIN_RAM_EXPANDED_BYTES
-                                               : PSX_MAIN_RAM_RETAIL_BYTES;
+    const uint32_t bytes = s_ram_bytes_requested ? s_ram_bytes_requested
+                                                 : PSX_MAIN_RAM_RETAIL_BYTES;
     g_psx_ram_size = bytes;
     g_psx_ram_mask = bytes - 1u;
 }
