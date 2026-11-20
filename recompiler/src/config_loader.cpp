@@ -1588,6 +1588,16 @@ BiosConfig load_bios_config(const fs::path& config_path_in) {
             : load_address;
     const uint32_t text_size =
         parse_hex(toml::find<std::string>(prog, "text_size"), "program.text_size");
+    uint32_t main_ram_bytes = 0x00200000u;
+    if (prog.contains("main_ram_bytes")) {
+        main_ram_bytes = parse_hex(toml::find<std::string>(prog, "main_ram_bytes"),
+                                   "program.main_ram_bytes");
+        if (main_ram_bytes != 0x00200000u && main_ram_bytes != 0x00400000u &&
+            main_ram_bytes != 0x00800000u)
+            throw std::runtime_error(fmt::format(
+                "{}: program.main_ram_bytes must be 0x200000, 0x400000 or 0x800000",
+                config_path.string()));
+    }
 
     // [program.image] — declared identity (optional)
     std::string image_sha256;
@@ -1782,6 +1792,7 @@ BiosConfig load_bios_config(const fs::path& config_path_in) {
         /*install_slots*/  std::move(install_slots),
         /*shell_entry_phys*/  shell_entry_phys,
         /*deliver_event_ret*/ deliver_event_ret,
+        /*main_ram_bytes*/    main_ram_bytes,
     };
 }
 

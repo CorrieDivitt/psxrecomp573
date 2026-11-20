@@ -1,0 +1,4727 @@
+{
+  "schema": "psxrecomp phase2 seeds",
+  "source": "Ghidra 12.1.4 analysis of 700b01.22g via FM_Bios700B01.java (Fighting-Mania-VR)",
+  "seed_count": 944,
+  "seeds": [
+    {
+      "address": "0xBFC00000",
+      "label": "reset",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00180",
+      "label": "general_exception_bev1",
+      "rationale": "BEV=1 general exception vector"
+    },
+    {
+      "address": "0xBFC00188",
+      "label": "bus_setup_table_apply",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC003D0",
+      "label": "ghidra_BFC003D0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC003F0",
+      "label": "kernel_copy_second_half",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC004C0",
+      "label": "kernel_copy",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00500",
+      "label": "ghidra_BFC00500",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0088C",
+      "label": "ghidra_BFC0088C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0091C",
+      "label": "ghidra_BFC0091C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC009AC",
+      "label": "ghidra_BFC009AC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00A3C",
+      "label": "ghidra_BFC00A3C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00A5C",
+      "label": "ghidra_BFC00A5C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00AF4",
+      "label": "ghidra_BFC00AF4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00B90",
+      "label": "ghidra_BFC00B90",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00C34",
+      "label": "ghidra_BFC00C34",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC00E6C",
+      "label": "ghidra_BFC00E6C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01090",
+      "label": "ghidra_BFC01090",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01BD0",
+      "label": "ghidra_BFC01BD0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01C10",
+      "label": "ghidra_BFC01C10",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01D50",
+      "label": "ghidra_BFC01D50",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01D80",
+      "label": "ghidra_BFC01D80",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01DBC",
+      "label": "ghidra_BFC01DBC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01E70",
+      "label": "ghidra_BFC01E70",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC01F7C",
+      "label": "ghidra_BFC01F7C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0214C",
+      "label": "ghidra_BFC0214C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC023E0",
+      "label": "ghidra_BFC023E0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC023F4",
+      "label": "ghidra_BFC023F4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02530",
+      "label": "ghidra_BFC02530",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0256C",
+      "label": "ghidra_BFC0256C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC025B0",
+      "label": "ghidra_BFC025B0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02614",
+      "label": "ghidra_BFC02614",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02880",
+      "label": "ghidra_BFC02880",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC028A0",
+      "label": "ghidra_BFC028A0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02A28",
+      "label": "ghidra_BFC02A28",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02C40",
+      "label": "ghidra_BFC02C40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02DE0",
+      "label": "ghidra_BFC02DE0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02E00",
+      "label": "ghidra_BFC02E00",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02E40",
+      "label": "ghidra_BFC02E40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC02FB0",
+      "label": "ghidra_BFC02FB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03010",
+      "label": "ghidra_BFC03010",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0309C",
+      "label": "ghidra_BFC0309C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03190",
+      "label": "ghidra_BFC03190",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC031CC",
+      "label": "ghidra_BFC031CC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03210",
+      "label": "ghidra_BFC03210",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03388",
+      "label": "ghidra_BFC03388",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC033F4",
+      "label": "ghidra_BFC033F4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03480",
+      "label": "ghidra_BFC03480",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03600",
+      "label": "ghidra_BFC03600",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC036B8",
+      "label": "ghidra_BFC036B8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03708",
+      "label": "ghidra_BFC03708",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03784",
+      "label": "ghidra_BFC03784",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03A54",
+      "label": "ghidra_BFC03A54",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03C58",
+      "label": "ghidra_BFC03C58",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03C68",
+      "label": "ghidra_BFC03C68",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03CC0",
+      "label": "ghidra_BFC03CC0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03CF0",
+      "label": "ghidra_BFC03CF0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03D10",
+      "label": "ghidra_BFC03D10",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03D78",
+      "label": "ghidra_BFC03D78",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03E04",
+      "label": "ghidra_BFC03E04",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC03FF0",
+      "label": "ghidra_BFC03FF0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04050",
+      "label": "ghidra_BFC04050",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC040E0",
+      "label": "ghidra_BFC040E0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04200",
+      "label": "ghidra_BFC04200",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC042EC",
+      "label": "ghidra_BFC042EC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0430C",
+      "label": "ghidra_BFC0430C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04340",
+      "label": "ghidra_BFC04340",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0439C",
+      "label": "ghidra_BFC0439C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0444C",
+      "label": "ghidra_BFC0444C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04498",
+      "label": "ghidra_BFC04498",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC045C0",
+      "label": "ghidra_BFC045C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04600",
+      "label": "ghidra_BFC04600",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04630",
+      "label": "ghidra_BFC04630",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04960",
+      "label": "ghidra_BFC04960",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC049C8",
+      "label": "ghidra_BFC049C8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04A7C",
+      "label": "ghidra_BFC04A7C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04BA0",
+      "label": "ghidra_BFC04BA0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04D40",
+      "label": "ghidra_BFC04D40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04E50",
+      "label": "ghidra_BFC04E50",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04F2C",
+      "label": "ghidra_BFC04F2C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04FB0",
+      "label": "ghidra_BFC04FB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC04FC4",
+      "label": "program_rom_check_license",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC050C8",
+      "label": "program_rom_call",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05130",
+      "label": "ghidra_BFC05130",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05150",
+      "label": "ghidra_BFC05150",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC053B0",
+      "label": "ghidra_BFC053B0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05504",
+      "label": "kernel_main_rom",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05570",
+      "label": "ghidra_BFC05570",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC055E4",
+      "label": "ghidra_BFC055E4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05640",
+      "label": "ghidra_BFC05640",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05670",
+      "label": "ghidra_BFC05670",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05714",
+      "label": "ghidra_BFC05714",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0579C",
+      "label": "ghidra_BFC0579C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC057F0",
+      "label": "ghidra_BFC057F0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC058AC",
+      "label": "ghidra_BFC058AC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05910",
+      "label": "ghidra_BFC05910",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05A8C",
+      "label": "ghidra_BFC05A8C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC05F4C",
+      "label": "ghidra_BFC05F4C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06094",
+      "label": "ghidra_BFC06094",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0611C",
+      "label": "ghidra_BFC0611C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0623C",
+      "label": "ghidra_BFC0623C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06490",
+      "label": "ghidra_BFC06490",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC064E8",
+      "label": "ghidra_BFC064E8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06670",
+      "label": "ghidra_BFC06670",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC067F8",
+      "label": "ghidra_BFC067F8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06864",
+      "label": "ghidra_BFC06864",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0689C",
+      "label": "ghidra_BFC0689C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC068BC",
+      "label": "ghidra_BFC068BC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06C2C",
+      "label": "ghidra_BFC06C2C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06C8C",
+      "label": "ghidra_BFC06C8C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC06FD0",
+      "label": "ghidra_BFC06FD0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC07324",
+      "label": "ghidra_BFC07324",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0738C",
+      "label": "ghidra_BFC0738C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC07404",
+      "label": "ghidra_BFC07404",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC07534",
+      "label": "ghidra_BFC07534",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC076A4",
+      "label": "ghidra_BFC076A4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0780C",
+      "label": "ghidra_BFC0780C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC07AB0",
+      "label": "ghidra_BFC07AB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC07C58",
+      "label": "ghidra_BFC07C58",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC08020",
+      "label": "ghidra_BFC08020",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC080C0",
+      "label": "ghidra_BFC080C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC082E4",
+      "label": "ghidra_BFC082E4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0849C",
+      "label": "ghidra_BFC0849C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC084F0",
+      "label": "ghidra_BFC084F0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC08544",
+      "label": "ghidra_BFC08544",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC08598",
+      "label": "ghidra_BFC08598",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC08F40",
+      "label": "ghidra_BFC08F40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC08F98",
+      "label": "ghidra_BFC08F98",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0902C",
+      "label": "ghidra_BFC0902C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09090",
+      "label": "ghidra_BFC09090",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09144",
+      "label": "ghidra_BFC09144",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0923C",
+      "label": "ghidra_BFC0923C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09260",
+      "label": "ghidra_BFC09260",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09288",
+      "label": "ghidra_BFC09288",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC092B0",
+      "label": "ghidra_BFC092B0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC092D8",
+      "label": "ghidra_BFC092D8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09300",
+      "label": "ghidra_BFC09300",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09328",
+      "label": "ghidra_BFC09328",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09358",
+      "label": "ghidra_BFC09358",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09394",
+      "label": "ghidra_BFC09394",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC095C0",
+      "label": "ghidra_BFC095C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09698",
+      "label": "ghidra_BFC09698",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC096E8",
+      "label": "ghidra_BFC096E8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC098CC",
+      "label": "ghidra_BFC098CC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09948",
+      "label": "ghidra_BFC09948",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09BA0",
+      "label": "ghidra_BFC09BA0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09BB0",
+      "label": "ghidra_BFC09BB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09BC0",
+      "label": "ghidra_BFC09BC0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09BD0",
+      "label": "ghidra_BFC09BD0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09BE0",
+      "label": "ghidra_BFC09BE0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09C80",
+      "label": "ghidra_BFC09C80",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09C90",
+      "label": "ghidra_BFC09C90",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09CA0",
+      "label": "ghidra_BFC09CA0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09CB0",
+      "label": "ghidra_BFC09CB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09CC0",
+      "label": "ghidra_BFC09CC0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09CD0",
+      "label": "ghidra_BFC09CD0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09CE0",
+      "label": "ghidra_BFC09CE0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09CF0",
+      "label": "ghidra_BFC09CF0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D00",
+      "label": "ghidra_BFC09D00",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D10",
+      "label": "ghidra_BFC09D10",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D20",
+      "label": "ghidra_BFC09D20",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D30",
+      "label": "ghidra_BFC09D30",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D40",
+      "label": "ghidra_BFC09D40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D50",
+      "label": "ghidra_BFC09D50",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D60",
+      "label": "ghidra_BFC09D60",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09D70",
+      "label": "ghidra_BFC09D70",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09DB0",
+      "label": "ghidra_BFC09DB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E00",
+      "label": "ghidra_BFC09E00",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E10",
+      "label": "ghidra_BFC09E10",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E20",
+      "label": "ghidra_BFC09E20",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E30",
+      "label": "ghidra_BFC09E30",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E40",
+      "label": "ghidra_BFC09E40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E50",
+      "label": "ghidra_BFC09E50",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E60",
+      "label": "ghidra_BFC09E60",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E70",
+      "label": "ghidra_BFC09E70",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E80",
+      "label": "ghidra_BFC09E80",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC09E90",
+      "label": "ghidra_BFC09E90",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC0A6B0",
+      "label": "ghidra_BFC0A6B0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC10000",
+      "label": "kernel_ram_entry",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC10C74",
+      "label": "ghidra_BFC10C74",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11008",
+      "label": "ghidra_BFC11008",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11288",
+      "label": "ghidra_BFC11288",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC112E8",
+      "label": "ghidra_BFC112E8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC1134C",
+      "label": "ghidra_BFC1134C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC113B0",
+      "label": "ghidra_BFC113B0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11414",
+      "label": "ghidra_BFC11414",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC1144C",
+      "label": "ghidra_BFC1144C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11484",
+      "label": "ghidra_BFC11484",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC114BC",
+      "label": "ghidra_BFC114BC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC114F4",
+      "label": "ghidra_BFC114F4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11620",
+      "label": "ghidra_BFC11620",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11644",
+      "label": "ghidra_BFC11644",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC1188C",
+      "label": "ghidra_BFC1188C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11B18",
+      "label": "ghidra_BFC11B18",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11C8C",
+      "label": "ghidra_BFC11C8C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC11F58",
+      "label": "ghidra_BFC11F58",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC122A0",
+      "label": "ghidra_BFC122A0",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC122C0",
+      "label": "ghidra_BFC122C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12370",
+      "label": "ghidra_BFC12370",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12408",
+      "label": "ghidra_BFC12408",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12458",
+      "label": "ghidra_BFC12458",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12564",
+      "label": "ghidra_BFC12564",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12628",
+      "label": "ghidra_BFC12628",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12794",
+      "label": "ghidra_BFC12794",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12900",
+      "label": "ghidra_BFC12900",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12998",
+      "label": "ghidra_BFC12998",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC129FC",
+      "label": "ghidra_BFC129FC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12AC8",
+      "label": "ghidra_BFC12AC8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12B00",
+      "label": "ghidra_BFC12B00",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12B60",
+      "label": "ghidra_BFC12B60",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12BC8",
+      "label": "ghidra_BFC12BC8",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC12C08",
+      "label": "ghidra_BFC12C08",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12CE8",
+      "label": "ghidra_BFC12CE8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12F6C",
+      "label": "ghidra_BFC12F6C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC12FB4",
+      "label": "ghidra_BFC12FB4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13070",
+      "label": "ghidra_BFC13070",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC130A4",
+      "label": "ghidra_BFC130A4",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC130AC",
+      "label": "ghidra_BFC130AC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13178",
+      "label": "ghidra_BFC13178",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13244",
+      "label": "ghidra_BFC13244",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13310",
+      "label": "ghidra_BFC13310",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC133D8",
+      "label": "ghidra_BFC133D8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC134A4",
+      "label": "ghidra_BFC134A4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC135AC",
+      "label": "ghidra_BFC135AC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC137E0",
+      "label": "ghidra_BFC137E0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC138AC",
+      "label": "ghidra_BFC138AC",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC13980",
+      "label": "ghidra_BFC13980",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13AF0",
+      "label": "ghidra_BFC13AF0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13B24",
+      "label": "ghidra_BFC13B24",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13B6C",
+      "label": "ghidra_BFC13B6C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13C34",
+      "label": "ghidra_BFC13C34",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13C64",
+      "label": "ghidra_BFC13C64",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13E04",
+      "label": "ghidra_BFC13E04",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13E60",
+      "label": "ghidra_BFC13E60",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13EE8",
+      "label": "ghidra_BFC13EE8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC13F5C",
+      "label": "ghidra_BFC13F5C",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC13F98",
+      "label": "ghidra_BFC13F98",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC144BC",
+      "label": "ghidra_BFC144BC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC145C8",
+      "label": "ghidra_BFC145C8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC14690",
+      "label": "ghidra_BFC14690",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC14710",
+      "label": "ghidra_BFC14710",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC14770",
+      "label": "ghidra_BFC14770",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC147F4",
+      "label": "ghidra_BFC147F4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC14A90",
+      "label": "ghidra_BFC14A90",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC14B00",
+      "label": "ghidra_BFC14B00",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC14CF4",
+      "label": "ghidra_BFC14CF4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC158A8",
+      "label": "ghidra_BFC158A8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC15B9C",
+      "label": "ghidra_BFC15B9C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC160E0",
+      "label": "Krom2RawAdd",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC16170",
+      "label": "ghidra_BFC16170",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC16580",
+      "label": "ghidra_BFC16580",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC165B0",
+      "label": "ghidra_BFC165B0",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC165C0",
+      "label": "ghidra_BFC165C0",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC165D0",
+      "label": "ghidra_BFC165D0",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC165E0",
+      "label": "ghidra_BFC165E0",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC165F0",
+      "label": "ghidra_BFC165F0",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC16600",
+      "label": "ghidra_BFC16600",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC16630",
+      "label": "ghidra_BFC16630",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC16650",
+      "label": "ghidra_BFC16650",
+      "rationale": "Ghidra function start (kernel_ram block)"
+    },
+    {
+      "address": "0xBFC18000",
+      "label": "post_ram_test",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC18224",
+      "label": "ghidra_BFC18224",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC18270",
+      "label": "ghidra_BFC18270",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC182EC",
+      "label": "ghidra_BFC182EC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC1831C",
+      "label": "ghidra_BFC1831C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC1837C",
+      "label": "ghidra_BFC1837C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC18484",
+      "label": "ghidra_BFC18484",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20144",
+      "label": "program_rom_main",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2029C",
+      "label": "ghidra_BFC2029C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC202A4",
+      "label": "program_rom_entry",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20360",
+      "label": "ghidra_BFC20360",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20370",
+      "label": "ghidra_BFC20370",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20380",
+      "label": "ghidra_BFC20380",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20494",
+      "label": "ghidra_BFC20494",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20500",
+      "label": "ghidra_BFC20500",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC205C0",
+      "label": "ghidra_BFC205C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20664",
+      "label": "ghidra_BFC20664",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC206E0",
+      "label": "ghidra_BFC206E0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20700",
+      "label": "ghidra_BFC20700",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2073C",
+      "label": "ghidra_BFC2073C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20778",
+      "label": "ghidra_BFC20778",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2079C",
+      "label": "ghidra_BFC2079C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC207C0",
+      "label": "ghidra_BFC207C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC208B0",
+      "label": "ghidra_BFC208B0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20940",
+      "label": "ghidra_BFC20940",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC209CC",
+      "label": "ghidra_BFC209CC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20A60",
+      "label": "ghidra_BFC20A60",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20AF4",
+      "label": "ghidra_BFC20AF4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20B0C",
+      "label": "ghidra_BFC20B0C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20B90",
+      "label": "ghidra_BFC20B90",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20BEC",
+      "label": "ghidra_BFC20BEC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20C14",
+      "label": "ghidra_BFC20C14",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20C40",
+      "label": "ghidra_BFC20C40",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20C50",
+      "label": "ghidra_BFC20C50",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20C7C",
+      "label": "ghidra_BFC20C7C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20D0C",
+      "label": "ghidra_BFC20D0C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20D9C",
+      "label": "ghidra_BFC20D9C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20DCC",
+      "label": "ghidra_BFC20DCC",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20E04",
+      "label": "ghidra_BFC20E04",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20E7C",
+      "label": "ghidra_BFC20E7C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20EB4",
+      "label": "ghidra_BFC20EB4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20F60",
+      "label": "ghidra_BFC20F60",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20F70",
+      "label": "ghidra_BFC20F70",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20F80",
+      "label": "ghidra_BFC20F80",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20F90",
+      "label": "ghidra_BFC20F90",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20FA0",
+      "label": "ghidra_BFC20FA0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20FB0",
+      "label": "ghidra_BFC20FB0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20FC0",
+      "label": "ghidra_BFC20FC0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20FD0",
+      "label": "ghidra_BFC20FD0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20FE4",
+      "label": "ghidra_BFC20FE4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC20FF8",
+      "label": "ghidra_BFC20FF8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21070",
+      "label": "ghidra_BFC21070",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC210E0",
+      "label": "ghidra_BFC210E0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21110",
+      "label": "ghidra_BFC21110",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21140",
+      "label": "ghidra_BFC21140",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21170",
+      "label": "ghidra_BFC21170",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC211A4",
+      "label": "ghidra_BFC211A4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC211D4",
+      "label": "ghidra_BFC211D4",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21204",
+      "label": "ghidra_BFC21204",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21274",
+      "label": "ghidra_BFC21274",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2134C",
+      "label": "ghidra_BFC2134C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2151C",
+      "label": "ghidra_BFC2151C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21664",
+      "label": "ghidra_BFC21664",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21704",
+      "label": "ghidra_BFC21704",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2177C",
+      "label": "ghidra_BFC2177C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC217A8",
+      "label": "ghidra_BFC217A8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC217C0",
+      "label": "ghidra_BFC217C0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC217D0",
+      "label": "ghidra_BFC217D0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC217E0",
+      "label": "ghidra_BFC217E0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC217F0",
+      "label": "ghidra_BFC217F0",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21800",
+      "label": "ghidra_BFC21800",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21810",
+      "label": "ghidra_BFC21810",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21868",
+      "label": "ghidra_BFC21868",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21900",
+      "label": "ghidra_BFC21900",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21930",
+      "label": "ghidra_BFC21930",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC2197C",
+      "label": "ghidra_BFC2197C",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC21BA8",
+      "label": "ghidra_BFC21BA8",
+      "rationale": "Ghidra function start (ram block)"
+    },
+    {
+      "address": "0xBFC28F60",
+      "label": "ghidra_BFC28F60",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC28F9C",
+      "label": "xfn_8001079C",
+      "rationale": "direct target 0x8001079C from emitted code"
+    },
+    {
+      "address": "0xBFC28FB4",
+      "label": "ghidra_BFC28FB4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC29020",
+      "label": "xfn_80010820",
+      "rationale": "direct target 0x80010820 from emitted code"
+    },
+    {
+      "address": "0xBFC29120",
+      "label": "xfn_80010920",
+      "rationale": "direct target 0x80010920 from emitted code"
+    },
+    {
+      "address": "0xBFC29144",
+      "label": "xfn_80010944",
+      "rationale": "direct target 0x80010944 from emitted code"
+    },
+    {
+      "address": "0xBFC291F0",
+      "label": "xfn_800109F0",
+      "rationale": "direct target 0x800109F0 from emitted code"
+    },
+    {
+      "address": "0xBFC291F4",
+      "label": "xfn_800109F4",
+      "rationale": "direct target 0x800109F4 from emitted code"
+    },
+    {
+      "address": "0xBFC29238",
+      "label": "xfn_80010A38",
+      "rationale": "direct target 0x80010A38 from emitted code"
+    },
+    {
+      "address": "0xBFC29254",
+      "label": "ghidra_BFC29254",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC29454",
+      "label": "ghidra_BFC29454",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC29484",
+      "label": "xfn_80010C84",
+      "rationale": "direct target 0x80010C84 from emitted code"
+    },
+    {
+      "address": "0xBFC294A4",
+      "label": "ghidra_BFC294A4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC29510",
+      "label": "xfn_80010D10",
+      "rationale": "direct target 0x80010D10 from emitted code"
+    },
+    {
+      "address": "0xBFC296C0",
+      "label": "xfn_80010EC0",
+      "rationale": "direct target 0x80010EC0 from emitted code"
+    },
+    {
+      "address": "0xBFC2981C",
+      "label": "ghidra_BFC2981C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2AD7C",
+      "label": "ghidra_BFC2AD7C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2AE50",
+      "label": "ghidra_BFC2AE50",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2AE98",
+      "label": "xfn_80012698",
+      "rationale": "direct target 0x80012698 from emitted code"
+    },
+    {
+      "address": "0xBFC2AF64",
+      "label": "xfn_80012764",
+      "rationale": "direct target 0x80012764 from emitted code"
+    },
+    {
+      "address": "0xBFC2AF84",
+      "label": "xfn_80012784",
+      "rationale": "direct target 0x80012784 from emitted code"
+    },
+    {
+      "address": "0xBFC2AFD8",
+      "label": "xfn_800127D8",
+      "rationale": "direct target 0x800127D8 from emitted code"
+    },
+    {
+      "address": "0xBFC2B0B4",
+      "label": "ghidra_BFC2B0B4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B298",
+      "label": "ghidra_BFC2B298",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B318",
+      "label": "ghidra_BFC2B318",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B45C",
+      "label": "ghidra_BFC2B45C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B464",
+      "label": "gx700_check_start",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B520",
+      "label": "ghidra_BFC2B520",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B530",
+      "label": "ghidra_BFC2B530",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B540",
+      "label": "ghidra_BFC2B540",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B570",
+      "label": "ghidra_BFC2B570",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B580",
+      "label": "ghidra_BFC2B580",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B590",
+      "label": "ghidra_BFC2B590",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B5A0",
+      "label": "ghidra_BFC2B5A0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B5C0",
+      "label": "ghidra_BFC2B5C0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B620",
+      "label": "ghidra_BFC2B620",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B660",
+      "label": "ghidra_BFC2B660",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B678",
+      "label": "xfn_80012E78",
+      "rationale": "direct target 0x80012E78 from emitted code"
+    },
+    {
+      "address": "0xBFC2B6A0",
+      "label": "ghidra_BFC2B6A0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2B7B0",
+      "label": "xfn_80012FB0",
+      "rationale": "direct target 0x80012FB0 from emitted code"
+    },
+    {
+      "address": "0xBFC2B800",
+      "label": "xfn_80013000",
+      "rationale": "direct target 0x80013000 from emitted code"
+    },
+    {
+      "address": "0xBFC2B984",
+      "label": "ghidra_BFC2B984",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2BA1C",
+      "label": "ghidra_BFC2BA1C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2BA84",
+      "label": "ghidra_BFC2BA84",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2BB54",
+      "label": "xfn_80013354",
+      "rationale": "direct target 0x80013354 from emitted code"
+    },
+    {
+      "address": "0xBFC2BB90",
+      "label": "xfn_80013390",
+      "rationale": "direct target 0x80013390 from emitted code"
+    },
+    {
+      "address": "0xBFC2BCC8",
+      "label": "ghidra_BFC2BCC8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2BE40",
+      "label": "ghidra_BFC2BE40",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2C010",
+      "label": "ghidra_BFC2C010",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2C080",
+      "label": "ghidra_BFC2C080",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2C218",
+      "label": "ghidra_BFC2C218",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2C24C",
+      "label": "ghidra_BFC2C24C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2C3EC",
+      "label": "xfn_80013BEC",
+      "rationale": "direct target 0x80013BEC from emitted code"
+    },
+    {
+      "address": "0xBFC2C604",
+      "label": "xfn_80013E04",
+      "rationale": "direct target 0x80013E04 from emitted code"
+    },
+    {
+      "address": "0xBFC2C694",
+      "label": "xfn_80013E94",
+      "rationale": "direct target 0x80013E94 from emitted code"
+    },
+    {
+      "address": "0xBFC2C6AC",
+      "label": "xfn_80013EAC",
+      "rationale": "direct target 0x80013EAC from emitted code"
+    },
+    {
+      "address": "0xBFC2CA60",
+      "label": "ghidra_BFC2CA60",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2CBBC",
+      "label": "xfn_800143BC",
+      "rationale": "direct target 0x800143BC from emitted code"
+    },
+    {
+      "address": "0xBFC2CCB4",
+      "label": "xfn_800144B4",
+      "rationale": "direct target 0x800144B4 from emitted code"
+    },
+    {
+      "address": "0xBFC2CCD0",
+      "label": "ghidra_BFC2CCD0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2CCF0",
+      "label": "ghidra_BFC2CCF0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2CD6C",
+      "label": "xfn_8001456C",
+      "rationale": "direct target 0x8001456C from emitted code"
+    },
+    {
+      "address": "0xBFC2CD88",
+      "label": "ghidra_BFC2CD88",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2CE04",
+      "label": "xfn_80014604",
+      "rationale": "direct target 0x80014604 from emitted code"
+    },
+    {
+      "address": "0xBFC2CE20",
+      "label": "ghidra_BFC2CE20",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2CE3C",
+      "label": "ghidra_BFC2CE3C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2CEB4",
+      "label": "xfn_800146B4",
+      "rationale": "direct target 0x800146B4 from emitted code"
+    },
+    {
+      "address": "0xBFC2D6A0",
+      "label": "ghidra_BFC2D6A0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2D7B4",
+      "label": "ghidra_BFC2D7B4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2D800",
+      "label": "xfn_80015000",
+      "rationale": "direct target 0x80015000 from emitted code"
+    },
+    {
+      "address": "0xBFC2D900",
+      "label": "xfn_80015100",
+      "rationale": "direct target 0x80015100 from emitted code"
+    },
+    {
+      "address": "0xBFC2D9B8",
+      "label": "xfn_800151B8",
+      "rationale": "direct target 0x800151B8 from emitted code"
+    },
+    {
+      "address": "0xBFC2DA48",
+      "label": "xfn_80015248",
+      "rationale": "direct target 0x80015248 from emitted code"
+    },
+    {
+      "address": "0xBFC2DA64",
+      "label": "ghidra_BFC2DA64",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2DCC4",
+      "label": "ghidra_BFC2DCC4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2DDE0",
+      "label": "xfn_800155E0",
+      "rationale": "direct target 0x800155E0 from emitted code"
+    },
+    {
+      "address": "0xBFC2DE14",
+      "label": "ghidra_BFC2DE14",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2DE34",
+      "label": "xfn_80015634",
+      "rationale": "direct target 0x80015634 from emitted code"
+    },
+    {
+      "address": "0xBFC2DE4C",
+      "label": "xfn_8001564C",
+      "rationale": "direct target 0x8001564C from emitted code"
+    },
+    {
+      "address": "0xBFC2DF40",
+      "label": "xfn_80015740",
+      "rationale": "direct target 0x80015740 from emitted code"
+    },
+    {
+      "address": "0xBFC2DF50",
+      "label": "ghidra_BFC2DF50",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2DF84",
+      "label": "ghidra_BFC2DF84",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2E0B8",
+      "label": "xfn_800158B8",
+      "rationale": "direct target 0x800158B8 from emitted code"
+    },
+    {
+      "address": "0xBFC2E0C8",
+      "label": "ghidra_BFC2E0C8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2E160",
+      "label": "xfn_80015960",
+      "rationale": "direct target 0x80015960 from emitted code"
+    },
+    {
+      "address": "0xBFC2E5A8",
+      "label": "ghidra_BFC2E5A8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2E5D0",
+      "label": "ghidra_BFC2E5D0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2E5E0",
+      "label": "ghidra_BFC2E5E0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2E620",
+      "label": "ghidra_BFC2E620",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2E670",
+      "label": "xfn_80015E70",
+      "rationale": "direct target 0x80015E70 from emitted code"
+    },
+    {
+      "address": "0xBFC2E69C",
+      "label": "xfn_80015E9C",
+      "rationale": "direct target 0x80015E9C from emitted code"
+    },
+    {
+      "address": "0xBFC2E6DC",
+      "label": "xfn_BFC2E6DC",
+      "rationale": "direct target 0xBFC2E6DC from emitted code"
+    },
+    {
+      "address": "0xBFC2E6E4",
+      "label": "xfn_BFC2E6E4",
+      "rationale": "direct target 0xBFC2E6E4 from emitted code"
+    },
+    {
+      "address": "0xBFC2E700",
+      "label": "xfn_BFC2E700",
+      "rationale": "direct target 0xBFC2E700 from emitted code"
+    },
+    {
+      "address": "0xBFC2E708",
+      "label": "xfn_BFC2E708",
+      "rationale": "direct target 0xBFC2E708 from emitted code"
+    },
+    {
+      "address": "0xBFC2E710",
+      "label": "xfn_BFC2E710",
+      "rationale": "direct target 0xBFC2E710 from emitted code"
+    },
+    {
+      "address": "0xBFC2E788",
+      "label": "xfn_80015F88",
+      "rationale": "direct target 0x80015F88 from emitted code"
+    },
+    {
+      "address": "0xBFC2E798",
+      "label": "xfn_BFC2E798",
+      "rationale": "direct target 0xBFC2E798 from emitted code"
+    },
+    {
+      "address": "0xBFC2E7A0",
+      "label": "xfn_BFC2E7A0",
+      "rationale": "direct target 0xBFC2E7A0 from emitted code"
+    },
+    {
+      "address": "0xBFC2E7FC",
+      "label": "xfn_BFC2E7FC",
+      "rationale": "direct target 0xBFC2E7FC from emitted code"
+    },
+    {
+      "address": "0xBFC2E804",
+      "label": "xfn_BFC2E804",
+      "rationale": "direct target 0xBFC2E804 from emitted code"
+    },
+    {
+      "address": "0xBFC2E80C",
+      "label": "xfn_BFC2E80C",
+      "rationale": "direct target 0xBFC2E80C from emitted code"
+    },
+    {
+      "address": "0xBFC2E814",
+      "label": "xfn_BFC2E814",
+      "rationale": "direct target 0xBFC2E814 from emitted code"
+    },
+    {
+      "address": "0xBFC2E830",
+      "label": "xfn_BFC2E830",
+      "rationale": "direct target 0xBFC2E830 from emitted code"
+    },
+    {
+      "address": "0xBFC2E834",
+      "label": "xfn_BFC2E834",
+      "rationale": "direct target 0xBFC2E834 from emitted code"
+    },
+    {
+      "address": "0xBFC2E864",
+      "label": "xfn_80016064",
+      "rationale": "direct target 0x80016064 from emitted code"
+    },
+    {
+      "address": "0xBFC2E878",
+      "label": "xfn_BFC2E878",
+      "rationale": "direct target 0xBFC2E878 from emitted code"
+    },
+    {
+      "address": "0xBFC2E8B4",
+      "label": "xfn_BFC2E8B4",
+      "rationale": "direct target 0xBFC2E8B4 from emitted code"
+    },
+    {
+      "address": "0xBFC2E8B8",
+      "label": "xfn_BFC2E8B8",
+      "rationale": "direct target 0xBFC2E8B8 from emitted code"
+    },
+    {
+      "address": "0xBFC2E8EC",
+      "label": "xfn_BFC2E8EC",
+      "rationale": "direct target 0xBFC2E8EC from emitted code"
+    },
+    {
+      "address": "0xBFC2E8FC",
+      "label": "xfn_BFC2E8FC",
+      "rationale": "direct target 0xBFC2E8FC from emitted code"
+    },
+    {
+      "address": "0xBFC2E954",
+      "label": "xfn_80016154",
+      "rationale": "direct target 0x80016154 from emitted code"
+    },
+    {
+      "address": "0xBFC2E95C",
+      "label": "xfn_BFC2E95C",
+      "rationale": "direct target 0xBFC2E95C from emitted code"
+    },
+    {
+      "address": "0xBFC2E960",
+      "label": "xfn_BFC2E960",
+      "rationale": "direct target 0xBFC2E960 from emitted code"
+    },
+    {
+      "address": "0xBFC2E994",
+      "label": "xfn_BFC2E994",
+      "rationale": "direct target 0xBFC2E994 from emitted code"
+    },
+    {
+      "address": "0xBFC2E9A0",
+      "label": "xfn_BFC2E9A0",
+      "rationale": "direct target 0xBFC2E9A0 from emitted code"
+    },
+    {
+      "address": "0xBFC2E9D4",
+      "label": "xfn_800161D4",
+      "rationale": "direct target 0x800161D4 from emitted code"
+    },
+    {
+      "address": "0xBFC2E9E8",
+      "label": "xfn_800161E8",
+      "rationale": "direct target 0x800161E8 from emitted code"
+    },
+    {
+      "address": "0xBFC2E9EC",
+      "label": "xfn_800161EC",
+      "rationale": "direct target 0x800161EC from emitted code"
+    },
+    {
+      "address": "0xBFC2EA8C",
+      "label": "xfn_8001628C",
+      "rationale": "direct target 0x8001628C from emitted code"
+    },
+    {
+      "address": "0xBFC2EBAC",
+      "label": "xfn_800163AC",
+      "rationale": "direct target 0x800163AC from emitted code"
+    },
+    {
+      "address": "0xBFC2EC7C",
+      "label": "xfn_8001647C",
+      "rationale": "direct target 0x8001647C from emitted code"
+    },
+    {
+      "address": "0xBFC2EC84",
+      "label": "xfn_80016484",
+      "rationale": "direct target 0x80016484 from emitted code"
+    },
+    {
+      "address": "0xBFC2ED30",
+      "label": "ghidra_BFC2ED30",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2ED50",
+      "label": "xfn_80016550",
+      "rationale": "direct target 0x80016550 from emitted code"
+    },
+    {
+      "address": "0xBFC2ED78",
+      "label": "xfn_80016578",
+      "rationale": "direct target 0x80016578 from emitted code"
+    },
+    {
+      "address": "0xBFC2ED80",
+      "label": "ghidra_BFC2ED80",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2EDC0",
+      "label": "xfn_800165C0",
+      "rationale": "direct target 0x800165C0 from emitted code"
+    },
+    {
+      "address": "0xBFC2EE1C",
+      "label": "xfn_8001661C",
+      "rationale": "direct target 0x8001661C from emitted code"
+    },
+    {
+      "address": "0xBFC2EE7C",
+      "label": "ghidra_BFC2EE7C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2EFE0",
+      "label": "ghidra_BFC2EFE0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2EFF0",
+      "label": "ghidra_BFC2EFF0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F068",
+      "label": "xfn_80016868",
+      "rationale": "direct target 0x80016868 from emitted code"
+    },
+    {
+      "address": "0xBFC2F0B0",
+      "label": "ghidra_BFC2F0B0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F0F8",
+      "label": "ghidra_BFC2F0F8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F180",
+      "label": "ghidra_BFC2F180",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F1A0",
+      "label": "ghidra_BFC2F1A0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F1C0",
+      "label": "ghidra_BFC2F1C0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F1D0",
+      "label": "ghidra_BFC2F1D0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F2B0",
+      "label": "ghidra_BFC2F2B0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F324",
+      "label": "ghidra_BFC2F324",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F37C",
+      "label": "ghidra_BFC2F37C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F4CC",
+      "label": "ghidra_BFC2F4CC",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F504",
+      "label": "ghidra_BFC2F504",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F57C",
+      "label": "ghidra_BFC2F57C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F680",
+      "label": "ghidra_BFC2F680",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F690",
+      "label": "ghidra_BFC2F690",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F6A0",
+      "label": "ghidra_BFC2F6A0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F6B0",
+      "label": "ghidra_BFC2F6B0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F6D4",
+      "label": "ghidra_BFC2F6D4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F6E8",
+      "label": "ghidra_BFC2F6E8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F760",
+      "label": "ghidra_BFC2F760",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F7D0",
+      "label": "ghidra_BFC2F7D0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F874",
+      "label": "xfn_80017074",
+      "rationale": "direct target 0x80017074 from emitted code"
+    },
+    {
+      "address": "0xBFC2F934",
+      "label": "xfn_80017134",
+      "rationale": "direct target 0x80017134 from emitted code"
+    },
+    {
+      "address": "0xBFC2F948",
+      "label": "ghidra_BFC2F948",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F9D0",
+      "label": "xfn_800171D0",
+      "rationale": "direct target 0x800171D0 from emitted code"
+    },
+    {
+      "address": "0xBFC2F9E0",
+      "label": "ghidra_BFC2F9E0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2F9F0",
+      "label": "ghidra_BFC2F9F0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FA18",
+      "label": "xfn_80017218",
+      "rationale": "direct target 0x80017218 from emitted code"
+    },
+    {
+      "address": "0xBFC2FA50",
+      "label": "ghidra_BFC2FA50",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FA80",
+      "label": "ghidra_BFC2FA80",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FAB0",
+      "label": "ghidra_BFC2FAB0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FAE0",
+      "label": "ghidra_BFC2FAE0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FB44",
+      "label": "ghidra_BFC2FB44",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FBCC",
+      "label": "ghidra_BFC2FBCC",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FBE4",
+      "label": "ghidra_BFC2FBE4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FCBC",
+      "label": "ghidra_BFC2FCBC",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FE60",
+      "label": "xfn_80017660",
+      "rationale": "direct target 0x80017660 from emitted code"
+    },
+    {
+      "address": "0xBFC2FE8C",
+      "label": "ghidra_BFC2FE8C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC2FF3C",
+      "label": "xfn_8001773C",
+      "rationale": "direct target 0x8001773C from emitted code"
+    },
+    {
+      "address": "0xBFC2FFD4",
+      "label": "ghidra_BFC2FFD4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC300EC",
+      "label": "ghidra_BFC300EC",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30118",
+      "label": "ghidra_BFC30118",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30130",
+      "label": "ghidra_BFC30130",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30140",
+      "label": "ghidra_BFC30140",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30150",
+      "label": "ghidra_BFC30150",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30160",
+      "label": "ghidra_BFC30160",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC301E0",
+      "label": "ghidra_BFC301E0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC302D0",
+      "label": "ghidra_BFC302D0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30300",
+      "label": "ghidra_BFC30300",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30578",
+      "label": "ghidra_BFC30578",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC305B4",
+      "label": "ghidra_BFC305B4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC305D0",
+      "label": "ghidra_BFC305D0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC305F0",
+      "label": "ghidra_BFC305F0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC306D8",
+      "label": "ghidra_BFC306D8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30750",
+      "label": "ghidra_BFC30750",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30760",
+      "label": "ghidra_BFC30760",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30770",
+      "label": "ghidra_BFC30770",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30844",
+      "label": "xfn_80018044",
+      "rationale": "direct target 0x80018044 from emitted code"
+    },
+    {
+      "address": "0xBFC309F0",
+      "label": "ghidra_BFC309F0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC30B00",
+      "label": "xfn_80018300",
+      "rationale": "direct target 0x80018300 from emitted code"
+    },
+    {
+      "address": "0xBFC30B94",
+      "label": "xfn_80018394",
+      "rationale": "direct target 0x80018394 from emitted code"
+    },
+    {
+      "address": "0xBFC3107C",
+      "label": "ghidra_BFC3107C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC310B8",
+      "label": "xfn_800188B8",
+      "rationale": "direct target 0x800188B8 from emitted code"
+    },
+    {
+      "address": "0xBFC31248",
+      "label": "ghidra_BFC31248",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31288",
+      "label": "xfn_80018A88",
+      "rationale": "direct target 0x80018A88 from emitted code"
+    },
+    {
+      "address": "0xBFC312B0",
+      "label": "ghidra_BFC312B0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC312C0",
+      "label": "ghidra_BFC312C0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC312F0",
+      "label": "ghidra_BFC312F0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31370",
+      "label": "ghidra_BFC31370",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31380",
+      "label": "ghidra_BFC31380",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31B58",
+      "label": "ghidra_BFC31B58",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31BC8",
+      "label": "xfn_800193C8",
+      "rationale": "direct target 0x800193C8 from emitted code"
+    },
+    {
+      "address": "0xBFC31EE0",
+      "label": "ghidra_BFC31EE0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31EF0",
+      "label": "ghidra_BFC31EF0",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31F20",
+      "label": "ghidra_BFC31F20",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC31F90",
+      "label": "ghidra_BFC31F90",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC32138",
+      "label": "ghidra_BFC32138",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC32378",
+      "label": "xfn_80019B78",
+      "rationale": "direct target 0x80019B78 from emitted code"
+    },
+    {
+      "address": "0xBFC3246C",
+      "label": "xfn_80019C6C",
+      "rationale": "direct target 0x80019C6C from emitted code"
+    },
+    {
+      "address": "0xBFC32470",
+      "label": "xfn_80019C70",
+      "rationale": "direct target 0x80019C70 from emitted code"
+    },
+    {
+      "address": "0xBFC32564",
+      "label": "ghidra_BFC32564",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC32C50",
+      "label": "ghidra_BFC32C50",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC32F3C",
+      "label": "ghidra_BFC32F3C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC32F7C",
+      "label": "ghidra_BFC32F7C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33008",
+      "label": "xfn_8001A808",
+      "rationale": "direct target 0x8001A808 from emitted code"
+    },
+    {
+      "address": "0xBFC3301C",
+      "label": "ghidra_BFC3301C",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33030",
+      "label": "ghidra_BFC33030",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33080",
+      "label": "ghidra_BFC33080",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC330C8",
+      "label": "xfn_8001A8C8",
+      "rationale": "direct target 0x8001A8C8 from emitted code"
+    },
+    {
+      "address": "0xBFC330D8",
+      "label": "ghidra_BFC330D8",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC3310C",
+      "label": "xfn_8001A90C",
+      "rationale": "direct target 0x8001A90C from emitted code"
+    },
+    {
+      "address": "0xBFC33210",
+      "label": "ghidra_BFC33210",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33764",
+      "label": "ghidra_BFC33764",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33920",
+      "label": "xfn_8001B120",
+      "rationale": "direct target 0x8001B120 from emitted code"
+    },
+    {
+      "address": "0xBFC33A34",
+      "label": "ghidra_BFC33A34",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33A74",
+      "label": "ghidra_BFC33A74",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC33A94",
+      "label": "ghidra_BFC33A94",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC34700",
+      "label": "ghidra_BFC34700",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC34788",
+      "label": "ghidra_BFC34788",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC34B30",
+      "label": "ghidra_BFC34B30",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC34CD4",
+      "label": "ghidra_BFC34CD4",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC34D18",
+      "label": "ghidra_BFC34D18",
+      "rationale": "Ghidra function start (gx700_check block)"
+    },
+    {
+      "address": "0xBFC61CE4",
+      "label": "ghidra_BFC61CE4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC61D50",
+      "label": "xfn_80381550",
+      "rationale": "direct target 0x80381550 from emitted code"
+    },
+    {
+      "address": "0xBFC61D68",
+      "label": "ghidra_BFC61D68",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC61DD4",
+      "label": "xfn_803815D4",
+      "rationale": "direct target 0x803815D4 from emitted code"
+    },
+    {
+      "address": "0xBFC61ED4",
+      "label": "xfn_803816D4",
+      "rationale": "direct target 0x803816D4 from emitted code"
+    },
+    {
+      "address": "0xBFC61EF8",
+      "label": "xfn_803816F8",
+      "rationale": "direct target 0x803816F8 from emitted code"
+    },
+    {
+      "address": "0xBFC61FA4",
+      "label": "xfn_803817A4",
+      "rationale": "direct target 0x803817A4 from emitted code"
+    },
+    {
+      "address": "0xBFC61FA8",
+      "label": "xfn_803817A8",
+      "rationale": "direct target 0x803817A8 from emitted code"
+    },
+    {
+      "address": "0xBFC61FEC",
+      "label": "xfn_803817EC",
+      "rationale": "direct target 0x803817EC from emitted code"
+    },
+    {
+      "address": "0xBFC62008",
+      "label": "ghidra_BFC62008",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC62208",
+      "label": "ghidra_BFC62208",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC62238",
+      "label": "xfn_80381A38",
+      "rationale": "direct target 0x80381A38 from emitted code"
+    },
+    {
+      "address": "0xBFC62258",
+      "label": "ghidra_BFC62258",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC622C4",
+      "label": "xfn_80381AC4",
+      "rationale": "direct target 0x80381AC4 from emitted code"
+    },
+    {
+      "address": "0xBFC62474",
+      "label": "xfn_80381C74",
+      "rationale": "direct target 0x80381C74 from emitted code"
+    },
+    {
+      "address": "0xBFC62590",
+      "label": "xfn_80381D90",
+      "rationale": "direct target 0x80381D90 from emitted code"
+    },
+    {
+      "address": "0xBFC625CC",
+      "label": "xfn_80381DCC",
+      "rationale": "direct target 0x80381DCC from emitted code"
+    },
+    {
+      "address": "0xBFC62620",
+      "label": "ghidra_BFC62620",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC62EEC",
+      "label": "shell_flash_check",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC62FA8",
+      "label": "xfn_803827A8",
+      "rationale": "direct target 0x803827A8 from emitted code"
+    },
+    {
+      "address": "0xBFC63004",
+      "label": "xfn_80382804",
+      "rationale": "direct target 0x80382804 from emitted code"
+    },
+    {
+      "address": "0xBFC63060",
+      "label": "xfn_80382860",
+      "rationale": "direct target 0x80382860 from emitted code"
+    },
+    {
+      "address": "0xBFC63084",
+      "label": "xfn_80382884",
+      "rationale": "direct target 0x80382884 from emitted code"
+    },
+    {
+      "address": "0xBFC630B4",
+      "label": "xfn_803828B4",
+      "rationale": "direct target 0x803828B4 from emitted code"
+    },
+    {
+      "address": "0xBFC630CC",
+      "label": "shell_cd_check",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC63210",
+      "label": "xfn_80382A10",
+      "rationale": "direct target 0x80382A10 from emitted code"
+    },
+    {
+      "address": "0xBFC63228",
+      "label": "shell_flash_load",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC63314",
+      "label": "xfn_80382B14",
+      "rationale": "direct target 0x80382B14 from emitted code"
+    },
+    {
+      "address": "0xBFC63438",
+      "label": "xfn_80382C38",
+      "rationale": "direct target 0x80382C38 from emitted code"
+    },
+    {
+      "address": "0xBFC636C0",
+      "label": "ghidra_BFC636C0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC63AD4",
+      "label": "ghidra_BFC63AD4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC63B1C",
+      "label": "xfn_8038331C",
+      "rationale": "direct target 0x8038331C from emitted code"
+    },
+    {
+      "address": "0xBFC63BE8",
+      "label": "xfn_803833E8",
+      "rationale": "direct target 0x803833E8 from emitted code"
+    },
+    {
+      "address": "0xBFC63C08",
+      "label": "xfn_80383408",
+      "rationale": "direct target 0x80383408 from emitted code"
+    },
+    {
+      "address": "0xBFC63C5C",
+      "label": "xfn_8038345C",
+      "rationale": "direct target 0x8038345C from emitted code"
+    },
+    {
+      "address": "0xBFC64034",
+      "label": "ghidra_BFC64034",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC64074",
+      "label": "xfn_80383874",
+      "rationale": "direct target 0x80383874 from emitted code"
+    },
+    {
+      "address": "0xBFC6408C",
+      "label": "ghidra_BFC6408C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC640B4",
+      "label": "ghidra_BFC640B4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6413C",
+      "label": "ghidra_BFC6413C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC64178",
+      "label": "xfn_80383978",
+      "rationale": "direct target 0x80383978 from emitted code"
+    },
+    {
+      "address": "0xBFC64190",
+      "label": "ghidra_BFC64190",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC64224",
+      "label": "ghidra_BFC64224",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC643D8",
+      "label": "xfn_80383BD8",
+      "rationale": "direct target 0x80383BD8 from emitted code"
+    },
+    {
+      "address": "0xBFC643F0",
+      "label": "ghidra_BFC643F0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC645D4",
+      "label": "ghidra_BFC645D4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC64654",
+      "label": "ghidra_BFC64654",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC64FB8",
+      "label": "ghidra_BFC64FB8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC64FC0",
+      "label": "boot_shell_start",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6507C",
+      "label": "ghidra_BFC6507C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6508C",
+      "label": "ghidra_BFC6508C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6509C",
+      "label": "ghidra_BFC6509C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC650CC",
+      "label": "ghidra_BFC650CC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC650DC",
+      "label": "ghidra_BFC650DC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC650EC",
+      "label": "ghidra_BFC650EC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC650FC",
+      "label": "ghidra_BFC650FC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6510C",
+      "label": "ghidra_BFC6510C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6512C",
+      "label": "ghidra_BFC6512C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6513C",
+      "label": "ghidra_BFC6513C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65234",
+      "label": "xfn_80384A34",
+      "rationale": "direct target 0x80384A34 from emitted code"
+    },
+    {
+      "address": "0xBFC65300",
+      "label": "xfn_80384B00",
+      "rationale": "direct target 0x80384B00 from emitted code"
+    },
+    {
+      "address": "0xBFC65334",
+      "label": "xfn_80384B34",
+      "rationale": "direct target 0x80384B34 from emitted code"
+    },
+    {
+      "address": "0xBFC6535C",
+      "label": "ghidra_BFC6535C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65378",
+      "label": "ghidra_BFC65378",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65394",
+      "label": "ghidra_BFC65394",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC653B0",
+      "label": "ghidra_BFC653B0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC653CC",
+      "label": "ghidra_BFC653CC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC653E8",
+      "label": "ghidra_BFC653E8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6541C",
+      "label": "ghidra_BFC6541C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65438",
+      "label": "ghidra_BFC65438",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6546C",
+      "label": "ghidra_BFC6546C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC654AC",
+      "label": "ghidra_BFC654AC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC654D4",
+      "label": "xfn_80384CD4",
+      "rationale": "direct target 0x80384CD4 from emitted code"
+    },
+    {
+      "address": "0xBFC6554C",
+      "label": "ghidra_BFC6554C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65564",
+      "label": "xfn_80384D64",
+      "rationale": "direct target 0x80384D64 from emitted code"
+    },
+    {
+      "address": "0xBFC6558C",
+      "label": "ghidra_BFC6558C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65604",
+      "label": "xfn_80384E04",
+      "rationale": "direct target 0x80384E04 from emitted code"
+    },
+    {
+      "address": "0xBFC6583C",
+      "label": "ghidra_BFC6583C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC65870",
+      "label": "ghidra_BFC65870",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC658AC",
+      "label": "ghidra_BFC658AC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6590C",
+      "label": "xfn_8038510C",
+      "rationale": "direct target 0x8038510C from emitted code"
+    },
+    {
+      "address": "0xBFC6591C",
+      "label": "ghidra_BFC6591C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6595C",
+      "label": "ghidra_BFC6595C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC659AC",
+      "label": "xfn_803851AC",
+      "rationale": "direct target 0x803851AC from emitted code"
+    },
+    {
+      "address": "0xBFC659D8",
+      "label": "xfn_803851D8",
+      "rationale": "direct target 0x803851D8 from emitted code"
+    },
+    {
+      "address": "0xBFC65A18",
+      "label": "xfn_BFC65A18",
+      "rationale": "direct target 0xBFC65A18 from emitted code"
+    },
+    {
+      "address": "0xBFC65A20",
+      "label": "xfn_BFC65A20",
+      "rationale": "direct target 0xBFC65A20 from emitted code"
+    },
+    {
+      "address": "0xBFC65A3C",
+      "label": "xfn_BFC65A3C",
+      "rationale": "direct target 0xBFC65A3C from emitted code"
+    },
+    {
+      "address": "0xBFC65A44",
+      "label": "xfn_BFC65A44",
+      "rationale": "direct target 0xBFC65A44 from emitted code"
+    },
+    {
+      "address": "0xBFC65A4C",
+      "label": "xfn_BFC65A4C",
+      "rationale": "direct target 0xBFC65A4C from emitted code"
+    },
+    {
+      "address": "0xBFC65AC4",
+      "label": "xfn_803852C4",
+      "rationale": "direct target 0x803852C4 from emitted code"
+    },
+    {
+      "address": "0xBFC65AD4",
+      "label": "xfn_BFC65AD4",
+      "rationale": "direct target 0xBFC65AD4 from emitted code"
+    },
+    {
+      "address": "0xBFC65ADC",
+      "label": "xfn_BFC65ADC",
+      "rationale": "direct target 0xBFC65ADC from emitted code"
+    },
+    {
+      "address": "0xBFC65B38",
+      "label": "xfn_BFC65B38",
+      "rationale": "direct target 0xBFC65B38 from emitted code"
+    },
+    {
+      "address": "0xBFC65B40",
+      "label": "xfn_BFC65B40",
+      "rationale": "direct target 0xBFC65B40 from emitted code"
+    },
+    {
+      "address": "0xBFC65B48",
+      "label": "xfn_BFC65B48",
+      "rationale": "direct target 0xBFC65B48 from emitted code"
+    },
+    {
+      "address": "0xBFC65B50",
+      "label": "xfn_BFC65B50",
+      "rationale": "direct target 0xBFC65B50 from emitted code"
+    },
+    {
+      "address": "0xBFC65B6C",
+      "label": "xfn_BFC65B6C",
+      "rationale": "direct target 0xBFC65B6C from emitted code"
+    },
+    {
+      "address": "0xBFC65B70",
+      "label": "xfn_BFC65B70",
+      "rationale": "direct target 0xBFC65B70 from emitted code"
+    },
+    {
+      "address": "0xBFC65BA0",
+      "label": "xfn_803853A0",
+      "rationale": "direct target 0x803853A0 from emitted code"
+    },
+    {
+      "address": "0xBFC65BB4",
+      "label": "xfn_BFC65BB4",
+      "rationale": "direct target 0xBFC65BB4 from emitted code"
+    },
+    {
+      "address": "0xBFC65BF0",
+      "label": "xfn_BFC65BF0",
+      "rationale": "direct target 0xBFC65BF0 from emitted code"
+    },
+    {
+      "address": "0xBFC65BF4",
+      "label": "xfn_BFC65BF4",
+      "rationale": "direct target 0xBFC65BF4 from emitted code"
+    },
+    {
+      "address": "0xBFC65C28",
+      "label": "xfn_BFC65C28",
+      "rationale": "direct target 0xBFC65C28 from emitted code"
+    },
+    {
+      "address": "0xBFC65C38",
+      "label": "xfn_BFC65C38",
+      "rationale": "direct target 0xBFC65C38 from emitted code"
+    },
+    {
+      "address": "0xBFC65C90",
+      "label": "xfn_80385490",
+      "rationale": "direct target 0x80385490 from emitted code"
+    },
+    {
+      "address": "0xBFC65C98",
+      "label": "xfn_BFC65C98",
+      "rationale": "direct target 0xBFC65C98 from emitted code"
+    },
+    {
+      "address": "0xBFC65C9C",
+      "label": "xfn_BFC65C9C",
+      "rationale": "direct target 0xBFC65C9C from emitted code"
+    },
+    {
+      "address": "0xBFC65CD0",
+      "label": "xfn_BFC65CD0",
+      "rationale": "direct target 0xBFC65CD0 from emitted code"
+    },
+    {
+      "address": "0xBFC65CDC",
+      "label": "xfn_BFC65CDC",
+      "rationale": "direct target 0xBFC65CDC from emitted code"
+    },
+    {
+      "address": "0xBFC65D10",
+      "label": "xfn_80385510",
+      "rationale": "direct target 0x80385510 from emitted code"
+    },
+    {
+      "address": "0xBFC65D24",
+      "label": "xfn_80385524",
+      "rationale": "direct target 0x80385524 from emitted code"
+    },
+    {
+      "address": "0xBFC65D28",
+      "label": "xfn_80385528",
+      "rationale": "direct target 0x80385528 from emitted code"
+    },
+    {
+      "address": "0xBFC65DC8",
+      "label": "xfn_803855C8",
+      "rationale": "direct target 0x803855C8 from emitted code"
+    },
+    {
+      "address": "0xBFC65EE8",
+      "label": "xfn_803856E8",
+      "rationale": "direct target 0x803856E8 from emitted code"
+    },
+    {
+      "address": "0xBFC65FB8",
+      "label": "xfn_803857B8",
+      "rationale": "direct target 0x803857B8 from emitted code"
+    },
+    {
+      "address": "0xBFC65FC0",
+      "label": "xfn_803857C0",
+      "rationale": "direct target 0x803857C0 from emitted code"
+    },
+    {
+      "address": "0xBFC65FFC",
+      "label": "ghidra_BFC65FFC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6601C",
+      "label": "xfn_8038581C",
+      "rationale": "direct target 0x8038581C from emitted code"
+    },
+    {
+      "address": "0xBFC66044",
+      "label": "xfn_80385844",
+      "rationale": "direct target 0x80385844 from emitted code"
+    },
+    {
+      "address": "0xBFC6604C",
+      "label": "ghidra_BFC6604C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6608C",
+      "label": "xfn_8038588C",
+      "rationale": "direct target 0x8038588C from emitted code"
+    },
+    {
+      "address": "0xBFC660E8",
+      "label": "xfn_803858E8",
+      "rationale": "direct target 0x803858E8 from emitted code"
+    },
+    {
+      "address": "0xBFC66148",
+      "label": "ghidra_BFC66148",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC662AC",
+      "label": "ghidra_BFC662AC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC662BC",
+      "label": "ghidra_BFC662BC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6634C",
+      "label": "xfn_80385B4C",
+      "rationale": "direct target 0x80385B4C from emitted code"
+    },
+    {
+      "address": "0xBFC66478",
+      "label": "xfn_80385C78",
+      "rationale": "direct target 0x80385C78 from emitted code"
+    },
+    {
+      "address": "0xBFC66514",
+      "label": "xfn_80385D14",
+      "rationale": "direct target 0x80385D14 from emitted code"
+    },
+    {
+      "address": "0xBFC66558",
+      "label": "xfn_80385D58",
+      "rationale": "direct target 0x80385D58 from emitted code"
+    },
+    {
+      "address": "0xBFC66588",
+      "label": "xfn_BFC66588",
+      "rationale": "direct target 0xBFC66588 from emitted code"
+    },
+    {
+      "address": "0xBFC66594",
+      "label": "xfn_BFC66594",
+      "rationale": "direct target 0xBFC66594 from emitted code"
+    },
+    {
+      "address": "0xBFC665A0",
+      "label": "xfn_80385DA0",
+      "rationale": "direct target 0x80385DA0 from emitted code"
+    },
+    {
+      "address": "0xBFC665C0",
+      "label": "xfn_BFC665C0",
+      "rationale": "direct target 0xBFC665C0 from emitted code"
+    },
+    {
+      "address": "0xBFC66618",
+      "label": "xfn_BFC66618",
+      "rationale": "direct target 0xBFC66618 from emitted code"
+    },
+    {
+      "address": "0xBFC6664C",
+      "label": "xfn_80385E4C",
+      "rationale": "direct target 0x80385E4C from emitted code"
+    },
+    {
+      "address": "0xBFC66738",
+      "label": "xfn_BFC66738",
+      "rationale": "direct target 0xBFC66738 from emitted code"
+    },
+    {
+      "address": "0xBFC66838",
+      "label": "xfn_BFC66838",
+      "rationale": "direct target 0xBFC66838 from emitted code"
+    },
+    {
+      "address": "0xBFC6684C",
+      "label": "xfn_BFC6684C",
+      "rationale": "direct target 0xBFC6684C from emitted code"
+    },
+    {
+      "address": "0xBFC66858",
+      "label": "xfn_BFC66858",
+      "rationale": "direct target 0xBFC66858 from emitted code"
+    },
+    {
+      "address": "0xBFC66860",
+      "label": "xfn_80386060",
+      "rationale": "direct target 0x80386060 from emitted code"
+    },
+    {
+      "address": "0xBFC66964",
+      "label": "xfn_BFC66964",
+      "rationale": "direct target 0xBFC66964 from emitted code"
+    },
+    {
+      "address": "0xBFC66984",
+      "label": "xfn_BFC66984",
+      "rationale": "direct target 0xBFC66984 from emitted code"
+    },
+    {
+      "address": "0xBFC66A10",
+      "label": "xfn_BFC66A10",
+      "rationale": "direct target 0xBFC66A10 from emitted code"
+    },
+    {
+      "address": "0xBFC66AE8",
+      "label": "xfn_803862E8",
+      "rationale": "direct target 0x803862E8 from emitted code"
+    },
+    {
+      "address": "0xBFC66B3C",
+      "label": "ghidra_BFC66B3C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC66BA0",
+      "label": "xfn_803863A0",
+      "rationale": "direct target 0x803863A0 from emitted code"
+    },
+    {
+      "address": "0xBFC66BAC",
+      "label": "ghidra_BFC66BAC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC66CBC",
+      "label": "xfn_803864BC",
+      "rationale": "direct target 0x803864BC from emitted code"
+    },
+    {
+      "address": "0xBFC66D0C",
+      "label": "xfn_8038650C",
+      "rationale": "direct target 0x8038650C from emitted code"
+    },
+    {
+      "address": "0xBFC66E90",
+      "label": "ghidra_BFC66E90",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC66F28",
+      "label": "ghidra_BFC66F28",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC66F90",
+      "label": "ghidra_BFC66F90",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC67060",
+      "label": "xfn_80386860",
+      "rationale": "direct target 0x80386860 from emitted code"
+    },
+    {
+      "address": "0xBFC6709C",
+      "label": "xfn_8038689C",
+      "rationale": "direct target 0x8038689C from emitted code"
+    },
+    {
+      "address": "0xBFC671D4",
+      "label": "ghidra_BFC671D4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6734C",
+      "label": "ghidra_BFC6734C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6751C",
+      "label": "ghidra_BFC6751C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6758C",
+      "label": "ghidra_BFC6758C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC67724",
+      "label": "ghidra_BFC67724",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC67758",
+      "label": "ghidra_BFC67758",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC678F8",
+      "label": "xfn_803870F8",
+      "rationale": "direct target 0x803870F8 from emitted code"
+    },
+    {
+      "address": "0xBFC67B10",
+      "label": "xfn_80387310",
+      "rationale": "direct target 0x80387310 from emitted code"
+    },
+    {
+      "address": "0xBFC67BA0",
+      "label": "xfn_803873A0",
+      "rationale": "direct target 0x803873A0 from emitted code"
+    },
+    {
+      "address": "0xBFC67BB8",
+      "label": "xfn_803873B8",
+      "rationale": "direct target 0x803873B8 from emitted code"
+    },
+    {
+      "address": "0xBFC67F6C",
+      "label": "ghidra_BFC67F6C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC680C8",
+      "label": "xfn_803878C8",
+      "rationale": "direct target 0x803878C8 from emitted code"
+    },
+    {
+      "address": "0xBFC681C0",
+      "label": "xfn_803879C0",
+      "rationale": "direct target 0x803879C0 from emitted code"
+    },
+    {
+      "address": "0xBFC681DC",
+      "label": "ghidra_BFC681DC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC681FC",
+      "label": "ghidra_BFC681FC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC68278",
+      "label": "xfn_80387A78",
+      "rationale": "direct target 0x80387A78 from emitted code"
+    },
+    {
+      "address": "0xBFC68294",
+      "label": "ghidra_BFC68294",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC68310",
+      "label": "xfn_80387B10",
+      "rationale": "direct target 0x80387B10 from emitted code"
+    },
+    {
+      "address": "0xBFC6832C",
+      "label": "ghidra_BFC6832C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC68348",
+      "label": "ghidra_BFC68348",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC683C0",
+      "label": "xfn_80387BC0",
+      "rationale": "direct target 0x80387BC0 from emitted code"
+    },
+    {
+      "address": "0xBFC68BAC",
+      "label": "ghidra_BFC68BAC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC68CC0",
+      "label": "ghidra_BFC68CC0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC68D0C",
+      "label": "xfn_8038850C",
+      "rationale": "direct target 0x8038850C from emitted code"
+    },
+    {
+      "address": "0xBFC68E0C",
+      "label": "xfn_8038860C",
+      "rationale": "direct target 0x8038860C from emitted code"
+    },
+    {
+      "address": "0xBFC68EC4",
+      "label": "xfn_803886C4",
+      "rationale": "direct target 0x803886C4 from emitted code"
+    },
+    {
+      "address": "0xBFC68F54",
+      "label": "xfn_80388754",
+      "rationale": "direct target 0x80388754 from emitted code"
+    },
+    {
+      "address": "0xBFC68F70",
+      "label": "ghidra_BFC68F70",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC691D0",
+      "label": "ghidra_BFC691D0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC692EC",
+      "label": "xfn_80388AEC",
+      "rationale": "direct target 0x80388AEC from emitted code"
+    },
+    {
+      "address": "0xBFC69320",
+      "label": "ghidra_BFC69320",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69340",
+      "label": "xfn_80388B40",
+      "rationale": "direct target 0x80388B40 from emitted code"
+    },
+    {
+      "address": "0xBFC69358",
+      "label": "xfn_80388B58",
+      "rationale": "direct target 0x80388B58 from emitted code"
+    },
+    {
+      "address": "0xBFC6944C",
+      "label": "xfn_80388C4C",
+      "rationale": "direct target 0x80388C4C from emitted code"
+    },
+    {
+      "address": "0xBFC6945C",
+      "label": "ghidra_BFC6945C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69490",
+      "label": "ghidra_BFC69490",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC695C4",
+      "label": "xfn_80388DC4",
+      "rationale": "direct target 0x80388DC4 from emitted code"
+    },
+    {
+      "address": "0xBFC695D4",
+      "label": "ghidra_BFC695D4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6966C",
+      "label": "xfn_80388E6C",
+      "rationale": "direct target 0x80388E6C from emitted code"
+    },
+    {
+      "address": "0xBFC69AB4",
+      "label": "ghidra_BFC69AB4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69ADC",
+      "label": "ghidra_BFC69ADC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69AEC",
+      "label": "ghidra_BFC69AEC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69B64",
+      "label": "xfn_80389364",
+      "rationale": "direct target 0x80389364 from emitted code"
+    },
+    {
+      "address": "0xBFC69BAC",
+      "label": "ghidra_BFC69BAC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69BEC",
+      "label": "ghidra_BFC69BEC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69C2C",
+      "label": "ghidra_BFC69C2C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69C8C",
+      "label": "ghidra_BFC69C8C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69D18",
+      "label": "xfn_80389518",
+      "rationale": "direct target 0x80389518 from emitted code"
+    },
+    {
+      "address": "0xBFC69D34",
+      "label": "ghidra_BFC69D34",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69DBC",
+      "label": "ghidra_BFC69DBC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69DDC",
+      "label": "ghidra_BFC69DDC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69DFC",
+      "label": "ghidra_BFC69DFC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69E0C",
+      "label": "ghidra_BFC69E0C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69EEC",
+      "label": "ghidra_BFC69EEC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69F60",
+      "label": "ghidra_BFC69F60",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC69FB8",
+      "label": "ghidra_BFC69FB8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A108",
+      "label": "ghidra_BFC6A108",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A140",
+      "label": "ghidra_BFC6A140",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A1B8",
+      "label": "ghidra_BFC6A1B8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A2BC",
+      "label": "ghidra_BFC6A2BC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A2CC",
+      "label": "ghidra_BFC6A2CC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A2DC",
+      "label": "ghidra_BFC6A2DC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A2EC",
+      "label": "ghidra_BFC6A2EC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A310",
+      "label": "ghidra_BFC6A310",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A324",
+      "label": "ghidra_BFC6A324",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A39C",
+      "label": "ghidra_BFC6A39C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A40C",
+      "label": "ghidra_BFC6A40C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A4B0",
+      "label": "xfn_80389CB0",
+      "rationale": "direct target 0x80389CB0 from emitted code"
+    },
+    {
+      "address": "0xBFC6A570",
+      "label": "xfn_80389D70",
+      "rationale": "direct target 0x80389D70 from emitted code"
+    },
+    {
+      "address": "0xBFC6A584",
+      "label": "ghidra_BFC6A584",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A60C",
+      "label": "xfn_80389E0C",
+      "rationale": "direct target 0x80389E0C from emitted code"
+    },
+    {
+      "address": "0xBFC6A61C",
+      "label": "ghidra_BFC6A61C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A62C",
+      "label": "ghidra_BFC6A62C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A654",
+      "label": "xfn_80389E54",
+      "rationale": "direct target 0x80389E54 from emitted code"
+    },
+    {
+      "address": "0xBFC6A68C",
+      "label": "ghidra_BFC6A68C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A6BC",
+      "label": "ghidra_BFC6A6BC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A6EC",
+      "label": "ghidra_BFC6A6EC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A71C",
+      "label": "ghidra_BFC6A71C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A780",
+      "label": "ghidra_BFC6A780",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A808",
+      "label": "ghidra_BFC6A808",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A820",
+      "label": "ghidra_BFC6A820",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6A8F8",
+      "label": "ghidra_BFC6A8F8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AA9C",
+      "label": "xfn_8038A29C",
+      "rationale": "direct target 0x8038A29C from emitted code"
+    },
+    {
+      "address": "0xBFC6AAC8",
+      "label": "ghidra_BFC6AAC8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AB78",
+      "label": "xfn_8038A378",
+      "rationale": "direct target 0x8038A378 from emitted code"
+    },
+    {
+      "address": "0xBFC6AC10",
+      "label": "ghidra_BFC6AC10",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AD28",
+      "label": "ghidra_BFC6AD28",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AD54",
+      "label": "ghidra_BFC6AD54",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AD6C",
+      "label": "ghidra_BFC6AD6C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AD7C",
+      "label": "ghidra_BFC6AD7C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AD8C",
+      "label": "ghidra_BFC6AD8C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AD9C",
+      "label": "ghidra_BFC6AD9C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AE1C",
+      "label": "ghidra_BFC6AE1C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AF0C",
+      "label": "ghidra_BFC6AF0C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6AF3C",
+      "label": "ghidra_BFC6AF3C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B1B4",
+      "label": "ghidra_BFC6B1B4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B1F0",
+      "label": "ghidra_BFC6B1F0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B20C",
+      "label": "ghidra_BFC6B20C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B22C",
+      "label": "ghidra_BFC6B22C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B314",
+      "label": "ghidra_BFC6B314",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B38C",
+      "label": "ghidra_BFC6B38C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B39C",
+      "label": "ghidra_BFC6B39C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B3AC",
+      "label": "ghidra_BFC6B3AC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B480",
+      "label": "xfn_8038AC80",
+      "rationale": "direct target 0x8038AC80 from emitted code"
+    },
+    {
+      "address": "0xBFC6B62C",
+      "label": "ghidra_BFC6B62C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6B73C",
+      "label": "xfn_8038AF3C",
+      "rationale": "direct target 0x8038AF3C from emitted code"
+    },
+    {
+      "address": "0xBFC6B7D0",
+      "label": "xfn_8038AFD0",
+      "rationale": "direct target 0x8038AFD0 from emitted code"
+    },
+    {
+      "address": "0xBFC6BCB8",
+      "label": "ghidra_BFC6BCB8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BCF4",
+      "label": "xfn_8038B4F4",
+      "rationale": "direct target 0x8038B4F4 from emitted code"
+    },
+    {
+      "address": "0xBFC6BE84",
+      "label": "ghidra_BFC6BE84",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BEC4",
+      "label": "xfn_8038B6C4",
+      "rationale": "direct target 0x8038B6C4 from emitted code"
+    },
+    {
+      "address": "0xBFC6BEEC",
+      "label": "ghidra_BFC6BEEC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BEFC",
+      "label": "ghidra_BFC6BEFC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BF2C",
+      "label": "ghidra_BFC6BF2C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BFAC",
+      "label": "ghidra_BFC6BFAC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BFBC",
+      "label": "ghidra_BFC6BFBC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6BFCC",
+      "label": "ghidra_BFC6BFCC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6C094",
+      "label": "xfn_8038B894",
+      "rationale": "direct target 0x8038B894 from emitted code"
+    },
+    {
+      "address": "0xBFC6C164",
+      "label": "ghidra_BFC6C164",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6C3A4",
+      "label": "xfn_8038BBA4",
+      "rationale": "direct target 0x8038BBA4 from emitted code"
+    },
+    {
+      "address": "0xBFC6C498",
+      "label": "xfn_8038BC98",
+      "rationale": "direct target 0x8038BC98 from emitted code"
+    },
+    {
+      "address": "0xBFC6C49C",
+      "label": "xfn_8038BC9C",
+      "rationale": "direct target 0x8038BC9C from emitted code"
+    },
+    {
+      "address": "0xBFC6C590",
+      "label": "ghidra_BFC6C590",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6C654",
+      "label": "ghidra_BFC6C654",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6C6E4",
+      "label": "xfn_8038BEE4",
+      "rationale": "direct target 0x8038BEE4 from emitted code"
+    },
+    {
+      "address": "0xBFC6C710",
+      "label": "xfn_8038BF10",
+      "rationale": "direct target 0x8038BF10 from emitted code"
+    },
+    {
+      "address": "0xBFC6C774",
+      "label": "xfn_8038BF74",
+      "rationale": "direct target 0x8038BF74 from emitted code"
+    },
+    {
+      "address": "0xBFC6C77C",
+      "label": "xfn_8038BF7C",
+      "rationale": "direct target 0x8038BF7C from emitted code"
+    },
+    {
+      "address": "0xBFC6C86C",
+      "label": "xfn_8038C06C",
+      "rationale": "direct target 0x8038C06C from emitted code"
+    },
+    {
+      "address": "0xBFC6C9D4",
+      "label": "xfn_8038C1D4",
+      "rationale": "direct target 0x8038C1D4 from emitted code"
+    },
+    {
+      "address": "0xBFC6C9EC",
+      "label": "xfn_8038C1EC",
+      "rationale": "direct target 0x8038C1EC from emitted code"
+    },
+    {
+      "address": "0xBFC6CA2C",
+      "label": "xfn_8038C22C",
+      "rationale": "direct target 0x8038C22C from emitted code"
+    },
+    {
+      "address": "0xBFC6CAB0",
+      "label": "xfn_8038C2B0",
+      "rationale": "direct target 0x8038C2B0 from emitted code"
+    },
+    {
+      "address": "0xBFC6CBB8",
+      "label": "ghidra_BFC6CBB8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CC18",
+      "label": "ghidra_BFC6CC18",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CC7C",
+      "label": "ghidra_BFC6CC7C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CCE8",
+      "label": "ghidra_BFC6CCE8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CD3C",
+      "label": "xfn_8038C53C",
+      "rationale": "direct target 0x8038C53C from emitted code"
+    },
+    {
+      "address": "0xBFC6CDA0",
+      "label": "xfn_8038C5A0",
+      "rationale": "direct target 0x8038C5A0 from emitted code"
+    },
+    {
+      "address": "0xBFC6CDA8",
+      "label": "ghidra_BFC6CDA8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CEA4",
+      "label": "xfn_8038C6A4",
+      "rationale": "direct target 0x8038C6A4 from emitted code"
+    },
+    {
+      "address": "0xBFC6CEF8",
+      "label": "ghidra_BFC6CEF8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CF0C",
+      "label": "ghidra_BFC6CF0C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CF5C",
+      "label": "ghidra_BFC6CF5C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CFA4",
+      "label": "xfn_8038C7A4",
+      "rationale": "direct target 0x8038C7A4 from emitted code"
+    },
+    {
+      "address": "0xBFC6CFB4",
+      "label": "ghidra_BFC6CFB4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6CFE8",
+      "label": "xfn_8038C7E8",
+      "rationale": "direct target 0x8038C7E8 from emitted code"
+    },
+    {
+      "address": "0xBFC6D0EC",
+      "label": "ghidra_BFC6D0EC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6D640",
+      "label": "ghidra_BFC6D640",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6D7FC",
+      "label": "xfn_8038CFFC",
+      "rationale": "direct target 0x8038CFFC from emitted code"
+    },
+    {
+      "address": "0xBFC6D910",
+      "label": "ghidra_BFC6D910",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6D930",
+      "label": "ghidra_BFC6D930",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6D960",
+      "label": "ghidra_BFC6D960",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6DCAC",
+      "label": "ghidra_BFC6DCAC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6DD34",
+      "label": "ghidra_BFC6DD34",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6E0DC",
+      "label": "ghidra_BFC6E0DC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6E120",
+      "label": "shell_flash_select_page",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6E1AC",
+      "label": "shell_flash_select_device",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6E280",
+      "label": "ghidra_BFC6E280",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6E2C4",
+      "label": "ghidra_BFC6E2C4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6FBA8",
+      "label": "ghidra_BFC6FBA8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC6FCBC",
+      "label": "xfn_8038F4BC",
+      "rationale": "direct target 0x8038F4BC from emitted code"
+    },
+    {
+      "address": "0xBFC6FEE4",
+      "label": "xfn_8038F6E4",
+      "rationale": "direct target 0x8038F6E4 from emitted code"
+    },
+    {
+      "address": "0xBFC727A0",
+      "label": "ghidra_BFC727A0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC728C4",
+      "label": "xfn_803920C4",
+      "rationale": "direct target 0x803920C4 from emitted code"
+    },
+    {
+      "address": "0xBFC72954",
+      "label": "xfn_80392154",
+      "rationale": "direct target 0x80392154 from emitted code"
+    },
+    {
+      "address": "0xBFC72990",
+      "label": "ghidra_BFC72990",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72A00",
+      "label": "xfn_80392200",
+      "rationale": "direct target 0x80392200 from emitted code"
+    },
+    {
+      "address": "0xBFC72A4C",
+      "label": "ghidra_BFC72A4C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72ABC",
+      "label": "ghidra_BFC72ABC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72ADC",
+      "label": "ghidra_BFC72ADC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72B24",
+      "label": "ghidra_BFC72B24",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72BCC",
+      "label": "xfn_803923CC",
+      "rationale": "direct target 0x803923CC from emitted code"
+    },
+    {
+      "address": "0xBFC72BDC",
+      "label": "ghidra_BFC72BDC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72C84",
+      "label": "xfn_80392484",
+      "rationale": "direct target 0x80392484 from emitted code"
+    },
+    {
+      "address": "0xBFC72C94",
+      "label": "ghidra_BFC72C94",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72CB8",
+      "label": "xfn_803924B8",
+      "rationale": "direct target 0x803924B8 from emitted code"
+    },
+    {
+      "address": "0xBFC72CF8",
+      "label": "ghidra_BFC72CF8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72D38",
+      "label": "xfn_80392538",
+      "rationale": "direct target 0x80392538 from emitted code"
+    },
+    {
+      "address": "0xBFC72D9C",
+      "label": "ghidra_BFC72D9C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72DDC",
+      "label": "xfn_803925DC",
+      "rationale": "direct target 0x803925DC from emitted code"
+    },
+    {
+      "address": "0xBFC72E40",
+      "label": "ghidra_BFC72E40",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72E64",
+      "label": "ghidra_BFC72E64",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72E88",
+      "label": "xfn_80392688",
+      "rationale": "direct target 0x80392688 from emitted code"
+    },
+    {
+      "address": "0xBFC72E90",
+      "label": "ghidra_BFC72E90",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72EB4",
+      "label": "xfn_803926B4",
+      "rationale": "direct target 0x803926B4 from emitted code"
+    },
+    {
+      "address": "0xBFC72EC8",
+      "label": "ghidra_BFC72EC8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC72EE8",
+      "label": "ghidra_BFC72EE8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73078",
+      "label": "xfn_80392878",
+      "rationale": "direct target 0x80392878 from emitted code"
+    },
+    {
+      "address": "0xBFC730A0",
+      "label": "xfn_803928A0",
+      "rationale": "direct target 0x803928A0 from emitted code"
+    },
+    {
+      "address": "0xBFC730FC",
+      "label": "xfn_803928FC",
+      "rationale": "direct target 0x803928FC from emitted code"
+    },
+    {
+      "address": "0xBFC73114",
+      "label": "ghidra_BFC73114",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73254",
+      "label": "xfn_80392A54",
+      "rationale": "direct target 0x80392A54 from emitted code"
+    },
+    {
+      "address": "0xBFC7326C",
+      "label": "ghidra_BFC7326C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC732BC",
+      "label": "ghidra_BFC732BC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC732F4",
+      "label": "ghidra_BFC732F4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73330",
+      "label": "xfn_80392B30",
+      "rationale": "direct target 0x80392B30 from emitted code"
+    },
+    {
+      "address": "0xBFC73340",
+      "label": "ghidra_BFC73340",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73404",
+      "label": "xfn_80392C04",
+      "rationale": "direct target 0x80392C04 from emitted code"
+    },
+    {
+      "address": "0xBFC73418",
+      "label": "ghidra_BFC73418",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC7347C",
+      "label": "ghidra_BFC7347C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC734D8",
+      "label": "ghidra_BFC734D8",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73590",
+      "label": "ghidra_BFC73590",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73634",
+      "label": "xfn_80392E34",
+      "rationale": "direct target 0x80392E34 from emitted code"
+    },
+    {
+      "address": "0xBFC736C0",
+      "label": "ghidra_BFC736C0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73718",
+      "label": "xfn_80392F18",
+      "rationale": "direct target 0x80392F18 from emitted code"
+    },
+    {
+      "address": "0xBFC738A8",
+      "label": "xfn_803930A8",
+      "rationale": "direct target 0x803930A8 from emitted code"
+    },
+    {
+      "address": "0xBFC738C4",
+      "label": "ghidra_BFC738C4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC7390C",
+      "label": "xfn_8039310C",
+      "rationale": "direct target 0x8039310C from emitted code"
+    },
+    {
+      "address": "0xBFC7391C",
+      "label": "ghidra_BFC7391C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73928",
+      "label": "ghidra_BFC73928",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73CDC",
+      "label": "ghidra_BFC73CDC",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC73F8C",
+      "label": "xfn_8039378C",
+      "rationale": "direct target 0x8039378C from emitted code"
+    },
+    {
+      "address": "0xBFC73F9C",
+      "label": "xfn_8039379C",
+      "rationale": "direct target 0x8039379C from emitted code"
+    },
+    {
+      "address": "0xBFC73FB0",
+      "label": "ghidra_BFC73FB0",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC74268",
+      "label": "xfn_80393A68",
+      "rationale": "direct target 0x80393A68 from emitted code"
+    },
+    {
+      "address": "0xBFC742A4",
+      "label": "xfn_80393AA4",
+      "rationale": "direct target 0x80393AA4 from emitted code"
+    },
+    {
+      "address": "0xBFC742D4",
+      "label": "ghidra_BFC742D4",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC75044",
+      "label": "ghidra_BFC75044",
+      "rationale": "Ghidra function start (boot_shell block)"
+    },
+    {
+      "address": "0xBFC7510C",
+      "label": "ghidra_BFC7510C",
+      "rationale": "Ghidra function start (boot_shell block)"
+    }
+  ]
+}

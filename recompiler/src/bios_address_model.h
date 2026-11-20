@@ -170,12 +170,14 @@ public:
     std::string emit_key_home_pc_c(uint32_t rom_va) const;
 
     const std::vector<BiosAddrCopy>& copies() const { return copies_; }
+    uint32_t ram_mask() const { return ram_mask_; }
 
 private:
     std::vector<BiosAddrCopy> copies_;
     std::vector<BiosInstallSlot> install_slots_;
     uint32_t                  rom_base_phys_ = 0x1FC00000u;
     uint32_t                  rom_size_ = 0x80000u;
+    uint32_t                  ram_mask_ = 0x001FFFFFu;  // main_ram_bytes - 1
     int                       kbless_idx_ = -1;     // index into copies_
     int                       rom_keyed_idx_ = -1;  // first dispatch_key="rom" copy
 };

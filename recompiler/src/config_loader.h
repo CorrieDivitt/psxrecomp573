@@ -1010,6 +1010,13 @@ struct BiosConfig {
     uint32_t shell_entry_phys  = 0;  // BIOS boot-skip trigger (bios_hle.c)
     uint32_t deliver_event_ret = 0;  // $ra after the kernel DeliverEvent jalr
 
+    // [program] main_ram_bytes (optional, default 2 MiB): main RAM of the board
+    // this image boots. Board fact, not a runtime preference: the compile-time
+    // address fold must match the live g_psx_ram_mask the runtime decodes with.
+    // The Konami System 573 BIOS loads its boot shell at 0x80380000, which a
+    // 2 MiB fold would alias onto 0x00180000. Accepts 2, 4 or 8 MiB.
+    uint32_t main_ram_bytes = 0x00200000u;
+
     // NOTE: a BIOS profile has NO [runtime] block. It describes an IMAGE —
     // facts about bytes — never a preference; runtime options belong to
     // game.toml/settings.toml, where the player and the title can both be

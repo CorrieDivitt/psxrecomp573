@@ -10,7 +10,7 @@ This fork adds what a System 573 game needs from the PS1 runtime. The 573 hardwa
 
 Test: `psx_exp1_test` (runtime/tests/test_psx_exp1.c) covers open bus with no device, every width and segment through the real accessors, region edges, and the 4 MiB fold.
 
-Still to do for 573 titles: the 700B01 BIOS profile below, and the SPU IRQ and SPU DMA completion paths the game's sound engine depends on (see the title repo's `docs/runtime-plan.md`).
+Still to do for 573 titles: running the 700B01 BIOS profile below on the runtime, and the SPU IRQ and SPU DMA completion paths the game's sound engine depends on (see the title repo's `docs/runtime-plan.md`).
 
 ## Boot path: Konami 700B01 BIOS (manifest, 2026-11-19)
 
@@ -48,3 +48,26 @@ Unknowns, not to be guessed:
 - the install slots the game's libapi patches
 
 Next: import `700b01.22g` into Ghidra at `0xBFC00000`, with the two EXEs as RAM overlays. Generate seeds, write `bios/700B01.toml` with the copy windows above, then recompile and check the boot against MAME.
+
+### Profile status (2026-11-19)
+
+`bios/700B01.toml` and `recompiler/seeds/700b01_ghidra_seeds.json` exist. To regenerate (supply your own `bios/700b01.22g`, SHA-256 `cc8a6628…c3256`):
+
+```
+tools/regen_bios.sh --config bios/700B01.toml
+```
+
+Result: `EMIT OK emitted=1014 interpreted=0 skipped=1 instructions=29406`, with no cross-function warnings. The generated C passes `gcc -fsyntax-only`.
+
+- **Skip:** the one skipped function is `0xBFC02614` (COP1 `mtc1`, the libc float parser). SCPH-1001 skips the same function.
+- **Seeds:** come from Ghidra 12.1.4, via `FM_Bios700B01.java` in the Fighting-Mania-VR repo. The recompiler's own direct and jump-table targets were added on top (`xfn_*` labels).
+- **Copy windows:** the kernel ramtext window stops at ROM `0x18000`, because the POST code that follows is only ever run from ROM.
+- **Recompiler change:** a new `[program] main_ram_bytes` (2, 4 or 8 MiB, default 2) makes the compile-time address fold match the board. Before it, the fold was hard-coded to 2 MiB, which aliased the boot shell at `0x80380000` onto `0x00180000`. A copy window past the declared RAM is refused. Covered by `bios_address_model_test`.
+- **`out_stem`:** set to `KONAMI700B01`, because a C identifier cannot start with a digit.
+
+Open question for running it:
+
+- The GX700 CHECK window is RAM-keyed at `0x80010000-0x8001FFFF`.
+- The game EXE loads over that same range.
+- The emitted `normalize()` folds those PCs to the BIOS ROM keys for as long as the process lives.
+- SCPH-1001 has the same shape: its shell is at `0x80030000` and games load over it. How the runtime keeps game dispatch from landing on BIOS keys there has to be confirmed before booting the game.

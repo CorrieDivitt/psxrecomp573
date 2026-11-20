@@ -334,6 +334,34 @@ int main(int argc, char** argv) {
         }
     }
 
+    // --- main_ram_bytes: the compile-time fold follows the board's RAM -----
+    // Konami System 573 (bios/700B01.toml): 4 MiB, boot shell at 0x80380000,
+    // RAM-keyed back to its ROM source 0x1FC60800.
+    {
+        BiosConfig cfg = minimal_cfg();
+        cfg.main_ram_bytes = 0x00400000u;
+        cfg.address_copies.push_back(mk("Boot shell", 0x1FC60800u, 0x1FC78800u,
+                                        0x00380000u, 0x80380000u, false, false));
+        BiosAddressModel m = BiosAddressModel::from_config(cfg);
+        expect_eq(m.ram_mask(), 0x003FFFFFu, "573.ram_mask", 0);
+        expect_eq(m.normalize(0x80381550u), 0x1FC61D50u, "573.normalize shell", 0x80381550u);
+        // 4 MiB mirror: 0x80780000 is the same RAM as 0x80380000.
+        expect_eq(m.normalize(0x80781550u), 0x1FC61D50u, "573.normalize mirror", 0x80781550u);
+        // Below the window: plain RAM key, not folded to 2 MiB.
+        expect_eq(m.normalize(0x80300000u), 0x00300000u, "573.normalize ram", 0x80300000u);
+
+        // Retail default (2 MiB) keeps the old fold.
+        BiosAddressModel r = BiosAddressModel::from_config(minimal_cfg());
+        expect_eq(r.ram_mask(), 0x001FFFFFu, "retail.ram_mask", 0);
+        expect_eq(r.normalize(0x80380000u), 0x00180000u, "retail.normalize", 0x80380000u);
+
+        // A RAM window past the declared RAM is refused.
+        expect_throw("copy past main_ram_bytes", [](BiosConfig& c) {
+            c.address_copies.push_back(mk("Boot shell", 0x1FC60800u, 0x1FC78800u,
+                                          0x00380000u, 0x80380000u, false, false));
+        }, minimal_cfg());
+    }
+
     if (g_failures == 0) {
         std::printf("bios_address_model_test: all checks passed\n");
         return 0;

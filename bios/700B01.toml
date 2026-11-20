@@ -1,0 +1,88 @@
+# bios/700B01.toml — BIOS build profile for the Konami System 573 BIOS 700B01.
+#
+# 700b01.22g (512 KiB) is the boot ROM of the Konami System 573 arcade board
+# (MAME set sys573). It is a PS-X kernel 2.5 variant, plus a Konami "program
+# ROM" and two embedded PS-X EXEs that test the board and then boot a game
+# from onboard flash, a PC card or CD-ROM. Proprietary: the player supplies it.
+#
+# Address model. Established by disassembly of the image (capstone) and checked
+# against a Ghidra 12.1.4 analysis (Fighting-Mania-VR,
+# work/analysis/FM_Bios700B01.java). Full manifest and the remaining unknowns:
+# docs/SYSTEM573.md.
+#
+#  - Reset 0xBFC00000 -> bus table at ROM 0x140 -> POST/RAM test at 0xBFC18000
+#    (runs from ROM: its calls are absolute ROM jals, e.g. jal 0xBFC18224).
+#  - kernel_copy (0xBFC004C0 then 0xBFC003F0) copies ROM 0xBFC10000, 0x9000
+#    bytes, to RAM 0xA0000500 and jumps there. Only the first 0x7000 bytes are
+#    kernel (the last non-zero word is ROM 0xBFC16F40; the highest jal target
+#    into low RAM is 0x6B80). ROM 0x18000-0x19000 is the POST code, copied as a
+#    side effect and never executed from RAM, so the window stops at 0x18000
+#    to keep that code from being emitted twice (CLAUDE.md rule 12).
+#  - Program ROM at 0x1FC20000 runs IN PLACE from KSEG0 (entry 0x9FC202A4,
+#    called by program_rom_call 0xBFC050C8 after it matches the "Lisenced by
+#    Sony" string at +0x18). No copy window: the normalize mask folds
+#    0x9FC2xxxx onto 0x1FC2xxxx.
+#  - program_rom_main (0x9FC20144) loads the PS-X EXE at ROM 0x28000 ("GX700
+#    CHECK"): text 0x10000 bytes from ROM 0x28800 to RAM 0x80010000, then
+#    jalr pc 0x80012C64.
+#  - GX700 CHECK's loader (0x8001257C) loads the PS-X EXE at ROM 0x60000 (the
+#    boot shell): text 0x18000 bytes from ROM 0x60800 to RAM 0x80380000, then
+#    Exec. The boot shell checks and loads the game from flash.
+#
+# The game EXE later loads over 0x80010000; that is the same situation as a PS1
+# game loading over the SCPH-1001 shell at 0x80030000.
+
+[program]
+name         = "Konami System 573 BIOS 700B01"
+id           = "700B01"
+rom          = "bios/700b01.22g"
+load_address = "0xBFC00000"
+entry_pc     = "0xBFC00000"
+text_size    = "0x80000"
+main_ram_bytes = "0x400000"   # System 573: 4 MiB; the boot shell runs at 0x80380000
+
+[program.image]
+sha256          = "cc8a6628a324ac57e4773b92614bf64eff9fef5109a4a038e3a63872955c3256"
+license         = "proprietary"
+redistributable = false
+
+[recompiler]
+seeds    = "recompiler/seeds/700b01_ghidra_seeds.json"
+out_dir  = "generated"
+out_stem = "KONAMI700B01"   # a C identifier prefix: may not start with a digit
+strict   = true
+
+[recompiler.address_model]
+normalize_mask = "0x1FFFFFFF"
+
+[[recompiler.address_model.copy]]
+name         = "Kernel ramtext"
+rom_lo       = "0x1FC10000"
+rom_hi       = "0x1FC18000"
+ram_lo       = "0x00000500"
+runtime_base = "0x00000500"     # kernel_copy jumps to 0xA0000500
+dispatch_key = "ram"
+kernel_bless = true
+
+[[recompiler.address_model.copy]]
+name         = "GX700 CHECK"
+rom_lo       = "0x1FC28800"
+rom_hi       = "0x1FC38800"
+ram_lo       = "0x00010000"
+runtime_base = "0x80010000"     # program_rom_main jalr 0x80012C64
+dispatch_key = "rom"
+kernel_bless = false
+
+[[recompiler.address_model.copy]]
+name         = "Boot shell"
+rom_lo       = "0x1FC60800"
+rom_hi       = "0x1FC78800"
+ram_lo       = "0x00380000"
+runtime_base = "0x80380000"     # GX700 CHECK Exec, pc 0x803847C0
+dispatch_key = "rom"
+kernel_bless = false
+
+# No install slots yet: they are measured on a live boot of a game whose libapi
+# patches the kernel (SCPH1001.toml lists the retail ones). No runtime exports:
+# the boot-skip and kernel-call HLE anchors are absent until verified on this
+# image, so both tiers are structurally unavailable.

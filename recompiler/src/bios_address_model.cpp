@@ -21,6 +21,7 @@ BiosAddressModel BiosAddressModel::from_config(const BiosConfig& cfg) {
     m.install_slots_ = cfg.install_slots;
     m.rom_base_phys_ = cfg.load_address & 0x1FFFFFFFu;
     m.rom_size_      = cfg.text_size;
+    m.ram_mask_      = cfg.main_ram_bytes - 1u;
 
     const std::string where = cfg.config_path.string();
 
@@ -44,6 +45,10 @@ BiosAddressModel BiosAddressModel::from_config(const BiosConfig& cfg) {
         if ((c.runtime_base & 0x1FFFFFFFu) != c.ram_lo)
             fail(fmt::format("copy '{}': runtime_base must be a vaddr of "
                              "ram_lo (phys mismatch)", c.name));
+        if (c.ram_lo < 0x00800000u && c.ram_hi() > m.ram_mask_ + 1u)
+            fail(fmt::format("copy '{}': RAM window ends at 0x{:08X}, past "
+                             "[program] main_ram_bytes 0x{:X}",
+                             c.name, c.ram_hi(), m.ram_mask_ + 1u));
 
         // Disjoint input windows: a ROM byte belongs to at most one copy, and
         // a RAM byte to at most one destination ("duplicate logical function
@@ -139,12 +144,13 @@ BiosAddressModel BiosAddressModel::from_config(const BiosConfig& cfg) {
 
 uint32_t BiosAddressModel::normalize(uint32_t addr) const {
     uint32_t phys = addr & 0x1FFFFFFFu;
-    // The 2 MiB main RAM is mirrored four times across the first 8 MiB of
-    // physical address space. Dispatch keys must use the same hardware alias
-    // as ordinary memory reads, or a valid call through 0x80200000+
-    // incorrectly becomes an unmapped-PC failure.
+    // Main RAM is mirrored across the first 8 MiB of physical address space
+    // (four times for retail 2 MiB, twice for the 573's 4 MiB). Dispatch keys
+    // must use the same hardware alias as ordinary memory reads (the emitted
+    // normalize folds with the live g_psx_ram_mask), or a valid call through
+    // a mirror incorrectly becomes an unmapped-PC failure.
     if (phys < 0x00800000u)
-        phys &= 0x001FFFFFu;
+        phys &= ram_mask_;
     // Sequential per-copy folds, same shape as the emitted normalize() —
     // equivalence to first-match-wins is enforced by from_config.
     for (const BiosAddrCopy& c : copies_) {
