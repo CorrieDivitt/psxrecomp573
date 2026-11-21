@@ -209,3 +209,9 @@ copies, including vertical orientation, alpha and GL state restoration.
 ## Frame interpolation is off while a session runs
 
 With frame interpolation on, each interpolated sub-present reaches gl_swap_with_osd and, with a native surface enabled, openxr_present_native -> psx_openxr_begin -> xrWaitFrame. XR would then run several times per guest frame (stacked waits, per-eye ghosting). So presentation-side interpolation is suspended whenever psx_openxr_session_active() is true (compiled, enabled, initialized and running; pure decision: psx_openxr_interp_gate). The compositor reprojects instead. History is reset on every transition and interpolation resumes when the session stops. In a default build, or when XR is not enabled or no session is running, the gate is constant false and interpolation is unchanged.
+
+`PSXModOpenXRSceneEye.floor_valid` / `floor_y_m` give the real floor when the
+runtime has a STAGE reference space: the height of its origin in raw LOCAL
+metres, located with the frame's views (`psx_openxr_floor`). A scene that
+stands things on the floor should use it and fall back to an eye-height
+estimate when `floor_valid` is 0.

@@ -52,6 +52,10 @@ int psx_openxr_haptic(uint32_t hand,float amplitude,uint32_t duration_ms);
 int psx_openxr_eye_scene(uint32_t eye,double near_m,double far_m,float view[16],float proj[16],
                          double eye_p[3],double eye_q[4],uint32_t *origin_valid,
                          double origin_p[3],double origin_q[4],uint64_t *predicted_time);
+/* Height of the real floor in raw LOCAL metres (the y of the STAGE space's
+ * origin), located for the open frame. Presenting/XR thread only, inside an
+ * XR frame. 0 when the runtime has no STAGE space or cannot place it. */
+int psx_openxr_floor(float *y_m);
 int psx_openxr_quad(double distance_m,double width_m,double height_m);
 int psx_openxr_surface_valid(const PSXModOpenXRSurface *surface);
 int psx_openxr_surface(const PSXModOpenXRSurface *surface);

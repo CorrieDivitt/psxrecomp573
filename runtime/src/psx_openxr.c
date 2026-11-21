@@ -155,6 +155,7 @@ static XrSystemId s_system;
 static XrSession s_session;
 static XrSpace s_space;
 static XrSpace s_view_space;
+static XrSpace s_stage_space; /* floor-level STAGE space, if the runtime has one */
 static XrActionSet s_actions;
 static XrAction s_stick;
 static XrAction s_trigger,s_squeeze,s_click[4];
@@ -346,6 +347,10 @@ static int initialize(void) {
     XrReferenceSpaceCreateInfo space={XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
     space.referenceSpaceType=XR_REFERENCE_SPACE_TYPE_LOCAL;space.poseInReferenceSpace.orientation.w=1;
     if(!check(xrCreateReferenceSpace(s_session,&space,&s_space),"local_space"))return 0;
+    /* Optional: STAGE has its origin on the real floor (psx_openxr_floor). A
+     * runtime without it, or with no floor set up, just leaves the floor unknown. */
+    space.referenceSpaceType=XR_REFERENCE_SPACE_TYPE_STAGE;
+    if(xrCreateReferenceSpace(s_session,&space,&s_stage_space)!=XR_SUCCESS)s_stage_space=XR_NULL_HANDLE;
     XrViewConfigurationView config[2]={{XR_TYPE_VIEW_CONFIGURATION_VIEW},{XR_TYPE_VIEW_CONFIGURATION_VIEW}};
     if(!check(xrEnumerateViewConfigurationViews(s_instance,s_system,XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO,
               2,&count,config),"view_config") || count!=2)return 0;
@@ -479,6 +484,7 @@ static void xr_destroy(void) {
     }
     if(s_space)xrDestroySpace(s_space);s_space=XR_NULL_HANDLE;
     if(s_view_space)xrDestroySpace(s_view_space);s_view_space=XR_NULL_HANDLE;
+    if(s_stage_space)xrDestroySpace(s_stage_space);s_stage_space=XR_NULL_HANDLE;
     if(s_session)xrDestroySession(s_session);s_session=XR_NULL_HANDLE;
     if(s_actions)xrDestroyActionSet(s_actions);s_actions=XR_NULL_HANDLE;s_stick=XR_NULL_HANDLE;
     s_trigger=s_squeeze=XR_NULL_HANDLE;memset(s_click,0,sizeof s_click);
@@ -955,6 +961,22 @@ int psx_openxr_eye_scene(uint32_t eye,double n,double f,float view[16],float pro
 #else
     (void)eye;(void)n;(void)f;(void)view;(void)proj;(void)eye_p;(void)eye_q;
     (void)origin_valid;(void)origin_p;(void)origin_q;(void)predicted_time;
+    return 0;
+#endif
+}
+
+int psx_openxr_floor(float *y_m) {
+#if defined(PSX_OPENXR)
+    if(!s_stats.frame_open || !s_stage_space || !y_m)return 0;
+    XrSpaceLocation loc={XR_TYPE_SPACE_LOCATION};
+    if(xrLocateSpace(s_stage_space,s_space,s_time,&loc)!=XR_SUCCESS)return 0;
+    if(!(loc.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT))return 0;
+    float y=loc.pose.position.y;
+    if(!isfinite(y) || fabsf(y)>10)return 0;
+    *y_m=y;
+    return 1;
+#else
+    (void)y_m;
     return 0;
 #endif
 }

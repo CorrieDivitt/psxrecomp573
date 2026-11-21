@@ -1075,6 +1075,11 @@ typedef struct PSXModOpenXRSceneEye {
      * psx_mod_openxr_hands would return, which must not be called from the
      * scene callback). */
     PSXModOpenXRHands hands;
+    /* The real floor, when the runtime knows it (its STAGE space): floor_y_m
+     * is its height in raw LOCAL metres, the space `view` maps from, so it
+     * stays right across a recentre. floor_valid 0: unknown; estimate it. */
+    uint32_t floor_valid;
+    float floor_y_m;
 } PSXModOpenXRSceneEye;
 typedef int (*PSXModOpenXRSceneDraw)(const PSXModOpenXRSceneEye *eye, void *user);
 /* Register (draw != NULL) or remove (draw == NULL) the host scene. near/far

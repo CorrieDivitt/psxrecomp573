@@ -9031,6 +9031,7 @@ static int openxr_copy_scene(uint32_t eye,uint32_t texture,int w,int h) {
     e.frame=s_frame_count;
     e.input=s_xr_scene_input;
     e.hands=s_xr_scene_hands;
+    e.floor_valid=(uint32_t)psx_openxr_floor(&e.floor_y_m);
     /* Saved state. */
     GLint read_fbo,draw_fbo,program,vao,array_buffer,active,binding,vp[4],sc[4];
     GLint blend_src_rgb,blend_dst_rgb,blend_src_a,blend_dst_a,depth_func,front_face,cull_mode;
