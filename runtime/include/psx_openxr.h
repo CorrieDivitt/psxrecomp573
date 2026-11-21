@@ -18,6 +18,12 @@ typedef struct PSXOpenXRStats {
     uint64_t gl_version, min_gl_version, max_gl_version;
     int64_t swapchain_format; /* GL_SRGB8_ALPHA8 preferred; GL_RGBA8 decoded copy */
     char runtime[128];
+    /* Interaction profile the runtime bound to each hand ("" = none yet), and
+     * the results of suggesting bindings for the Touch and the KHR simple
+     * controller profiles. A focused session with an empty profile receives
+     * no controller actions at all. */
+    char hand_profile[2][96];
+    int32_t touch_bindings_result, simple_bindings_result;
     float pose[2][7], fov[2][4];
     PSXModRenderView view[2];
     uint64_t submitted_pair_id, submitted_guest_cycle;
@@ -37,6 +43,15 @@ int psx_openxr_view(uint32_t eye,PSXModRenderView *out);
 /* copy callback: blit this pair's eye to runtime GL texture. */
 typedef int (*PSXOpenXRCopy)(uint32_t eye,uint32_t texture,int w,int h);
 int psx_openxr_end(int keep,PSXOpenXRCopy copy);
+/* Column-major GL view/projection of the eye located by the open frame, in
+ * raw LOCAL space, plus that eye's pose and the recentre origin. 0 unless a
+ * tracked frame is open. Used by the host scene layer. */
+/* Vibrate one controller (0 left, 1 right): amplitude 0..1, duration in ms.
+ * Presenting/XR thread only. 0 when XR is not running. */
+int psx_openxr_haptic(uint32_t hand,float amplitude,uint32_t duration_ms);
+int psx_openxr_eye_scene(uint32_t eye,double near_m,double far_m,float view[16],float proj[16],
+                         double eye_p[3],double eye_q[4],uint32_t *origin_valid,
+                         double origin_p[3],double origin_q[4],uint64_t *predicted_time);
 int psx_openxr_quad(double distance_m,double width_m,double height_m);
 int psx_openxr_surface_valid(const PSXModOpenXRSurface *surface);
 int psx_openxr_surface(const PSXModOpenXRSurface *surface);

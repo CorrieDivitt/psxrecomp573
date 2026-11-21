@@ -9376,7 +9376,7 @@ static void handle_render_pass_refuse(int id, const char *json)
 
 static void handle_openxr_stats(int id, const char *json) {
     PSXOpenXRStats s; (void)json; psx_openxr_stats(&s);
-    send_fmt("{\"id\":%d,\"ok\":true,\"compiled\":%u,\"enabled\":%u,"
+    send_fmt("{\"id\":%d,\"ok\":true,\"hand_profile\":[\"%s\",\"%s\"],\"touch_bindings_result\":%d,\"simple_bindings_result\":%d,\"compiled\":%u,\"enabled\":%u,"
              "\"initialized\":%u,\"running\":%u,\"state\":%u,\"tracking\":%u,"
              "\"frame_open\":%u,\"result\":%d,\"stage\":\"%s\",\"runtime\":\"%s\","
              "\"last_failure\":\"%s\",\"last_failure_result\":%d,\"view_flags\":%llu,"
@@ -9388,7 +9388,7 @@ static void handle_openxr_stats(int id, const char *json) {
              "\"submitted_layer\":%u,\"quad_submitted\":%llu,"
              "\"submitted_source\":%u,\"native_submitted\":%llu,\"submitted_native_frame\":%llu,"
              "\"quad_distance_m\":%.6f,\"quad_width_m\":%.6f,\"quad_height_m\":%.6f,\"losses\":%llu,"
-             "\"submitted_surfaces\":%u,\"surface_uploads\":%llu,\"surface_failures\":%llu}", id,s.compiled,s.enabled,
+             "\"submitted_surfaces\":%u,\"surface_uploads\":%llu,\"surface_failures\":%llu}", id,s.hand_profile[0],s.hand_profile[1],s.touch_bindings_result,s.simple_bindings_result,s.compiled,s.enabled,
              s.initialized,s.running,s.state,s.tracking,s.frame_open,s.result,
              s.stage?s.stage:"off",s.runtime,s.last_failure?s.last_failure:"",s.last_failure_result,
              (unsigned long long)s.view_flags,(unsigned long long)s.waits,

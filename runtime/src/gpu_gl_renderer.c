@@ -668,6 +668,35 @@ static int s_native_surface_enabled, s_native_surface_pending;
 static int s_native_surface_rect[4]; /* Fresh native backbuffer content, GL coordinates. */
 static double s_native_surface_distance, s_native_surface_width, s_native_surface_units;
 static void openxr_present_native(void);
+/* Host-drawn XR scene (psx_mod_openxr_scene): the application draws its own
+ * world per eye at each fresh native present; the composed native frame is
+ * supplied as a texture. */
+static PSXModOpenXRSceneDraw s_scene_draw;
+static void *s_scene_user;
+static double s_scene_near, s_scene_far;
+static int s_scene_pending;
+/* The scene runs on its own XR thread with a GL context shared with the
+ * composing context, so the headset gets a fresh frame every display period
+ * while the game presents at its own rate. The composing thread copies each
+ * fresh native frame into one of three shared textures and publishes it with a
+ * fence; the XR thread draws with the newest published one. */
+#define XR_SCENE_SLOTS 3
+static GLuint s_xr_scene_tex[XR_SCENE_SLOTS];
+static int s_xr_scene_tex_w[XR_SCENE_SLOTS], s_xr_scene_tex_h[XR_SCENE_SLOTS];
+static GLsync s_xr_scene_fence[XR_SCENE_SLOTS];
+static int s_xr_scene_pub = -1, s_xr_scene_inuse = -1;   /* guarded by s_xr_scene_lock */
+static SDL_mutex *s_xr_scene_lock;
+static SDL_Thread *s_xr_scene_thread;
+static SDL_GLContext s_xr_scene_ctx;
+static volatile int s_xr_scene_run;
+/* XR-thread-only state (its own context's objects and the frame's samples). */
+static GLuint s_xr_scene_fbo, s_xr_scene_depth;
+static int s_xr_scene_depth_w, s_xr_scene_depth_h;
+static int s_xr_scene_slot = -1;
+static PSXModOpenXRInput s_xr_scene_input;
+static PSXModOpenXRHands s_xr_scene_hands;
+static void openxr_present_scene(void);
+static void openxr_scene_thread_stop(void);
 static GLint         s_present_uTex = -1, s_present_uUvRect = -1;
 static GLint         s_present_uTexSize = -1, s_present_uSharpScale = -1;
 static GLint         s_present_uSharp = -1;
@@ -1432,6 +1461,8 @@ static void pres_record(int path, int dx, int dy, int w, int h,
     if (path != GL_PRES_STEREO)
         local_pair_present_shared(&lx, &ly, &lw, &lh);
     s_native_surface_pending=s_native_surface_enabled &&
+        (path==GL_PRES_VRAM || path==GL_PRES_WIDE || path==GL_PRES_CPU || path==GL_PRES_BLANK);
+    s_scene_pending=s_scene_draw!=NULL &&
         (path==GL_PRES_VRAM || path==GL_PRES_WIDE || path==GL_PRES_CPU || path==GL_PRES_BLANK);
     s_native_surface_rect[0]=lx;s_native_surface_rect[1]=ly;
     s_native_surface_rect[2]=lw;s_native_surface_rect[3]=lh;
@@ -8158,11 +8189,18 @@ static void pass_free_color_fbo(GLuint *tex, GLuint *rb, GLuint *fbo,
 /* Context teardown (gl_renderer_shutdown): free the pass images, backups
  * and journal, and forget their names so a new context makes fresh ones. */
 static void pass_resources_release(void) {
+    openxr_scene_thread_stop();   /* ends and destroys the XR session on its own thread */
     psx_openxr_shutdown();
     if(s_ctx) {
         if(s_xr_color_prog && p_glDeleteProgram) p_glDeleteProgram(s_xr_color_prog);
         if(s_xr_native_tex) glDeleteTextures(1,&s_xr_native_tex);
+        for(int i=0;i<XR_SCENE_SLOTS;i++) {
+            if(s_xr_scene_tex[i]) glDeleteTextures(1,&s_xr_scene_tex[i]);
+            if(s_xr_scene_fence[i] && p_glDeleteSync) p_glDeleteSync(s_xr_scene_fence[i]);
+        }
     }
+    memset(s_xr_scene_tex,0,sizeof s_xr_scene_tex);memset(s_xr_scene_fence,0,sizeof s_xr_scene_fence);
+    s_xr_scene_pub=s_xr_scene_inuse=-1;
     if(s_ctx) {
         if(s_xr_surface_program && p_glDeleteProgram)p_glDeleteProgram(s_xr_surface_program);
         if(s_xr_surface_vao && p_glDeleteVertexArrays)p_glDeleteVertexArrays(1,&s_xr_surface_vao);
@@ -8691,13 +8729,28 @@ int psx_mod_openxr_native_surface(double distance,double width,double units) {
     if(s_pass_active || stats.frame_open || !stats.compiled ||
        !isfinite(distance) || !isfinite(width) || !isfinite(units))return 0;
     if(distance && (distance<.25 || distance>20 || width<=0 || width>10 || units<1 || units>65536))return 0;
+    if(distance && s_scene_draw)return 0; /* the host scene owns XR presentation */
     s_native_surface_enabled=distance!=0;s_native_surface_pending=0;
     s_native_surface_distance=distance;s_native_surface_width=width;s_native_surface_units=units;
     return 1;
 }
+int psx_mod_openxr_haptic(uint32_t hand,float amplitude,uint32_t duration_ms) {
+    return psx_openxr_haptic(hand,amplitude,duration_ms);
+}
+int psx_mod_openxr_scene(PSXModOpenXRSceneDraw draw,void *user,double near_m,double far_m) {
+    GL_RT_SYNC("openxr_scene");
+    PSXOpenXRStats stats;psx_openxr_stats(&stats);
+    if(s_pass_active || stats.frame_open || !stats.compiled)return 0;
+    if(draw && (s_native_surface_enabled || !isfinite(near_m) || !isfinite(far_m) ||
+                !(near_m>0) || !(far_m>near_m) || far_m>1000))return 0;
+    if(!draw)openxr_scene_thread_stop();
+    s_scene_draw=draw;s_scene_user=draw?user:NULL;
+    s_scene_near=draw?near_m:0;s_scene_far=draw?far_m:0;s_scene_pending=0;
+    return 1;
+}
 int psx_mod_openxr_begin(uint32_t width, uint32_t height, double units) {
     GL_RT_SYNC("openxr_begin");
-    if (s_native_surface_enabled || s_pass_active || gl_renderer_stereo_unavailable() != PSX_MOD_RENDER_PASS_READY ||
+    if (s_native_surface_enabled || s_scene_draw || s_pass_active || gl_renderer_stereo_unavailable() != PSX_MOD_RENDER_PASS_READY ||
         !width || !height || width > VRAM_W || height > VRAM_H) return 0;
     s_xr_begin_pair = s_stereo_valid ? s_stereo_pair[s_stereo_current].id : 0;
     return psx_openxr_begin((int)width, (int)height, units);
@@ -8913,6 +8966,203 @@ static void openxr_present_native(void) {
     psx_openxr_native_metadata(s_frame_count);
     (void)psx_openxr_end(1,openxr_copy_native);
 }
+
+/* Host scene: copy the composed native viewport (display-encoded, desktop
+ * post-processing baked in, upright) into a free shared slot, fence it and
+ * publish it to the XR thread. Composing thread. */
+static int openxr_scene_capture_game(void) {
+    int ww=0,wh=0,*r=s_native_surface_rect;
+    SDL_GL_GetDrawableSize(s_win,&ww,&wh);
+    if(r[0]<0 || r[1]<0 || r[2]<1 || r[3]<1 || r[0]+r[2]>ww || r[1]+r[3]>wh)return 0;
+    int slot=-1;
+    SDL_LockMutex(s_xr_scene_lock);
+    for(int i=0;i<XR_SCENE_SLOTS && slot<0;i++)
+        if(i!=s_xr_scene_pub && i!=s_xr_scene_inuse)slot=i;
+    if(slot>=0 && s_xr_scene_fence[slot] && p_glDeleteSync){p_glDeleteSync(s_xr_scene_fence[slot]);s_xr_scene_fence[slot]=0;}
+    SDL_UnlockMutex(s_xr_scene_lock);
+    if(slot<0)return 0;
+    GLint read_fbo,read_buffer,active,binding;
+    GLboolean scissor=glIsEnabled(GL_SCISSOR_TEST),srgb=glIsEnabled(0x8DB9);
+    glGetIntegerv(0x8CAA,&read_fbo);glGetIntegerv(GL_READ_BUFFER,&read_buffer);
+    glGetIntegerv(0x84E0,&active);p_glActiveTexture(PSXGL_TEXTURE0);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D,&binding);
+    glDisable(GL_SCISSOR_TEST);glDisable(0x8DB9);
+    p_glBindFramebuffer(PSXGL_READ_FRAMEBUFFER,0);glReadBuffer(s_pt_on?PSXGL_COLOR_ATTACHMENT0:GL_BACK);
+    if(!s_xr_scene_tex[slot])glGenTextures(1,&s_xr_scene_tex[slot]);
+    glBindTexture(GL_TEXTURE_2D,s_xr_scene_tex[slot]);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    (void)pass_gl_errors();
+    glCopyTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,r[0],r[1],r[2],r[3],0);
+    int ok=pass_gl_errors()==0;
+    glBindTexture(GL_TEXTURE_2D,(GLuint)binding);p_glActiveTexture((GLenum)active);
+    p_glBindFramebuffer(PSXGL_READ_FRAMEBUFFER,(GLuint)read_fbo);glReadBuffer((GLenum)read_buffer);
+    if(scissor)glEnable(GL_SCISSOR_TEST);
+    if(srgb)glEnable(0x8DB9);
+    if(!ok)return 0;
+    GLsync fence=p_glFenceSync?p_glFenceSync(0x9117 /* SYNC_GPU_COMMANDS_COMPLETE */,0):0;
+    glFlush();   /* the fence must reach the GPU before another context waits on it */
+    SDL_LockMutex(s_xr_scene_lock);
+    s_xr_scene_tex_w[slot]=r[2];s_xr_scene_tex_h[slot]=r[3];
+    s_xr_scene_fence[slot]=fence;s_xr_scene_pub=slot;
+    SDL_UnlockMutex(s_xr_scene_lock);
+    return 1;
+}
+
+/* PSXOpenXRCopy for the host scene: render the application's world into the
+ * eye's swapchain image with a private depth buffer, then restore the GL state
+ * the native renderer relies on. */
+static int openxr_copy_scene(uint32_t eye,uint32_t texture,int w,int h) {
+    if(!s_scene_draw)return 0;
+    PSXModOpenXRSceneEye e;memset(&e,0,sizeof e);
+    e.struct_size=sizeof e;e.eye=eye;e.width=(uint32_t)w;e.height=(uint32_t)h;
+    if(!psx_openxr_eye_scene(eye,s_scene_near,s_scene_far,e.view,e.projection,
+                             e.eye_position_m,e.eye_orientation_xyzw,&e.origin_valid,
+                             e.origin_position_m,e.origin_orientation_xyzw,&e.predicted_time))return 0;
+    PSXOpenXRStats xr;psx_openxr_stats(&xr);
+    e.linear_target=xr.swapchain_format!=PSX_XR_SRGB8_ALPHA8;
+    if(s_xr_scene_slot>=0) {
+        e.game_texture=s_xr_scene_tex[s_xr_scene_slot];
+        e.game_width=(uint32_t)s_xr_scene_tex_w[s_xr_scene_slot];
+        e.game_height=(uint32_t)s_xr_scene_tex_h[s_xr_scene_slot];
+    }
+    e.frame=s_frame_count;
+    e.input=s_xr_scene_input;
+    e.hands=s_xr_scene_hands;
+    /* Saved state. */
+    GLint read_fbo,draw_fbo,program,vao,array_buffer,active,binding,vp[4],sc[4];
+    GLint blend_src_rgb,blend_dst_rgb,blend_src_a,blend_dst_a,depth_func,front_face,cull_mode;
+    GLboolean depth_mask,color_mask[4];GLfloat clear_color[4];
+    GLboolean scissor=glIsEnabled(GL_SCISSOR_TEST),srgb=glIsEnabled(0x8DB9);
+    GLboolean blend=glIsEnabled(GL_BLEND),depth=glIsEnabled(GL_DEPTH_TEST),cull=glIsEnabled(GL_CULL_FACE);
+    glGetIntegerv(0x8CAA,&read_fbo);glGetIntegerv(0x8CA6,&draw_fbo);
+    glGetIntegerv(0x8B8D,&program);glGetIntegerv(0x85B5,&vao);glGetIntegerv(0x8894,&array_buffer);
+    glGetIntegerv(0x84E0,&active);p_glActiveTexture(PSXGL_TEXTURE0);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D,&binding);
+    glGetIntegerv(GL_VIEWPORT,vp);glGetIntegerv(GL_SCISSOR_BOX,sc);
+    glGetIntegerv(0x80C8,&blend_src_rgb);glGetIntegerv(0x80C9,&blend_dst_rgb);
+    glGetIntegerv(0x80CB,&blend_src_a);glGetIntegerv(0x80CA,&blend_dst_a);
+    glGetIntegerv(GL_DEPTH_FUNC,&depth_func);glGetIntegerv(GL_FRONT_FACE,&front_face);
+    glGetIntegerv(GL_CULL_FACE_MODE,&cull_mode);
+    glGetBooleanv(GL_DEPTH_WRITEMASK,&depth_mask);glGetBooleanv(GL_COLOR_WRITEMASK,color_mask);
+    glGetFloatv(GL_COLOR_CLEAR_VALUE,clear_color);
+    int ok=1;
+    if(!s_xr_scene_fbo)p_glGenFramebuffers(1,&s_xr_scene_fbo);
+    if(!s_xr_scene_depth || s_xr_scene_depth_w!=w || s_xr_scene_depth_h!=h) {
+        if(!s_xr_scene_depth)p_glGenRenderbuffers(1,&s_xr_scene_depth);
+        p_glBindRenderbuffer(PSXGL_RENDERBUFFER,s_xr_scene_depth);
+        p_glRenderbufferStorage(PSXGL_RENDERBUFFER,PSXGL_DEPTH24_STENCIL8,w,h);
+        p_glBindRenderbuffer(PSXGL_RENDERBUFFER,0);
+        s_xr_scene_depth_w=w;s_xr_scene_depth_h=h;
+    }
+    p_glBindFramebuffer(PSXGL_DRAW_FRAMEBUFFER,s_xr_scene_fbo);
+    p_glFramebufferTexture2D(PSXGL_DRAW_FRAMEBUFFER,PSXGL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,texture,0);
+    p_glFramebufferRenderbuffer(PSXGL_DRAW_FRAMEBUFFER,PSXGL_DEPTH_STENCIL_ATTACHMENT,PSXGL_RENDERBUFFER,s_xr_scene_depth);
+    ok=p_glCheckFramebufferStatus(PSXGL_DRAW_FRAMEBUFFER)==PSXGL_FRAMEBUFFER_COMPLETE;
+    if(ok) {
+        e.framebuffer=s_xr_scene_fbo;
+        glDisable(GL_SCISSOR_TEST);glDisable(0x8DB9);
+        glViewport(0,0,w,h);
+        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glDepthMask(GL_TRUE);
+        (void)pass_gl_errors();
+        ok=s_scene_draw(&e,s_scene_user)==1;
+        glFlush();
+        ok=ok && pass_gl_errors()==0;
+    }
+    p_glFramebufferTexture2D(PSXGL_DRAW_FRAMEBUFFER,PSXGL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,0,0);
+    /* Restore. */
+    p_glBindFramebuffer(PSXGL_READ_FRAMEBUFFER,(GLuint)read_fbo);
+    p_glBindFramebuffer(PSXGL_DRAW_FRAMEBUFFER,(GLuint)draw_fbo);
+    p_glUseProgram((GLuint)program);p_glBindVertexArray((GLuint)vao);
+    p_glBindBuffer(0x8892,(GLuint)array_buffer);
+    p_glActiveTexture(PSXGL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,(GLuint)binding);
+    p_glActiveTexture((GLenum)active);
+    glViewport(vp[0],vp[1],vp[2],vp[3]);glScissor(sc[0],sc[1],sc[2],sc[3]);
+    p_glBlendFuncSeparate((GLenum)blend_src_rgb,(GLenum)blend_dst_rgb,(GLenum)blend_src_a,(GLenum)blend_dst_a);
+    glDepthFunc((GLenum)depth_func);glFrontFace((GLenum)front_face);glCullFace((GLenum)cull_mode);
+    glDepthMask(depth_mask);glColorMask(color_mask[0],color_mask[1],color_mask[2],color_mask[3]);
+    glClearColor(clear_color[0],clear_color[1],clear_color[2],clear_color[3]);
+    if(scissor)glEnable(GL_SCISSOR_TEST);else glDisable(GL_SCISSOR_TEST);
+    if(srgb)glEnable(0x8DB9);else glDisable(0x8DB9);
+    if(blend)glEnable(GL_BLEND);else glDisable(GL_BLEND);
+    if(depth)glEnable(GL_DEPTH_TEST);else glDisable(GL_DEPTH_TEST);
+    if(cull)glEnable(GL_CULL_FACE);else glDisable(GL_CULL_FACE);
+    return ok;
+}
+/* XR thread: owns the OpenXR session and its own shared GL context. Paced by
+ * xrWaitFrame at the headset's rate, independent of the game's presents. */
+static int SDLCALL openxr_scene_thread(void *unused) {
+    (void)unused;
+    if(SDL_GL_MakeCurrent(s_win,s_xr_scene_ctx)!=0)return 0;
+    while(s_xr_scene_run) {
+        memset(&s_xr_scene_input,0,sizeof s_xr_scene_input);
+        s_xr_scene_input.struct_size=sizeof s_xr_scene_input;
+        (void)psx_openxr_input(&s_xr_scene_input);   /* no frame open: a real sample */
+        if(!psx_openxr_begin(512,240,1.0)) {
+            PSXOpenXRStats st;psx_openxr_stats(&st);
+            if(!st.enabled)break;   /* the headset app closed the session, or XR was turned off */
+            SDL_Delay(5);           /* not running yet / backing off after a loss */
+            continue;
+        }
+        memset(&s_xr_scene_hands,0,sizeof s_xr_scene_hands);
+        s_xr_scene_hands.struct_size=sizeof s_xr_scene_hands;
+        (void)psx_openxr_hands(&s_xr_scene_hands);
+        GLsync fence=0;
+        SDL_LockMutex(s_xr_scene_lock);
+        s_xr_scene_slot=s_xr_scene_pub;s_xr_scene_inuse=s_xr_scene_slot;
+        if(s_xr_scene_slot>=0){fence=s_xr_scene_fence[s_xr_scene_slot];s_xr_scene_fence[s_xr_scene_slot]=0;}
+        SDL_UnlockMutex(s_xr_scene_lock);
+        if(fence){p_glWaitSync(fence,0,(uint64_t)-1 /* TIMEOUT_IGNORED */);p_glDeleteSync(fence);}
+        psx_openxr_native_metadata(s_frame_count);
+        (void)psx_openxr_end(1,openxr_copy_scene);
+        SDL_LockMutex(s_xr_scene_lock);
+        s_xr_scene_inuse=-1;
+        SDL_UnlockMutex(s_xr_scene_lock);
+    }
+    /* End the session gracefully and destroy it with this context current. */
+    psx_openxr_shutdown();
+    if(s_xr_scene_fbo)p_glDeleteFramebuffers(1,&s_xr_scene_fbo);
+    if(s_xr_scene_depth)p_glDeleteRenderbuffers(1,&s_xr_scene_depth);
+    s_xr_scene_fbo=s_xr_scene_depth=0;s_xr_scene_depth_w=s_xr_scene_depth_h=0;
+    glFinish();
+    SDL_GL_MakeCurrent(s_win,NULL);
+    return 0;
+}
+
+void gl_renderer_xr_scene_stop(void) { openxr_scene_thread_stop(); }
+static void openxr_scene_thread_stop(void) {
+    if(!s_xr_scene_thread)return;
+    s_xr_scene_run=0;
+    SDL_WaitThread(s_xr_scene_thread,NULL);
+    s_xr_scene_thread=NULL;
+    if(s_xr_scene_ctx){SDL_GL_DeleteContext(s_xr_scene_ctx);s_xr_scene_ctx=NULL;}
+}
+
+/* Composing thread, at each present: start the XR thread once, then hand
+ * over every fresh native frame. */
+static void openxr_present_scene(void) {
+    if(!s_scene_draw || s_pass_active)return;
+    if(!s_xr_scene_thread) {
+        PSXOpenXRStats st;psx_openxr_stats(&st);
+        if(!st.enabled || !p_glFenceSync || !p_glWaitSync || !p_glDeleteSync)return;
+        if(!s_xr_scene_lock && !(s_xr_scene_lock=SDL_CreateMutex()))return;
+        SDL_GLContext cur=SDL_GL_GetCurrentContext();
+        SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT,1);
+        s_xr_scene_ctx=SDL_GL_CreateContext(s_win);
+        SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT,0);
+        SDL_GL_MakeCurrent(s_win,cur);   /* creation made the new context current here */
+        if(!s_xr_scene_ctx)return;
+        s_xr_scene_run=1;
+        s_xr_scene_thread=SDL_CreateThread(openxr_scene_thread,"openxr_scene",NULL);
+        if(!s_xr_scene_thread){s_xr_scene_run=0;SDL_GL_DeleteContext(s_xr_scene_ctx);s_xr_scene_ctx=NULL;return;}
+    }
+    if(!s_scene_pending)return;
+    s_scene_pending=0;
+    (void)openxr_scene_capture_game();
+}
+
 
 /* Copy only the composed native viewport, never the guest's texture VRAM or
  * an earlier pair. This also serves CPU FMV presents with no raster backend.
@@ -9530,7 +9780,9 @@ static void gl_swap_now(int generated);
 
 static void gl_swap_with_osd(void) {
     openxr_present_native(); /* Copy guest content before host-only overlays. */
+    openxr_present_scene();  /* Host scene: same source, same point. */
     s_native_surface_pending=0; /* Hold-last/resim cannot reuse a native source. */
+    s_scene_pending=0;
 #ifndef PSX_NO_DEBUG_TOOLS
     if (s_ctx) present_image_ring_capture_gl();
 #endif

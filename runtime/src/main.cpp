@@ -4428,6 +4428,16 @@ static void shutdown_runtime(void) {
     }
     if (s_drc_ready) { rab_free(&s_drc); s_drc_ready = false; }
     close_controller();
+    /* Window-close paths call std::exit right after this, never reaching
+     * gl_renderer_shutdown: end and destroy a live OpenXR session here, with
+     * the GL context back on this thread. Exiting with the session alive hung
+     * the process inside Virtual Desktop's runtime (VDXR, 2026-11-20). Both
+     * calls are idempotent, so the full teardown later is unaffected. */
+    if (g_gl_active) {
+        gl_renderer_xr_scene_stop();   /* the host-scene XR thread ends its own session */
+        gl_renderer_render_thread_stop();
+        psx_openxr_shutdown();
+    }
     debug_server_shutdown();
 }
 
@@ -8854,6 +8864,9 @@ static void savestate_menu_poll_toggle_buttons(void) {
  * fast-forward block runs exactly as if Turbo were held. Cleared by the next
  * press, so a hold-to-run Turbo release never cancels a latched run. */
 static int g_manual_turbo_latched = 0;
+/* psx_mod_set_fast_forward: held fast-forward requested by a title plugin. */
+static volatile int g_mod_fast_forward = 0;
+extern "C" void psx_mod_set_fast_forward(int on) { g_mod_fast_forward = on ? 1 : 0; }
 
 static void fast_forward_toggle_flip(void) {
     char msg[40];
@@ -10234,6 +10247,9 @@ static NetplayVblankEpilogue sdl_vblank_present_body(void) {
             (kb_turbo || hotkey_shortcut_down(PSX_ASSIST_BIND_FAST_FORWARD,
                                              g_hotkey_pad_fast_forward)));
     }
+    /* A trusted title plugin may hold fast-forward on through a stretch it
+     * owns (psx_mod_set_fast_forward), e.g. a long boot self-test. */
+    if (g_mod_fast_forward) manual_turbo_requested = true;
 
 #ifndef PSX_SDL_NO_AUDIO
     /* Optional turbo host sink advances the canonical SPU on the exact guest

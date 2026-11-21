@@ -1035,6 +1035,59 @@ typedef struct PSXModOpenXRHands {
 } PSXModOpenXRHands;
 int psx_mod_openxr_hands(PSXModOpenXRHands *hands);
 
+/* Host-drawn scene: the application renders its own world (for example a
+ * cabinet the game screen sits in) into the stereo projection layer, once per
+ * eye, at every fresh native present. The composed native frame is handed over
+ * as a texture so the application can place it on a world surface. No guest
+ * replay happens; guest timing is untouched. Mutually exclusive with
+ * psx_mod_openxr_native_surface and the guest stereo path (psx_mod_openxr_begin).
+ *
+ * The callback runs on a dedicated XR thread, at the headset's frame rate,
+ * with its own GL context shared with the game's (share-list objects such as
+ * textures, buffers, shaders are visible; VAOs and FBOs are per context), and
+ * inside the XR frame with `framebuffer`
+ * bound for drawing: colour is the eye's swapchain image, depth is a private
+ * DEPTH24_STENCIL8 renderbuffer, the viewport covers the whole image, and the
+ * colour and depth contents are undefined (clear them). Write display-encoded
+ * (sRGB) values: GL_FRAMEBUFFER_SRGB is disabled. When `linear_target` is 1
+ * the runtime offered only a linear swapchain format, and the application
+ * must decode sRGB to linear before writing. `game_texture` is GL_TEXTURE_2D
+ * RGBA8, display-encoded, bottom row first (GL convention), already including
+ * the desktop post-processing; 0 when no fresh frame was available.
+ * Matrices are column-major. `view` maps raw XR LOCAL metres to eye space;
+ * `projection` is the eye's asymmetric GL clip transform for near/far. The
+ * recentre origin (as in PSXModOpenXRHands) is supplied so world placement can
+ * follow psx_mod_openxr_recenter. The runtime restores the GL state it relies
+ * on afterwards. Return 1 when both colour and depth were written. */
+typedef struct PSXModOpenXRSceneEye {
+    uint32_t struct_size, eye, framebuffer, width, height, linear_target;
+    float view[16], projection[16];
+    double eye_position_m[3], eye_orientation_xyzw[4];
+    uint32_t origin_valid;
+    double origin_position_m[3], origin_orientation_xyzw[4];
+    uint32_t game_texture, game_width, game_height;
+    uint64_t predicted_time, frame;
+    /* Controller actions sampled for this frame on the presenting thread,
+     * just before the XR frame opened (the same sample for both eyes). Use
+     * this instead of calling psx_mod_openxr_input from another thread. */
+    PSXModOpenXRInput input;
+    /* Controller poses located with this frame's views (same as
+     * psx_mod_openxr_hands would return, which must not be called from the
+     * scene callback). */
+    PSXModOpenXRHands hands;
+} PSXModOpenXRSceneEye;
+typedef int (*PSXModOpenXRSceneDraw)(const PSXModOpenXRSceneEye *eye, void *user);
+/* Register (draw != NULL) or remove (draw == NULL) the host scene. near/far
+ * are metres, 0 < near < far <= 1000. Refused while an XR frame is open,
+ * during guest replay, while a native surface is enabled, or when XR is
+ * compiled out. */
+int psx_mod_openxr_scene(PSXModOpenXRSceneDraw draw, void *user,
+                         double near_m, double far_m);
+/* Vibrate a Touch controller: hand 0 left, 1 right, amplitude 0..1, duration
+ * in milliseconds. Call on the presenting thread, for example from the scene
+ * callback; never from the emulation thread. Returns 0 when XR is not running. */
+int psx_mod_openxr_haptic(uint32_t hand, float amplitude, uint32_t duration_ms);
+
 
 
 /*
@@ -1374,6 +1427,12 @@ enum {
     PSX_MOD_SHORTCUT_FAST_FORWARD_TOGGLE = 3
 };
 int psx_mod_allow_direct_shortcut(uint32_t shortcut);
+
+/* Hold fast-forward on (1) or release it (0) from a trusted title plugin, for
+ * a stretch the title owns such as a long boot self-test. It acts like the
+ * held Turbo key, with the same speed cap (PSX_FAST_FORWARD_SPEED); guest
+ * timing stays exact, only the host runs ahead. Any thread. */
+void psx_mod_set_fast_forward(int on);
 
 /* Refuse local Rewind while the title is in a mode it must not rewind (e.g.
  * local split-screen multiplayer). While blocked, opening Rewind is refused

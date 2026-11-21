@@ -159,6 +159,7 @@ static XrActionSet s_actions;
 static XrAction s_stick;
 static XrAction s_trigger,s_squeeze,s_click[4];
 static XrAction s_pose_action[2];
+static XrAction s_haptic; /* vibration output, both hands */
 static XrSpace s_pose_space[2][2];
 static XrPath s_hand[2];
 static XrTime s_origin_reset_time;
@@ -219,6 +220,9 @@ static int input_initialize(void) {
         strcpy(action.actionName,names[i]);strcpy(action.localizedActionName,labels[i]);
         if(!check(xrCreateAction(s_actions,&action,&s_click[i]),names[i]))return 0;
     }
+    action.actionType=XR_ACTION_TYPE_VIBRATION_OUTPUT;
+    strcpy(action.actionName,"haptic");strcpy(action.localizedActionName,"Vibration");
+    if(!check(xrCreateAction(s_actions,&action,&s_haptic),"haptic_action"))return 0;
     action.actionType=XR_ACTION_TYPE_POSE_INPUT;
     for(int k=0;k<2;k++) {
         strcpy(action.actionName,k?"aim_pose":"grip_pose");
@@ -241,7 +245,7 @@ static int input_initialize(void) {
          "/user/hand/right/input/squeeze/value","/user/hand/right/input/a/click",
          "/user/hand/right/input/b/click",NULL,"/user/hand/right/input/thumbstick/click"}};
     XrAction actions[7]={s_stick,s_trigger,s_squeeze,s_click[0],s_click[1],s_click[2],s_click[3]};
-    XrActionSuggestedBinding bindings[17];uint32_t n=0;
+    XrActionSuggestedBinding bindings[19];uint32_t n=0;
     for(int e=0;e<2;e++)for(int a=0;a<7;a++)if(paths[e][a]) {
         bindings[n].action=actions[a];
         if(!check(xrStringToPath(s_instance,paths[e][a],&bindings[n].binding),"touch_input_path"))return 0;
@@ -254,9 +258,45 @@ static int input_initialize(void) {
         if(!check(xrStringToPath(s_instance,pose_paths[e][k],&bindings[n].binding),"pose_binding"))return 0;
         n++;
     }
+    for(int e=0;e<2;e++) {
+        bindings[n].action=s_haptic;
+        if(!check(xrStringToPath(s_instance,e?"/user/hand/right/output/haptic":"/user/hand/left/output/haptic",
+                                 &bindings[n].binding),"haptic_binding"))return 0;
+        n++;
+    }
     XrInteractionProfileSuggestedBinding suggest={XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
     suggest.interactionProfile=profile; suggest.countSuggestedBindings=n; suggest.suggestedBindings=bindings;
-    if(!check(xrSuggestInteractionProfileBindings(s_instance,&suggest),"touch_bindings"))return 0;
+    s_stats.touch_bindings_result=(int32_t)xrSuggestInteractionProfileBindings(s_instance,&suggest);
+    if(!check((XrResult)s_stats.touch_bindings_result,"touch_bindings"))return 0;
+    /* Fallback the runtime may bind when it does not offer the Touch profile
+     * (or offers it only for other devices): select = primary, menu = menu,
+     * plus both poses. Not fatal when refused. */
+    {
+        XrPath simple;
+        XrActionSuggestedBinding sb[10];uint32_t sn=0;
+        const char *sp[2][4]={{"/user/hand/left/input/select/click","/user/hand/left/input/menu/click",
+                               "/user/hand/left/input/grip/pose","/user/hand/left/input/aim/pose"},
+                              {"/user/hand/right/input/select/click","/user/hand/right/input/menu/click",
+                               "/user/hand/right/input/grip/pose","/user/hand/right/input/aim/pose"}};
+        XrAction sa[4]={s_click[0],s_click[2],s_pose_action[0],s_pose_action[1]};
+        int ok=check(xrStringToPath(s_instance,"/interaction_profiles/khr/simple_controller",&simple),"simple_profile");
+        for(int e=0;e<2 && ok;e++)for(int a=0;a<4 && ok;a++) {
+            sb[sn].action=sa[a];
+            ok=check(xrStringToPath(s_instance,sp[e][a],&sb[sn].binding),"simple_input_path");
+            sn++;
+        }
+        for(int e=0;e<2 && ok;e++) {
+            sb[sn].action=s_haptic;
+            ok=check(xrStringToPath(s_instance,e?"/user/hand/right/output/haptic":"/user/hand/left/output/haptic",
+                                    &sb[sn].binding),"simple_haptic_path");
+            sn++;
+        }
+        if(ok) {
+            XrInteractionProfileSuggestedBinding ss={XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
+            ss.interactionProfile=simple;ss.countSuggestedBindings=sn;ss.suggestedBindings=sb;
+            s_stats.simple_bindings_result=(int32_t)xrSuggestInteractionProfileBindings(s_instance,&ss);
+        }
+    }
     XrSessionActionSetsAttachInfo attach={XR_TYPE_SESSION_ACTION_SETS_ATTACH_INFO};
     attach.countActionSets=1; attach.actionSets=&s_actions;
     return check(xrAttachSessionActionSets(s_session,&attach),"attach_actions");
@@ -406,6 +446,22 @@ static void hands_locate(int focused) {
         memcpy(v->orientation_xyzw,q,sizeof q);memcpy(v->position_m,p,sizeof p);
     }
     s_hands=current;s_hands_sample_ms=psx_host_mono_ms();
+    /* Which interaction profile the runtime bound to each hand (diagnostic,
+     * openxr_stats.hand_profile); refreshed about once a second. */
+    static uint64_t profile_ms;
+    if(s_hands_sample_ms-profile_ms>=1000u) {
+        profile_ms=s_hands_sample_ms;
+        for(int e=0;e<2;e++) {
+            XrInteractionProfileState ps={XR_TYPE_INTERACTION_PROFILE_STATE};
+            s_stats.hand_profile[e][0]=0;
+            if(xrGetCurrentInteractionProfile(s_session,s_hand[e],&ps)!=XR_SUCCESS ||
+               ps.interactionProfile==XR_NULL_PATH)continue;
+            uint32_t n=0;
+            (void)xrPathToString(s_instance,ps.interactionProfile,(uint32_t)sizeof s_stats.hand_profile[e],
+                                 &n,s_stats.hand_profile[e]);
+            s_stats.hand_profile[e][sizeof s_stats.hand_profile[e]-1]=0;
+        }
+    }
 }
 /* Destroy every XR object (children before parents). Safe on a partially
  * initialised stack and on a lost session: destroy calls need no live session. */
@@ -426,7 +482,7 @@ static void xr_destroy(void) {
     if(s_session)xrDestroySession(s_session);s_session=XR_NULL_HANDLE;
     if(s_actions)xrDestroyActionSet(s_actions);s_actions=XR_NULL_HANDLE;s_stick=XR_NULL_HANDLE;
     s_trigger=s_squeeze=XR_NULL_HANDLE;memset(s_click,0,sizeof s_click);
-    memset(s_pose_action,0,sizeof s_pose_action);
+    memset(s_pose_action,0,sizeof s_pose_action);s_haptic=XR_NULL_HANDLE;
     if(s_instance)xrDestroyInstance(s_instance);s_instance=XR_NULL_HANDLE;
     s_origin_valid=0;s_origin_reset_time=0;s_origin_inversion_streak=0;
     s_stats.origin_inversion_streak=s_stats.origin_ambiguous=0;s_stats.origin_up_dot=1.0f;
@@ -488,9 +544,46 @@ void psx_openxr_recenter(void) {
     s_stats.origin_inversion_streak=s_stats.origin_ambiguous=0;
 #endif
 }
+#if defined(PSX_OPENXR)
+/* Leave a running session the way the spec asks before destroying it:
+ * request exit, keep an empty frame loop going so the runtime can move to
+ * STOPPING (events() then calls xrEndSession), bounded by a deadline.
+ * Destroying a running session outright left the process hanging on exit
+ * under Virtual Desktop's runtime (VDXR, 2026-11-20). */
+static void xr_graceful_exit(void) {
+    if(!s_session || !s_stats.running)return;
+    if(xrRequestExitSession(s_session)!=XR_SUCCESS)return;
+    uint64_t deadline=psx_host_mono_ms()+1500u;
+    while(s_stats.running && psx_host_mono_ms()<deadline) {
+        if(!events() || !s_stats.running)break;
+        XrFrameWaitInfo wi={XR_TYPE_FRAME_WAIT_INFO};XrFrameState fs={XR_TYPE_FRAME_STATE};
+        if(xrWaitFrame(s_session,&wi,&fs)!=XR_SUCCESS)break;
+        XrFrameBeginInfo bi={XR_TYPE_FRAME_BEGIN_INFO};
+        if(XR_FAILED(xrBeginFrame(s_session,&bi)))break;
+        XrFrameEndInfo ei={XR_TYPE_FRAME_END_INFO};ei.displayTime=fs.predictedDisplayTime;
+        ei.environmentBlendMode=XR_ENVIRONMENT_BLEND_MODE_OPAQUE;ei.layerCount=0;ei.layers=NULL;
+        if(xrEndFrame(s_session,&ei)!=XR_SUCCESS)break;
+    }
+    (void)events();
+}
+#endif
+int psx_openxr_haptic(uint32_t hand,float amplitude,uint32_t duration_ms) {
+#if defined(PSX_OPENXR)
+    if(hand>1 || !s_session || !s_haptic || !s_stats.running || !isfinite(amplitude))return 0;
+    if(amplitude<0)amplitude=0;
+    if(amplitude>1)amplitude=1;
+    XrHapticVibration v={XR_TYPE_HAPTIC_VIBRATION};
+    v.amplitude=amplitude;v.duration=(XrDuration)duration_ms*1000000;v.frequency=XR_FREQUENCY_UNSPECIFIED;
+    XrHapticActionInfo info={XR_TYPE_HAPTIC_ACTION_INFO};info.action=s_haptic;info.subactionPath=s_hand[hand];
+    return xrApplyHapticFeedback(s_session,&info,(const XrHapticBaseHeader*)&v)==XR_SUCCESS;
+#else
+    (void)hand;(void)amplitude;(void)duration_ms;return 0;
+#endif
+}
 void psx_openxr_shutdown(void) {
 #if defined(PSX_OPENXR)
     if(s_stats.frame_open)psx_openxr_end(0,NULL);
+    xr_graceful_exit();
     xr_destroy();
     s_reset_pending=s_exit_pending=s_recovering=0;s_reset_stage=NULL;s_retry_ms=0;
 #endif
@@ -823,6 +916,48 @@ int psx_openxr_end(int keep,PSXOpenXRCopy copy) {
 #endif
 }
 
+int psx_openxr_eye_scene(uint32_t eye,double n,double f,float view[16],float proj[16],
+                         double eye_p[3],double eye_q[4],uint32_t *origin_valid,
+                         double origin_p[3],double origin_q[4],uint64_t *predicted_time) {
+#if defined(PSX_OPENXR)
+    if(!s_stats.frame_open || !s_stats.tracking || eye>1 || !view || !proj)return 0;
+    if(!(n>0) || !(f>n) || !isfinite(f))return 0;
+    const XrView *v=&s_views[eye];
+    double x=v->pose.orientation.x,y=v->pose.orientation.y,z=v->pose.orientation.z,w=v->pose.orientation.w;
+    double len=sqrt(x*x+y*y+z*z+w*w);
+    if(!(len>.5) || !isfinite(len))return 0;
+    x/=len;y/=len;z/=len;w/=len;
+    /* Rotation of the eye in LOCAL space (row r, column c). */
+    double r[3][3]={{1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)},
+                    {2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)},
+                    {2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)}};
+    double t[3]={v->pose.position.x,v->pose.position.y,v->pose.position.z};
+    /* view = inverse(T*R) = R^T * T^-1, column-major. */
+    for(int c=0;c<3;c++)for(int rr=0;rr<3;rr++)view[c*4+rr]=(float)r[c][rr];
+    view[3]=view[7]=view[11]=0;
+    for(int rr=0;rr<3;rr++)view[12+rr]=(float)-(r[0][rr]*t[0]+r[1][rr]*t[1]+r[2][rr]*t[2]);
+    view[15]=1;
+    double tl=tan(v->fov.angleLeft),tr=tan(v->fov.angleRight);
+    double tu=tan(v->fov.angleUp),td=tan(v->fov.angleDown);
+    double wd=tr-tl,ht=tu-td;
+    if(!(wd>0) || !(ht>0))return 0;
+    memset(proj,0,16*sizeof *proj);
+    proj[0]=(float)(2/wd);proj[8]=(float)((tr+tl)/wd);
+    proj[5]=(float)(2/ht);proj[9]=(float)((tu+td)/ht);
+    proj[10]=(float)(-(f+n)/(f-n));proj[11]=-1;proj[14]=(float)(-2*f*n/(f-n));
+    if(eye_p){eye_p[0]=t[0];eye_p[1]=t[1];eye_p[2]=t[2];}
+    if(eye_q){eye_q[0]=x;eye_q[1]=y;eye_q[2]=z;eye_q[3]=w;}
+    if(origin_valid)*origin_valid=(uint32_t)s_origin_valid;
+    if(origin_p)memcpy(origin_p,s_op,sizeof s_op);
+    if(origin_q)memcpy(origin_q,s_oq,sizeof s_oq);
+    if(predicted_time)*predicted_time=(uint64_t)s_time;
+    return 1;
+#else
+    (void)eye;(void)n;(void)f;(void)view;(void)proj;(void)eye_p;(void)eye_q;
+    (void)origin_valid;(void)origin_p;(void)origin_q;(void)predicted_time;
+    return 0;
+#endif
+}
 int psx_openxr_surface(const PSXModOpenXRSurface *v) {
     if(!psx_openxr_surface_valid(v))return 0;
     if(!s_stats.frame_open || !s_stats.tracking || s_quad_distance>0)return 0;

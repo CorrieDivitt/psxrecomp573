@@ -655,4 +655,13 @@ void gl_renderer_ring_capture(uint32_t frame, int wide, int base_x, int disp_y, 
 }
 #endif
 
+/* Stop the host-scene XR thread (it ends and destroys the OpenXR session on
+ * its own thread). Idempotent; call before psx_openxr_shutdown on exit. */
+#ifdef __cplusplus
+extern "C" {
+#endif
+void gl_renderer_xr_scene_stop(void);
+#ifdef __cplusplus
+}
+#endif
 #endif /* PSX_GPU_GL_RENDERER_H */

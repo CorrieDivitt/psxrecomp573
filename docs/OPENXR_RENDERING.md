@@ -102,6 +102,69 @@ submission; they do not prove the layer currently visible. `video_info` exposes
 the actual GL swap interval. The plugin can avoid a second desktop wait while
 keeping the runtime's guest-speed deadline.
 
+## Host-drawn scene: `psx_mod_openxr_scene`
+
+**Thread and rate.** The scene runs on its own XR thread with a GL context
+shared with the composing context, paced by `xrWaitFrame` at the headset's
+refresh rate rather than the game's presents. The composing thread copies each
+fresh native frame into one of three shared textures, fences it and publishes
+it; the XR thread waits on that fence and draws with the newest frame. Drawing
+at the game's 60 Hz instead made the runtime reproject every frame, which
+smeared the screen badly on horizontal head turns (Virtual Desktop, Quest 3,
+2026-11-20). The XR thread owns the OpenXR session: it samples input, locates
+the controllers (`PSXModOpenXRSceneEye.hands`), and ends and destroys the
+session when the scene is removed or the renderer shuts down
+(`gl_renderer_xr_scene_stop`). Scene callbacks must not call
+`psx_mod_openxr_hands` or `psx_mod_openxr_input` (they synchronise with the
+render thread); `psx_mod_openxr_haptic` is safe there.
+
+For titles whose VR presentation is a world the application builds itself (a
+virtual arcade cabinet with the game on its screen, a room around a flat game),
+`psx_mod_openxr_scene(draw,user,near_m,far_m)` registers a callback that draws
+that world into the stereo projection layer, once per eye, at every fresh native
+present (the same source and point as the native surface). There is no guest
+replay and no change to guest timing.
+
+Before the XR frame begins, the composed native viewport is copied into a
+texture: display-encoded RGBA8, bottom row first, with the desktop
+post-processing already applied. Inside the frame, for each eye the callback
+receives a `PSXModOpenXRSceneEye`: an FBO bound for drawing whose colour is the
+eye's swapchain image and whose depth is a private DEPTH24_STENCIL8
+renderbuffer, the full-image viewport, column-major `view` (raw XR LOCAL metres
+to eye) and `projection` (asymmetric GL clip from the eye's FOV and the given
+near/far), the eye pose, the recentre origin (the same one
+`PSXModOpenXRHands` reports), and the game texture with its size.
+`GL_FRAMEBUFFER_SRGB` is disabled: write display-encoded values, or decode to
+linear when `linear_target` is 1 (a runtime without an sRGB swapchain format).
+The runtime restores the GL state its native renderer depends on afterwards.
+Returning 0 from the callback submits no layer for that frame.
+
+Controller actions for the scene's frame are sampled on the presenting
+thread just before the XR frame opens and passed in `input` (the same sample
+for both eyes). Use it rather than calling `psx_mod_openxr_input` from the
+emulation thread: with the render thread on, such a call can arrive while a
+frame is open, where it samples nothing and clears the cached controller
+poses, so the scene sees no hands for that frame.
+
+The scene excludes the native surface and the guest stereo path
+(`psx_mod_openxr_begin` refuses while a scene is registered). Controllers come
+from `psx_mod_openxr_hands`, sampled when the frame's views are located. The
+layer is submitted at the native present rate, so a headset faster than the
+game reprojects between game frames. Not yet validated on a headset (first use:
+Fighting Mania VR, 2026-11-20).
+
+## Haptics and session exit
+
+A vibration output action is bound to `/user/hand/left/output/haptic` and
+`/user/hand/right/output/haptic` for the Touch and KHR simple profiles.
+`psx_mod_openxr_haptic(hand,amplitude,duration_ms)` applies it; call it on the
+presenting thread (for example from the scene callback).
+
+`psx_openxr_shutdown` ends a running session before destroying it: it requests
+exit, runs empty frames until the runtime reaches STOPPING (where `xrEndSession`
+is called), at most 1.5 s, and then destroys the objects. Destroying a running
+session directly hung the process on exit under Virtual Desktop's runtime.
+
 ## Validation and limits
 
 The original MoH alpha was accepted on Quest 3 via Virtual Desktop/VDXR for
