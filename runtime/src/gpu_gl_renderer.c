@@ -8995,7 +8995,12 @@ static int openxr_scene_capture_game(void) {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     (void)pass_gl_errors();
-    glCopyTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,r[0],r[1],r[2],r[3],0);
+    /* Copy into the slot's existing storage when its size has not changed,
+     * rather than reallocating the shared texture on every present. */
+    if(s_xr_scene_tex_w[slot]==r[2] && s_xr_scene_tex_h[slot]==r[3])
+        glCopyTexSubImage2D(GL_TEXTURE_2D,0,0,0,r[0],r[1],r[2],r[3]);
+    else
+        glCopyTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,r[0],r[1],r[2],r[3],0);
     int ok=pass_gl_errors()==0;
     glBindTexture(GL_TEXTURE_2D,(GLuint)binding);p_glActiveTexture((GLenum)active);
     p_glBindFramebuffer(PSXGL_READ_FRAMEBUFFER,(GLuint)read_fbo);glReadBuffer((GLenum)read_buffer);
@@ -9610,7 +9615,34 @@ static void gl_swap_self_heal(Uint64 t0) {
     }
 }
 
+/* While the host-drawn XR scene runs, the desktop window swaps without
+ * waiting for the monitor: in VR it is only a mirror, the wall-clock pacer
+ * keeps the guest's cadence, and a swap blocked on a 120 Hz monitor's vsync
+ * was the lead suspect for bursts of missed headset frames (frames held for
+ * 16.7 ms on a 120 Hz Quest 3 through Virtual Desktop, Fighting Mania VR,
+ * 2026-11-21): with NVIDIA's OpenGL a blocking SwapBuffers can hold up the
+ * XR thread's shared context. PSX_OPENXR_MIRROR_VSYNC=1 keeps the old
+ * behaviour for comparison. Swap thread only (the interval is per context). */
+static int s_xr_mirror_vsync_off;
+static void gl_xr_mirror_vsync(void) {
+    static int s_keep = -1;
+    if (s_keep < 0) { const char *e = getenv("PSX_OPENXR_MIRROR_VSYNC"); s_keep = e && e[0] == '1'; }
+    const int want_off = s_xr_scene_thread != NULL && !s_keep;
+    if (want_off && !s_xr_mirror_vsync_off) {
+        if (SDL_GL_SetSwapInterval(0) == 0) {
+            s_xr_mirror_vsync_off = 1;
+            fprintf(stderr, "psxrecomp: OpenXR scene running: desktop mirror swaps without vsync "
+                            "(PSX_OPENXR_MIRROR_VSYNC=1 keeps it)\n");
+        }
+    } else if (!want_off && s_xr_mirror_vsync_off) {
+        const int interval = psx_present_vsync_disabled() ? 0 : s_swap_interval;
+        if (SDL_GL_SetSwapInterval(interval) != 0 && interval < 0) SDL_GL_SetSwapInterval(1);
+        s_xr_mirror_vsync_off = 0;
+    }
+}
+
 static void gl_window_swap(void) {
+    gl_xr_mirror_vsync();
     const Uint64 swap_t0 = SDL_GetPerformanceCounter();
 #if defined(PSX_SDL3)
     psx_video_telemetry_present(SDL_GL_SwapWindow(s_win) ? 1 : 0);
@@ -9642,6 +9674,7 @@ static void *pt_cb_present(void *user, int slot, void *ready) {
         const int interval = psx_present_vsync_disabled() ? 0 : s_swap_interval;
         if (SDL_GL_SetSwapInterval(interval) != 0 && interval < 0)
             SDL_GL_SetSwapInterval(1);
+        s_xr_mirror_vsync_off = 0;   /* gl_window_swap turns it off again if XR is running */
     }
     if (ready) { p_glWaitSync(ready, 0, PT_TIMEOUT_IGNORED); p_glDeleteSync(ready); }
     if (!s_ptp_fbo[slot] || s_ptp_gen[slot] != s_pts_gen[slot]) {
