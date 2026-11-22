@@ -20,6 +20,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
 
 extern int g_psx_render_pass_active;
 extern uint64_t s_frame_count;
@@ -93,6 +94,14 @@ static DWORD WINAPI sampler_main(LPVOID arg) {
 
 void host_sampler_start(void) {
     if (s_supported) return;
+    /* PSX_HOST_SAMPLER=0: no sampler thread. Suspending the emulation (GL)
+     * thread 1000 times a second at time-critical priority is a suspect for
+     * stalls of other GL contexts (the OpenXR scene thread) that share the
+     * driver with it (Fighting Mania VR, 2026-11-21). */
+    {
+        const char *e = getenv("PSX_HOST_SAMPLER");
+        if (e && e[0] == '0') return;
+    }
     s_image_base = (uintptr_t)GetModuleHandleW(NULL);
     if (!DuplicateHandle(GetCurrentProcess(), GetCurrentThread(),
                          GetCurrentProcess(), &s_target,

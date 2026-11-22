@@ -9099,13 +9099,23 @@ static int openxr_copy_scene(uint32_t eye,uint32_t texture,int w,int h) {
 }
 /* XR thread: owns the OpenXR session and its own shared GL context. Paced by
  * xrWaitFrame at the headset's rate, independent of the game's presents. */
+/* Hitch report (PSX_XR_HITCH_MS, default 22; 0 = off): when one pass of the
+ * XR thread's loop takes longer than that, print where the time went, with
+ * SDL_GetTicks() so it can be lined up with other logs. */
+static double xr_ms_since(Uint64 a, Uint64 b) {
+    return (double)(b - a) * 1000.0 / (double)SDL_GetPerformanceFrequency();
+}
 static int SDLCALL openxr_scene_thread(void *unused) {
     (void)unused;
     if(SDL_GL_MakeCurrent(s_win,s_xr_scene_ctx)!=0)return 0;
+    double hitch_ms=22.0;
+    {const char *e=getenv("PSX_XR_HITCH_MS");if(e&&*e)hitch_ms=atof(e);}
     while(s_xr_scene_run) {
+        const Uint64 h0=SDL_GetPerformanceCounter();
         memset(&s_xr_scene_input,0,sizeof s_xr_scene_input);
         s_xr_scene_input.struct_size=sizeof s_xr_scene_input;
         (void)psx_openxr_input(&s_xr_scene_input);   /* no frame open: a real sample */
+        const Uint64 h1=SDL_GetPerformanceCounter();
         if(!psx_openxr_begin(512,240,1.0)) {
             PSXOpenXRStats st;psx_openxr_stats(&st);
             if(!st.enabled)break;   /* the headset app closed the session, or XR was turned off */
@@ -9115,17 +9125,25 @@ static int SDLCALL openxr_scene_thread(void *unused) {
         memset(&s_xr_scene_hands,0,sizeof s_xr_scene_hands);
         s_xr_scene_hands.struct_size=sizeof s_xr_scene_hands;
         (void)psx_openxr_hands(&s_xr_scene_hands);
+        const Uint64 h2=SDL_GetPerformanceCounter();
         GLsync fence=0;
         SDL_LockMutex(s_xr_scene_lock);
         s_xr_scene_slot=s_xr_scene_pub;s_xr_scene_inuse=s_xr_scene_slot;
         if(s_xr_scene_slot>=0){fence=s_xr_scene_fence[s_xr_scene_slot];s_xr_scene_fence[s_xr_scene_slot]=0;}
         SDL_UnlockMutex(s_xr_scene_lock);
+        const Uint64 h3=SDL_GetPerformanceCounter();
         if(fence){p_glWaitSync(fence,0,(uint64_t)-1 /* TIMEOUT_IGNORED */);p_glDeleteSync(fence);}
         psx_openxr_native_metadata(s_frame_count);
+        const Uint64 h4=SDL_GetPerformanceCounter();
         (void)psx_openxr_end(1,openxr_copy_scene);
+        const Uint64 h5=SDL_GetPerformanceCounter();
         SDL_LockMutex(s_xr_scene_lock);
         s_xr_scene_inuse=-1;
         SDL_UnlockMutex(s_xr_scene_lock);
+        if(hitch_ms>0 && xr_ms_since(h0,h5)>hitch_ms)
+            fprintf(stderr,"psxrecomp: XR hitch at %u ms: loop %.1f ms = input %.1f, begin (wait frame) + hands %.1f, "
+                           "lock %.1f, fence %.1f, draw+end %.1f\n",(unsigned)SDL_GetTicks(),xr_ms_since(h0,h5),
+                    xr_ms_since(h0,h1),xr_ms_since(h1,h2),xr_ms_since(h2,h3),xr_ms_since(h3,h4),xr_ms_since(h4,h5));
     }
     /* End the session gracefully and destroy it with this context current. */
     psx_openxr_shutdown();
@@ -9621,29 +9639,63 @@ static void gl_swap_self_heal(Uint64 t0) {
  * was the lead suspect for bursts of missed headset frames (frames held for
  * 16.7 ms on a 120 Hz Quest 3 through Virtual Desktop, Fighting Mania VR,
  * 2026-11-21): with NVIDIA's OpenGL a blocking SwapBuffers can hold up the
- * XR thread's shared context. PSX_OPENXR_MIRROR_VSYNC=1 keeps the old
- * behaviour for comparison. Swap thread only (the interval is per context). */
+ * XR thread's shared context. MEASURED OTHERWISE (Fighting Mania VR,
+ * 2026-11-21, 380 s of 30 s blocks alternating in one session, RTX 4090,
+ * Quest 3 at 120 Hz): no difference with a light GPU load (1.22 vs 1.24
+ * late frames/s) and about 3x more late frames without vsync once the scene
+ * got heavier (10.8 vs 3.6/s), presumably because the unthrottled mirror
+ * competes for the GPU. So the mirror keeps vsync by default;
+ * PSX_OPENXR_MIRROR_VSYNC=0 swaps without it, and
+ * psx_mod_openxr_mirror_vsync() switches while running (for an A/B). Swap thread only (the
+ * interval is per context); the switch is an atomic the next swap reads. */
 static int s_xr_mirror_vsync_off;
+static _Atomic int s_xr_mirror_keep = -1;   /* -1 unset (env), 0 no vsync, 1 vsync (default) */
+static int xr_mirror_keep_now(void) {
+    int k = atomic_load(&s_xr_mirror_keep);
+    if (k < 0) {
+        const char *e = getenv("PSX_OPENXR_MIRROR_VSYNC");
+        int want = !(e && e[0] == '0');
+        int expect = -1;
+        atomic_compare_exchange_strong(&s_xr_mirror_keep, &expect, want);
+        k = atomic_load(&s_xr_mirror_keep);
+    }
+    return k;
+}
+int psx_mod_openxr_mirror_vsync(int keep) {
+    if (keep >= 0) atomic_store(&s_xr_mirror_keep, keep ? 1 : 0);
+    return xr_mirror_keep_now();
+}
 static void gl_xr_mirror_vsync(void) {
-    static int s_keep = -1;
-    if (s_keep < 0) { const char *e = getenv("PSX_OPENXR_MIRROR_VSYNC"); s_keep = e && e[0] == '1'; }
-    const int want_off = s_xr_scene_thread != NULL && !s_keep;
+    static int s_said = -1;
+    const int keep = xr_mirror_keep_now();
+    const int want_off = s_xr_scene_thread != NULL && !keep;
     if (want_off && !s_xr_mirror_vsync_off) {
         if (SDL_GL_SetSwapInterval(0) == 0) {
             s_xr_mirror_vsync_off = 1;
-            fprintf(stderr, "psxrecomp: OpenXR scene running: desktop mirror swaps without vsync "
-                            "(PSX_OPENXR_MIRROR_VSYNC=1 keeps it)\n");
+            if (s_said != 0)
+                fprintf(stderr, "psxrecomp: OpenXR scene running: desktop mirror swaps without vsync "
+                                "(PSX_OPENXR_MIRROR_VSYNC=0 / psx_mod_openxr_mirror_vsync(0))\n");
+            s_said = 0;
         }
     } else if (!want_off && s_xr_mirror_vsync_off) {
         const int interval = psx_present_vsync_disabled() ? 0 : s_swap_interval;
         if (SDL_GL_SetSwapInterval(interval) != 0 && interval < 0) SDL_GL_SetSwapInterval(1);
         s_xr_mirror_vsync_off = 0;
+        if (s_xr_scene_thread && s_said != 1) {
+            fprintf(stderr, "psxrecomp: OpenXR scene running: desktop mirror swaps with vsync (default)\n");
+            s_said = 1;
+        }
     }
 }
 
 static void gl_window_swap(void) {
     gl_xr_mirror_vsync();
     const Uint64 swap_t0 = SDL_GetPerformanceCounter();
+    static double s_swap_hitch_ms = -1.0;
+    if (s_swap_hitch_ms < 0.0) {
+        const char *e = getenv("PSX_XR_HITCH_MS");
+        s_swap_hitch_ms = e && *e ? atof(e) : 22.0;
+    }
 #if defined(PSX_SDL3)
     psx_video_telemetry_present(SDL_GL_SwapWindow(s_win) ? 1 : 0);
 #else
@@ -9651,6 +9703,12 @@ static void gl_window_swap(void) {
     psx_video_telemetry_present(-1); // SDL2 exposes no swap result.
 #endif
     gl_swap_self_heal(swap_t0);
+    if (s_xr_scene_thread && s_swap_hitch_ms > 0.0) {
+        const double took = (double)(SDL_GetPerformanceCounter() - swap_t0) * 1000.0 /
+                            (double)SDL_GetPerformanceFrequency();
+        if (took > s_swap_hitch_ms)
+            fprintf(stderr, "psxrecomp: desktop swap hitch at %u ms: %.1f ms\n", (unsigned)SDL_GetTicks(), took);
+    }
     if (s_swap_timing < 0) {
         const char *env = getenv("PSX_PRESENT_TIMING");
         s_swap_timing = env && env[0] == '1';

@@ -1092,6 +1092,13 @@ int psx_mod_openxr_scene(PSXModOpenXRSceneDraw draw, void *user,
  * in milliseconds. Call on the presenting thread, for example from the scene
  * callback; never from the emulation thread. Returns 0 when XR is not running. */
 int psx_mod_openxr_haptic(uint32_t hand, float amplitude, uint32_t duration_ms);
+/* While the host scene runs, the desktop window is only a mirror and swaps
+ * without waiting for the monitor's vsync (a blocking swap held up the XR
+ * thread) when keep is 0. keep 1 = keep vsync (the default: measured better),
+ * 0 = swap without it, negative = only ask. Returns the mode in force
+ * (initially 1, or 0 with PSX_OPENXR_MIRROR_VSYNC=0). Any thread; the next
+ * desktop swap applies it. */
+int psx_mod_openxr_mirror_vsync(int keep);
 
 
 

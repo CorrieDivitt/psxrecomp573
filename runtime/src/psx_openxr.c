@@ -12,6 +12,7 @@
 #include "openxr_color.h"
 #include "frame_trace.h"
 #include "gpu_gl_renderer.h"
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -378,6 +379,12 @@ static int initialize(void) {
     }
     s_stats.initialized=1;s_stats.stage="waiting_session";return 1;
 }
+/* Ask for the bound interaction profiles only when the runtime says they
+ * changed (plus a few retries at the start while nothing is bound yet), not
+ * on a timer: on Virtual Desktop's runtime a once-a-second
+ * xrGetCurrentInteractionProfile lined up with headset stutters of 25-55 ms
+ * (Fighting Mania VR play log, 2026-11-21). */
+static int s_profile_dirty=1, s_profile_retries=10;
 static int events(void) {
     for(;;) {
         XrEventDataBuffer event={XR_TYPE_EVENT_DATA_BUFFER};
@@ -404,6 +411,8 @@ static int events(void) {
             /* Recenter from the next valid located pair. */
             const XrEventDataReferenceSpaceChangePending *e=(const void*)&event;
             if(e->referenceSpaceType==XR_REFERENCE_SPACE_TYPE_LOCAL) s_origin_reset_time=e->changeTime;
+        } else if(event.type==XR_TYPE_EVENT_DATA_INTERACTION_PROFILE_CHANGED) {
+            s_profile_dirty=1;
         } else if(event.type==XR_TYPE_EVENT_DATA_INSTANCE_LOSS_PENDING) {
             s_reset_pending=1;s_reset_stage="instance_loss";return 0;
         }
@@ -452,10 +461,14 @@ static void hands_locate(int focused) {
     }
     s_hands=current;s_hands_sample_ms=psx_host_mono_ms();
     /* Which interaction profile the runtime bound to each hand (diagnostic,
-     * openxr_stats.hand_profile); refreshed about once a second. */
+     * openxr_stats.hand_profile): on the INTERACTION_PROFILE_CHANGED event,
+     * and once a second for the first few seconds until both hands have one. */
     static uint64_t profile_ms;
-    if(s_hands_sample_ms-profile_ms>=1000u) {
+    if(s_profile_dirty || (s_profile_retries>0 && s_hands_sample_ms-profile_ms>=1000u)) {
+        const uint64_t t0=psx_host_mono_ms();
         profile_ms=s_hands_sample_ms;
+        s_profile_dirty=0;
+        if(s_profile_retries>0)s_profile_retries--;
         for(int e=0;e<2;e++) {
             XrInteractionProfileState ps={XR_TYPE_INTERACTION_PROFILE_STATE};
             s_stats.hand_profile[e][0]=0;
@@ -466,6 +479,9 @@ static void hands_locate(int focused) {
                                  &n,s_stats.hand_profile[e]);
             s_stats.hand_profile[e][sizeof s_stats.hand_profile[e]-1]=0;
         }
+        if(s_stats.hand_profile[0][0] && s_stats.hand_profile[1][0])s_profile_retries=0;
+        const uint64_t took=psx_host_mono_ms()-t0;
+        if(took>=5u)fprintf(stderr,"psxrecomp: OpenXR: reading the controller profiles took %llu ms\n",(unsigned long long)took);
     }
 }
 /* Destroy every XR object (children before parents). Safe on a partially
@@ -474,6 +490,7 @@ static void xr_destroy(void) {
     /* A new session must not inherit the previous one's display times: the
      * first delta after a re-init would be meaningless. */
     s_prev_display_valid=0;s_prev_display_time=0;
+    s_profile_dirty=1;s_profile_retries=10;   /* a new session binds again */
     for(int eye=0;eye<2;eye++) {
         for(int k=0;k<2;k++) {
             if(s_pose_space[eye][k])xrDestroySpace(s_pose_space[eye][k]);
