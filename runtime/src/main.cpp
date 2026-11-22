@@ -7897,13 +7897,29 @@ done:
 extern "C" int psx_mod_hold(int (*keep)(void *user), void *user) {
     if (!keep) return 0;
     freeze_heartbeat_set_paused(1);
+    uint64_t last_present = 0;
     while (keep(user)) {
         if (!g_headless) {
             SDL_PumpEvents();
             if (SDL_HasEvent(SDL_QUIT)) break;
         }
+#ifndef PSX_SDL_NO_RENDER
+        /* Keep the desktop window presenting (the last frame again, at the
+         * game's rate), as the netplay hold does. A window that stops
+         * presenting for a while and then starts again makes Windows change
+         * how it composes it, and the change hitches the whole GPU: in
+         * Fighting Mania VR a 50-100 ms headset frame came about half a
+         * second after every pause and every resume. */
+        if (g_gl_active) {
+            const uint64_t now = SDL_GetTicks64();
+            uint32_t period = (uint32_t)(g_frame_period_ms + 0.5);
+            if (period < 8u) period = 8u;
+            if (last_present == 0 || now - last_present >= period)
+                if (gl_renderer_present_hold_last()) last_present = now ? now : 1;
+        }
+#endif
         starvation_watchdog_heartbeat();
-        SDL_Delay(4);
+        SDL_Delay(2);
     }
     freeze_heartbeat_set_paused(0);
     return 1;
