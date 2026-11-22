@@ -1169,6 +1169,14 @@ typedef struct PSXModSprite {
  * new address), or at vblank for a game that does not flip. Any thread.
  * Returns how many were copied (with out NULL: how many there are). */
 int psx_mod_sprite_frame(PSXModSprite *out, int max, uint8_t *pool, uint32_t pool_texels, uint32_t *seq);
+/* Pause the game from a mod: call on the emulation thread (for example from
+ * a board or frame hook). Holds the guest while keep(user) returns nonzero,
+ * checking about every 4 ms; meanwhile the window's events are pumped (not
+ * consumed), the freeze detector and starvation watchdog are kept quiet, and
+ * the host's other threads (the OpenXR scene, audio) carry on. The frame
+ * pacer resyncs afterwards instead of catching up. A quit request (window
+ * closed) ends the hold. Returns 1 if it held, 0 if keep is NULL. */
+int psx_mod_hold(int (*keep)(void *user), void *user);
 
 
 

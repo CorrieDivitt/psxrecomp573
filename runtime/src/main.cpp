@@ -7889,6 +7889,26 @@ done:
     freeze_heartbeat_set_paused(0);
 }
 
+/* psx_mod_hold (mod_plugins.h): a mod's pause. Same quieting as the netplay
+ * admit barrier above: the freeze detector is told guest execution is held,
+ * the starvation watchdog is fed, and window events are pumped so the OS
+ * does not call the window unresponsive (events stay queued for the main
+ * loop; a quit request ends the hold). */
+extern "C" int psx_mod_hold(int (*keep)(void *user), void *user) {
+    if (!keep) return 0;
+    freeze_heartbeat_set_paused(1);
+    while (keep(user)) {
+        if (!g_headless) {
+            SDL_PumpEvents();
+            if (SDL_HasEvent(SDL_QUIT)) break;
+        }
+        starvation_watchdog_heartbeat();
+        SDL_Delay(4);
+    }
+    freeze_heartbeat_set_paused(0);
+    return 1;
+}
+
 /* Main-thread implementation of the PadExtHooks seams (see
  * pad_external_input.h for the resolution order and precedence rule). */
 static int pad_ext_guard_active(void*) { return savestate_input_guard_active(); }
