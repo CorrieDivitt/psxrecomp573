@@ -91,6 +91,7 @@ static int      gp0_words_needed;
 static uint32_t gp0_next_source_addr = 0xFFFFFFFFu;
 static uint32_t gp0_cmd_source_addr  = 0xFFFFFFFFu;
 static uint16_t gp0_ot_rank = 0xFFFFu;
+static int sl_list_no;   /* sprite layers: DrawOTag lists begun in this frame (gpu_ws_begin_linked_list) */
 
 /* ---- Widescreen proportion correction --------------------------------------
  * Active only when [video] aspect_ratio != 4:3 AND the game's [widescreen]
@@ -4153,6 +4154,7 @@ static void ws_clear_tagged_rect_reveal(int y, int h) {
  * stage art. A stale reveal tile is safer than deleting submitted content. */
 void gpu_ws_begin_linked_list(void) {
     gp0_ot_rank = 0xFFFFu;
+    sl_list_no++;   /* sprite layers: a new list, a new set of draw-order keys */
 }
 
 void gpu_set_gp0_linked_list_node(uint32_t addr, uint32_t word_count) {
@@ -4588,7 +4590,9 @@ void gpu_vblank_flush_present(void) {
     s_flushing_present = 0;
 }
 
+static void sl_vblank(void);
 void gpu_vblank_tick(void) {
+    sl_vblank();
     lcf ^= 1;
     gpu_timeline_note(GTL_VBLANK, lcf, 0);
     /* GPUSTAT.13 (interlace FIELD): on real hardware this alternates per
@@ -7845,6 +7849,270 @@ uint64_t gpu_ws_census_seq(void) { return ws_census_seq; }
 /* Execute a fully-collected GP0 command */
 static void gp0_dispatch_command(uint8_t opcode);
 
+/* ---------------------------------------------------------- sprite layers */
+/* psx_mod_sprite_rules / psx_mod_sprite_frame (mod_plugins.h): textured
+ * sprites the application names by their texture (page + texel rectangle,
+ * optionally the palette) are cut out of VRAM as RGBA when they are drawn,
+ * with their place on the picture, and handed over once per frame; a rule
+ * with `hide` also leaves the sprite out of the picture. Made for VR (draw a
+ * HUD piece in 3D, e.g. Fighting Mania's GOOD! on the pad that was hit).
+ * Emulation thread: matching, decoding, publishing at vblank. Any thread:
+ * replacing the rules (taken at the next vblank) and reading the last
+ * finished frame. The texels come from the CPU copy of VRAM, so a sprite
+ * whose texture the game drew with the GPU (not uploaded) may read stale. */
+#define SL_MAX_RULES   32
+#define SL_MAX_SPRITES 1024
+static PSXModSpriteRule sl_rules[SL_MAX_RULES];
+static int sl_nrules;
+static PSXModSpriteRule sl_rules_next[SL_MAX_RULES];
+static int sl_nrules_next;
+static volatile int sl_rules_pending;
+static volatile int sl_lock_flag;
+/* Two lists with their texel pools: the one being filled while the game
+ * draws, and the published one; swapped when a frame is finished. */
+static PSXModSprite sl_list[2][SL_MAX_SPRITES];
+static uint8_t *sl_pool[2];
+static int sl_fill;                 /* which of the two is being filled */
+static int sl_ncur, sl_npub, sl_draws;
+static uint32_t sl_used, sl_pub_used;   /* texels used in the filling / published pool */
+static uint32_t sl_seq;
+static uint32_t sl_last_disp = 0xFFFFFFFFu;
+static int sl_flip_age = 1000;      /* vblanks since the game last flipped */
+static uint32_t sl_base_key = 0xFFFFFFFFu;   /* the frame's first draw-order key */
+
+static void sl_lock(void) {
+    while (__atomic_exchange_n(&sl_lock_flag, 1, __ATOMIC_ACQUIRE)) { }
+}
+static void sl_unlock(void) { __atomic_store_n(&sl_lock_flag, 0, __ATOMIC_RELEASE); }
+
+int psx_mod_sprite_rules(const PSXModSpriteRule *rules, int count) {
+    if (count < 0 || count > SL_MAX_RULES || (count && !rules)) return 0;
+    sl_lock();
+    if (count) memcpy(sl_rules_next, rules, (size_t)count * sizeof *rules);
+    sl_nrules_next = count;
+    sl_rules_pending = 1;
+    sl_unlock();
+    return 1;
+}
+
+int psx_mod_sprite_frame(PSXModSprite *out, int max, uint8_t *pool, uint32_t pool_texels, uint32_t *seq) {
+    sl_lock();
+    int n = sl_npub < max ? sl_npub : max;
+    if (seq) *seq = sl_seq;
+    if (out && n > 0) {
+        const PSXModSprite *src = sl_list[sl_fill ^ 1];
+        memcpy(out, src, (size_t)n * sizeof *out);
+        if (pool && sl_pool[sl_fill ^ 1]) {
+            uint32_t used = sl_pub_used < pool_texels ? sl_pub_used : pool_texels;
+            memcpy(pool, sl_pool[sl_fill ^ 1], (size_t)used * 4u);
+            /* drop any textured draw whose texels did not fit the caller's pool */
+            int k = 0;
+            for (int i = 0; i < n; i++)
+                if (!(out[i].flags & PSX_MOD_SPRITE_TEXTURED) || out[i].pix + (uint32_t)out[i].w * out[i].h <= used)
+                    out[k++] = out[i];
+            n = k;
+        }
+    }
+    sl_unlock();
+    return out ? n : sl_npub;
+}
+
+static uint16_t sl_vram(int x, int y) {
+    return vram[((uint32_t)y & PSX_VRAM_YMASK) * 1024u + ((uint32_t)x & 1023u)];
+}
+
+/* The frame being filled is finished: publish it (only frames in which the
+ * game drew something, so a skipped frame keeps the last list). */
+static void sl_publish(void) {
+    if (!sl_nrules || !sl_draws) return;
+    sl_lock();
+    sl_npub = sl_ncur;
+    sl_pub_used = sl_used;
+    sl_fill ^= 1;
+    sl_seq++;
+    sl_unlock();
+    sl_ncur = 0;
+    sl_used = 0;
+    sl_draws = 0;
+    sl_list_no = 0;
+    sl_base_key = 0xFFFFFFFFu;
+}
+
+/* GP1(05h): a new display address is the game's buffer flip: what it drew
+ * since the last flip is the picture now shown. */
+static void sl_display_start(uint32_t val) {
+    if (val == sl_last_disp) return;
+    sl_last_disp = val;
+    sl_flip_age = 0;
+    sl_publish();
+}
+
+/* At vblank: take new rules; for a game that does not flip, publish here. */
+static void sl_vblank(void) {
+    if (sl_rules_pending) {
+        sl_lock();
+        memcpy(sl_rules, sl_rules_next, sizeof sl_rules);
+        sl_nrules = sl_nrules_next;
+        sl_rules_pending = 0;
+        sl_unlock();
+        if (!sl_nrules) {   /* rules cleared: the list empties too */
+            sl_lock(); sl_npub = 0; sl_pub_used = 0; sl_seq++; sl_unlock();
+            sl_ncur = 0; sl_used = 0; sl_draws = 0; sl_list_no = 0; sl_base_key = 0xFFFFFFFFu;
+        }
+    }
+    if (sl_flip_age < 1000) sl_flip_age++;
+    if (sl_flip_age > 8) sl_publish();
+}
+
+/* Texels u0..u0+w-1, v0..v0+h-1 of a texture page into RGBA. */
+static void sl_decode(uint8_t *px, int page_x, int page_y, int mode, int clut_x, int clut_y,
+                      int u0, int v0, int w, int h) {
+    uint16_t pal[256];
+    if (mode == 0 || mode == 1) {
+        const int n = mode == 0 ? 16 : 256;
+        for (int i = 0; i < n; i++) pal[i] = sl_vram(clut_x + i, clut_y);
+    }
+    for (int y = 0; y < h; y++) {
+        const int v = (v0 + y) & 255;
+        const uint16_t *row = &vram[((uint32_t)(page_y + v) & PSX_VRAM_YMASK) * 1024u];
+        for (int x = 0; x < w; x++, px += 4) {
+            const int u = (u0 + x) & 255;
+            uint16_t p;
+            if (mode == 0)      p = pal[(row[(page_x + u / 4) & 1023] >> ((u & 3) * 4)) & 15];
+            else if (mode == 1) p = pal[(row[(page_x + u / 2) & 1023] >> ((u & 1) * 8)) & 255];
+            else                p = row[(page_x + u) & 1023];
+            px[0] = (uint8_t)((p & 31) << 3); px[1] = (uint8_t)(((p >> 5) & 31) << 3);
+            px[2] = (uint8_t)(((p >> 10) & 31) << 3); px[3] = p ? 255 : 0;
+        }
+    }
+}
+
+/* A draw command (opcode 0x20-0x7F): returns 1 to leave it out of the
+ * picture. */
+static int sl_draw(uint8_t op) {
+    sl_draws++;
+    int nv, vx[4], vy[4], us[4] = { 0, 0, 0, 0 }, vs[4] = { 0, 0, 0, 0 };
+    uint32_t col[4];
+    uint16_t tp = current_texpage(), clut = 0;
+    int tex = 0, raw = 0, line = 0;
+    const uint32_t *b = gp0_cmd_buf;
+    if (op >= 0x20 && op <= 0x3F) {                 /* polygon */
+        tex = (op & 4) != 0; raw = tex && (op & 1); 
+        const int gour = (op & 0x10) != 0;
+        nv = (op & 8) ? 4 : 3;
+        int idx = 1;
+        col[0] = b[0] & 0xFFFFFFu;
+        for (int i = 0; i < nv; i++) {
+            if (i > 0) col[i] = gour ? (b[idx++] & 0xFFFFFFu) : col[0];
+            int32_t x, y; parse_vertex(b[idx++], &x, &y);
+            vx[i] = x; vy[i] = y;
+            if (tex) {
+                uint32_t w = b[idx++];
+                us[i] = w & 0xFF; vs[i] = (w >> 8) & 0xFF;
+                if (i == 0) clut = (uint16_t)(w >> 16);
+                if (i == 1) tp = (uint16_t)(w >> 16);
+            }
+        }
+    } else if (op >= 0x40 && op <= 0x5F) {          /* line (not polylines) */
+        if (op & 8) return 0;
+        line = 1; nv = 2;
+        col[0] = b[0] & 0xFFFFFFu;
+        int idx = 1;
+        int32_t x, y; parse_vertex(b[idx++], &x, &y); vx[0] = x; vy[0] = y;
+        col[1] = (op & 0x10) ? (b[idx++] & 0xFFFFFFu) : col[0];
+        parse_vertex(b[idx++], &x, &y); vx[1] = x; vy[1] = y;
+        vx[2] = vx[3] = vx[1]; vy[2] = vy[3] = vy[1]; col[2] = col[3] = col[1];
+    } else {                                        /* rectangle 0x60-0x7F */
+        tex = (op & 4) != 0; raw = tex && (op & 1);
+        const int size = (op >> 3) & 3;
+        int idx = 1;
+        int32_t x, y; parse_vertex(b[idx++], &x, &y);
+        int u0 = 0, v0 = 0;
+        if (tex) { uint32_t w = b[idx++]; u0 = w & 0xFF; v0 = (w >> 8) & 0xFF; clut = (uint16_t)(w >> 16); }
+        int w = size == 0 ? (int)(b[idx] & 0x3FF) : size == 1 ? 1 : size == 2 ? 8 : 16;
+        int h = size == 0 ? (int)((b[idx] >> 16) & 0x1FF) : w;
+        if (w <= 0 || h <= 0) return 0;
+        nv = 4;
+        vx[0] = x;     vy[0] = y;     us[0] = u0;         vs[0] = v0;
+        vx[1] = x + w; vy[1] = y;     us[1] = u0 + w - 1; vs[1] = v0;
+        vx[2] = x;     vy[2] = y + h; us[2] = u0;         vs[2] = v0 + h - 1;
+        vx[3] = x + w; vy[3] = y + h; us[3] = u0 + w - 1; vs[3] = v0 + h - 1;
+        col[0] = col[1] = col[2] = col[3] = b[0] & 0xFFFFFFu;
+    }
+    /* Draw-order key: (DrawOTag list in this frame << 11) | rank. */
+    uint32_t key = 0xFFFFu;
+    if (gp0_ot_rank != 0xFFFFu) {
+        key = ((uint32_t)(sl_list_no & 31) << 11) | (gp0_ot_rank & 0x7FFu);
+        if (sl_base_key == 0xFFFFFFFFu) sl_base_key = key;
+    }
+    int umin = 255, umax = 0, vmin = 255, vmax = 0, ymax = -100000;
+    for (int i = 0; i < nv; i++) {
+        if (us[i] < umin) umin = us[i];
+        if (us[i] > umax) umax = us[i];
+        if (vs[i] < vmin) vmin = vs[i];
+        if (vs[i] > vmax) vmax = vs[i];
+        int py = vy[i] + draw_offset_y - (int32_t)draw_area_top;
+        if (py > ymax) ymax = py;
+    }
+    if (umax > 255) umax = 255;
+    if (vmax > 255) vmax = 255;
+    const int page_x = (tp & 0xF) * 64, page_y = (int)PSX_TPAGE_Y(tp), mode = (tp >> 7) & 3;
+    const int clut_x = (clut & 0x3F) * 16, clut_y = (int)PSX_CLUT_Y(clut);
+    const PSXModSpriteRule *rule = NULL;
+    for (int k = 0; k < sl_nrules; k++) {
+        const PSXModSpriteRule *r = &sl_rules[k];
+        if (r->page_x != PSX_MOD_SPRITE_ANY_PAGE) {
+            if (!tex || r->page_x != page_x || r->page_y != page_y) continue;
+            if (umin < r->u0 || umax > r->u1 || vmin < r->v0 || vmax > r->v1) continue;
+        }
+        if (r->clut_x >= 0 && (!tex || r->clut_x != clut_x || r->clut_y != clut_y)) continue;
+        if (r->ot0 >= 0) {
+            if (key == 0xFFFFu) continue;
+            int rank = (int)(key & 0x7FFu);
+            if (rank < r->ot0 || rank > r->ot1) continue;
+        }
+        if (r->keep_base && (key == 0xFFFFu || key == sl_base_key)) continue;
+        if (r->y_max >= 0 && ymax > r->y_max) continue;
+        rule = r; break;
+    }
+    if (!rule) return 0;
+    int w = tex ? umax - umin + 1 : 0, h = tex ? vmax - vmin + 1 : 0;
+    if (w > PSX_MOD_SPRITE_MAX_W) w = PSX_MOD_SPRITE_MAX_W;
+    if (h > PSX_MOD_SPRITE_MAX_H) h = PSX_MOD_SPRITE_MAX_H;
+    uint8_t *pool = sl_pool[sl_fill];
+    if (!pool) {   /* first match: both pools at once */
+        sl_pool[0] = (uint8_t *)malloc((size_t)PSX_MOD_SPRITE_POOL * 4u);
+        sl_pool[1] = (uint8_t *)malloc((size_t)PSX_MOD_SPRITE_POOL * 4u);
+        if (!sl_pool[0] || !sl_pool[1]) { free(sl_pool[0]); free(sl_pool[1]); sl_pool[0] = sl_pool[1] = NULL; }
+        pool = sl_pool[sl_fill];
+    }
+    if (!pool || sl_ncur >= SL_MAX_SPRITES || sl_used + (uint32_t)(w * h) > PSX_MOD_SPRITE_POOL)
+        return 0;   /* no room: it stays in the picture */
+    PSXModSprite *o = &sl_list[sl_fill][sl_ncur];
+    o->layer = rule->layer;
+    o->semi = (uint8_t)((b[0] >> 25) & 1);
+    o->abr = (uint8_t)((tp >> 5) & 3);
+    o->flags = (uint8_t)((tex ? PSX_MOD_SPRITE_TEXTURED : 0) | (raw ? PSX_MOD_SPRITE_RAW : 0) | (line ? PSX_MOD_SPRITE_LINE : 0));
+    o->nv = (uint8_t)nv; o->pad[0] = o->pad[1] = o->pad[2] = 0; o->pad2 = 0;
+    o->key = (uint16_t)key;
+    o->w = (uint16_t)w; o->h = (uint16_t)h;
+    o->pix = sl_used;
+    for (int i = 0; i < 4; i++) {
+        o->color[i] = col[i < nv ? i : nv - 1];
+        int j = i < nv ? i : nv - 1;
+        o->x[i] = (float)(vx[j] + draw_offset_x - (int32_t)draw_area_left);
+        o->y[i] = (float)(vy[j] + draw_offset_y - (int32_t)draw_area_top);
+        o->s[i] = w ? (float)(us[j] - umin + (us[j] == umax ? 1 : 0)) / (float)w : 0.0f;
+        o->t[i] = h ? (float)(vs[j] - vmin + (vs[j] == vmax ? 1 : 0)) / (float)h : 0.0f;
+    }
+    if (tex) {
+        sl_decode(pool + (size_t)sl_used * 4u, page_x, page_y, mode, clut_x, clut_y, umin, vmin, w, h);
+        sl_used += (uint32_t)(w * h);
+    }
+    sl_ncur++;
+    return rule->hide ? 1 : 0;
+}
+
 static void gp0_execute_command(void) {
     uint8_t opcode = (gp0_cmd_buf[0] >> 24) & 0xFF;
     gp0_opcode_count[opcode]++;
@@ -7895,6 +8163,9 @@ static void gp0_execute_command(void) {
     else if (opcode >= 0x20 && opcode <= 0x7F) gp0_draw_count++;
     else if (opcode >= 0x80 && opcode <= 0xDF) gp0_copy_count++;
     else if (opcode >= 0xE1 && opcode <= 0xE6) gp0_env_count++;
+
+    if (opcode >= 0x20 && opcode <= 0x7F && sl_nrules && sl_draw(opcode))
+        return;   /* a sprite layer took it out of the picture */
 
     if (opcode >= 0x20 && opcode <= 0x7F && ws_shared_ui_packet()) {
         for (ws_shared_ui_copy = 0; ws_shared_ui_copy < 2; ws_shared_ui_copy++)
@@ -8400,6 +8671,7 @@ static void gp1_display_area_start(uint32_t val) {
     display_area_y = (val >> 10) & PSX_VRAM_YMASK;
     ws_note_display_base(display_area_x);  /* learn the display buffer set (native-wide) */
     gpu_timeline_note(GTL_DISP_START, display_area_x, display_area_y);
+    sl_display_start(val);   /* sprite layers: the game's buffer flip ends a frame */
 }
 
 static void gp1_h_display_range(uint32_t val) {

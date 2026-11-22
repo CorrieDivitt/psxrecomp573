@@ -1099,6 +1099,76 @@ int psx_mod_openxr_haptic(uint32_t hand, float amplitude, uint32_t duration_ms);
  * (initially 1, or 0 with PSX_OPENXR_MIRROR_VSYNC=0). Any thread; the next
  * desktop swap applies it. */
 int psx_mod_openxr_mirror_vsync(int keep);
+/* Sprite layers (gpu.c): name the game's draws, get them back every frame
+ * with their place on the picture (and the texels of textured ones as RGBA),
+ * and optionally leave them out of the picture, to draw them elsewhere (in
+ * VR: at their own depth). Polygons (GP0 0x20-0x3F: flat or shaded, three
+ * or four corners, textured or not), single lines (0x40-0x47, 0x50-0x57) and
+ * rectangles (0x60-0x7F) can match; polylines, fills and VRAM copies never
+ * do and stay in the picture. A rule matches when all of these hold:
+ *  - texture: unless page_x is PSX_MOD_SPRITE_ANY_PAGE, the draw is textured,
+ *    its texture page base is (page_x, page_y) in VRAM pixels and all its
+ *    texture coordinates lie inside [u0, u1] x [v0, v1] (inclusive, within
+ *    the page); untextured draws match only any-page rules;
+ *  - palette: unless clut_x is negative, the palette sits at (clut_x, clut_y);
+ *  - draw order: unless ot0 is negative, the draw's ordering-table rank (the
+ *    count of empty linked-list nodes before it in the game's DrawOTag list;
+ *    the order the game sorts its layers in) is within [ot0, ot1];
+ *  - height: unless y_max is negative, its lowest picture row is at most y_max;
+ *  - keep_base: if set, draws at the frame's first draw-order key (its
+ *    backmost layer, usually the background) never match: they stay in the
+ *    picture, which is the backmost layer anyway, and cost nothing.
+ * Draws outside any DrawOTag list (no rank) match only rules with ot0 < 0
+ * and keep_base 0. The first matching rule wins. Rules may be replaced from
+ * any thread; they take effect at the next vblank. count 0 clears them
+ * (and the list). A draw is left out of the picture only if its rule hides
+ * it and it made it into the list. */
+typedef struct PSXModSpriteRule {
+    uint16_t page_x, page_y;
+    uint8_t u0, v0, u1, v1;
+    int16_t clut_x, clut_y;
+    uint8_t layer;      /* the application's tag, handed back with the sprite */
+    uint8_t hide;       /* 1: not drawn into the picture */
+    int16_t ot0, ot1;   /* draw-order rank range; ot0 < 0: any */
+    int16_t y_max;      /* lowest picture row allowed; < 0: any */
+    uint8_t keep_base;  /* 1: the frame's first draw-order key never matches */
+    uint8_t pad;
+} PSXModSpriteRule;
+#define PSX_MOD_SPRITE_ANY_PAGE 0xFFFFu
+int psx_mod_sprite_rules(const PSXModSpriteRule *rules, int count);
+#define PSX_MOD_SPRITE_MAX_W 256
+#define PSX_MOD_SPRITE_MAX_H 256
+#define PSX_MOD_SPRITE_POOL  (1024u * 1024u)   /* texels (x 4 bytes) in one frame's list */
+#define PSX_MOD_SPRITE_TEXTURED 1u   /* flags */
+#define PSX_MOD_SPRITE_RAW      2u   /* textured, not tinted by its colours */
+#define PSX_MOD_SPRITE_LINE     4u   /* a line: corners 0 and 1 */
+/* One matched draw. nv corners (2 line, 3 triangle, 4 quad or rectangle), in
+ * the GPU's order (a quad is the triangles 0-1-2 and 1-2-3; a rectangle's
+ * corners are top-left, top-right, bottom-left, bottom-right). x/y: pixels
+ * on the picture from its top-left; color: each corner's GP0 colour
+ * (0xBBGGRR; for textured draws 0x80 = unchanged). Textured draws: s/t give
+ * the corner's place in its texels (0..1, t = 0 at the first row): w x h
+ * RGBA at pool + pix * 4, first row = the lowest v, alpha 0 where the texel
+ * is 0 (transparent on the PlayStation); larger than the maximum is cut to
+ * it. semi: semi-transparent; abr: blend mode (0 average, 1 add, 2
+ * subtract, 3 add a quarter). key: the draw order, (DrawOTag list number in
+ * the frame << 11) | rank; 0xFFFF outside a list. */
+typedef struct PSXModSprite {
+    uint8_t layer, semi, abr, flags;
+    uint8_t nv, pad[3];
+    uint16_t w, h;
+    uint32_t pix;
+    uint16_t key, pad2;
+    uint32_t color[4];
+    float x[4], y[4], s[4], t[4];
+} PSXModSprite;
+/* Copy the last finished frame's draws (at most max, in the game's draw
+ * order) and their texels (into pool, pool_texels texels long; NULL to
+ * skip), and its sequence number (it changes when a new frame's list is
+ * published). A frame is finished at the game's buffer flip (GP1 05h to a
+ * new address), or at vblank for a game that does not flip. Any thread.
+ * Returns how many were copied (with out NULL: how many there are). */
+int psx_mod_sprite_frame(PSXModSprite *out, int max, uint8_t *pool, uint32_t pool_texels, uint32_t *seq);
 
 
 
