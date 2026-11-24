@@ -1953,6 +1953,20 @@ extern "C" int psx_mod_set_auto_skip_fmv(int enabled) {
     return 1;
 }
 
+/* Board-boot titles: the title's own check of its board data stands in for
+ * the launcher's disc check (mod_plugins.h psx_mod_register_board_media). */
+static PSXModBoardMediaCheck s_board_media_check = nullptr;
+static std::string s_board_media_path;
+
+extern "C" void psx_mod_register_board_media(const char* path, PSXModBoardMediaCheck check) {
+    s_board_media_path = path ? path : "";
+    s_board_media_check = check;
+}
+
+static bool board_media_active() {
+    return g_game_boot_from_board && s_board_media_check != nullptr;
+}
+
 extern "C" int psx_mod_set_bezel_artwork(const char* path) {
     if (!path || !path[0]) {
         std::fprintf(stderr, "psxrecomp: mod rejected empty bezel artwork path\n");
@@ -12258,6 +12272,14 @@ namespace {
         if (!disc_path || !disc_path[0] || !out) return 0;
         g_launcher_disc_path = disc_path;
         std::memset(out, 0, sizeof(*out));
+        if (board_media_active()) {
+            /* A board-boot title: its own check of the board data. */
+            const int ok = s_board_media_check(disc_path, out->serial, (uint32_t)sizeof(out->serial));
+            out->verdict = ok ? 1 : 3;
+            out->iso_ok = 1;
+            std::fprintf(stdout, "psxrecomp: board data %s: %s\n", ok ? "ready" : "not ready", disc_path);
+            return 1;
+        }
         const int profile_route = fntrace_is_game_started() ? 0 : PSXRecompV4::regional::picked(disc_path);
         if (profile_route != 0) {
             out->verdict = profile_route > 0 ? 1 : 3;
@@ -17682,6 +17704,7 @@ namespace {
             ? std::string() : psx_path::utf8(PSXRecompV4::regional::root / "artwork");
         gi->artwork_root = regional_artwork.empty() ? nullptr : regional_artwork.c_str();
         gi->disc_selection_locked = PSXRecompV4::regional::disc_selection_locked ? 1 : 0;
+        if (board_media_active()) gi->disc_selection_locked = 1;   /* board data, not a disc */
         gi->dashboard_quick_controls = g_launcher_quick_controls ? 1 : 0;
 #endif
         gi->name = game_name_c;
@@ -18209,6 +18232,7 @@ const OvlLookRow* ovl_look_row(int setting) {
 std::atomic<bool> g_ovl_look_available[PSX_MENU_SESSION_DITHERING + 1];
 void ovl_look_catalog_snapshot(void) {
     for (auto& available : g_ovl_look_available) available = false;
+#if defined(RECOMP_LAUNCHER)   /* the launcher's mod provider; none in a build without the launcher UI */
     const auto* mods = PSXRecompV4::mod_runtime_launcher_provider();
     if (!mods || !mods->feature_count || !mods->feature_get) return;
     for (int setting=PSX_MENU_SESSION_INTERNAL_RESOLUTION;
@@ -18233,6 +18257,7 @@ void ovl_look_catalog_snapshot(void) {
             break;
         }
     }
+#endif
 }
 bool ovl_look_catalog_available(int setting) {
     const OvlLookRow* row=ovl_look_row(setting);
@@ -20813,6 +20838,7 @@ int main(int argc, char** argv) {
                     resolved_disc = cli_disc;
             }
             std::string rui_initial_disc = resolved_disc.string();
+            if (board_media_active()) rui_initial_disc = s_board_media_path;   /* the board data stands for the disc */
             std::string rui_title = (game_name.empty() ? std::string("PSX") : game_name)
                                      + " - Launcher";
 
@@ -21057,7 +21083,11 @@ int main(int argc, char** argv) {
                     if (ae_bios_verify("", &bv) && bv.ok) bios_ok = true;
                 }
                 bool disc_ok = false;
-                if (!rui_initial_disc.empty()) {
+                if (board_media_active()) {
+                    char board_label[32] = "";
+                    disc_ok = s_board_media_check(rui_initial_disc.c_str(), board_label,
+                                                  (uint32_t)sizeof(board_label)) != 0;
+                } else if (!rui_initial_disc.empty()) {
                     std::error_code ec;
                     if (std::filesystem::exists(rui_initial_disc, ec)) {
                         const DiscValidation dv =
@@ -21118,7 +21148,8 @@ int main(int argc, char** argv) {
 #if defined(PSX_LAUNCHER_MOD_COMMIT_WORKER_SAFE)
             // Once per offline preboot: verified receipts make the selected plan
             // ready before the launcher opens. A miss leaves preparation to UI.
-            if (!net_cfg.enabled && !ls.netplay_launch.enabled && !rui_initial_disc.empty())
+            if (!net_cfg.enabled && !ls.netplay_launch.enabled && !rui_initial_disc.empty() &&
+                !board_media_active())
                 PSXRecompV4::mod_runtime_try_prepare_cached(rui_initial_disc);
 #endif
             char rui_out_disc[1024] = {0};
@@ -21615,6 +21646,9 @@ int main(int argc, char** argv) {
         timing.success();
     }
 
+    /* A board-boot title has no disc: the board data the launcher showed in its
+     * place is never mounted (psx_mod_register_board_media). */
+    if (board_media_active()) resolved_disc.clear();
     if ((game_config_path && !g_game_boot_from_board) || disc_override_path ||
         !resolved_disc.empty()) {
         /* The disc check shows its own box for an image it cannot open or

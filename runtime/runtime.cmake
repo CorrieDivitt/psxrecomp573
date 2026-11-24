@@ -1746,12 +1746,25 @@ function(psxrecomp_add_runtime_target target)
         set(mode_source ${PSXRECOMP_ROOT}/runtime/src/stub_interpreter.c)
     endif()
 
-    add_executable(${target}
-        ${PSXRECOMP_RUNTIME_SOURCES}
-        ${mode_source}
-        ${generated_sources}
-        ${PSXRT_EXTRAS_SOURCES}
-    )
+    if(ANDROID)
+        # Android / Meta Quest (psxrecomp573): SDL's Java activity loads
+        # libmain.so and calls SDL_main (SDL_main.h renames main), so the
+        # runtime is a shared library there; it gets OUTPUT_NAME main below.
+        add_library(${target} SHARED
+            ${PSXRECOMP_RUNTIME_SOURCES}
+            ${mode_source}
+            ${generated_sources}
+            ${PSXRT_EXTRAS_SOURCES}
+            ${PSXRECOMP_ROOT}/runtime/src/android_gl_stubs.c
+        )
+    else()
+        add_executable(${target}
+            ${PSXRECOMP_RUNTIME_SOURCES}
+            ${mode_source}
+            ${generated_sources}
+            ${PSXRT_EXTRAS_SOURCES}
+        )
+    endif()
     target_link_libraries(${target} PRIVATE chdr-static psx_texture_image_decode)
     if(PSX_MEMORY_CARD_MANAGER)
         target_compile_definitions(${target} PRIVATE PSX_MEMORY_CARD_MANAGER=1)
@@ -1919,6 +1932,9 @@ function(psxrecomp_add_runtime_target target)
         set(_psxrt_overlay_flavor 0)
     endif()
     set_target_properties(${target} PROPERTIES OUTPUT_NAME "${_psxrt_exe_name}")
+    if(ANDROID)
+        set_target_properties(${target} PROPERTIES OUTPUT_NAME main)   # libmain.so for SDLActivity
+    endif()
 
     # Publish the OVERLAY CODEGEN FLAVOR this target links with, for the same
     # reason the exe name is published just below: so nothing downstream has to
@@ -2521,6 +2537,12 @@ function(psxrecomp_add_runtime_target target)
         # legacy libGL.so / glx.h (Steam Deck), yet never creates that target —
         # which then fails at generate time. recomp_resolve_gl() picks whatever
         # the host actually has; see recomp-ui/cmake/recomp_gl.cmake.
+        if(ANDROID)
+            # Android / Meta Quest (psxrecomp573, 2026-11-23): SDL makes a GLES
+            # context and there is no desktop GL to find; GLES, EGL and the
+            # Android system libraries come from the NDK sysroot.
+            target_link_libraries(${target} PRIVATE GLESv3 EGL android log)
+        else()
         if(NOT COMMAND recomp_resolve_gl
            AND RECOMP_UI_ROOT AND EXISTS "${RECOMP_UI_ROOT}/cmake/recomp_gl.cmake")
             include("${RECOMP_UI_ROOT}/cmake/recomp_gl.cmake")
@@ -2541,6 +2563,7 @@ function(psxrecomp_add_runtime_target target)
                 target_link_libraries(${target} PRIVATE "${OPENGL_opengl_LIBRARY}")
             endif()
         endif()
+        endif()   # ANDROID
         # The overlay autocompile watcher (autocompile.c), the debug server and
         # the lobby client all use pthread on Unix.
         find_package(Threads REQUIRED)

@@ -1257,6 +1257,19 @@ int psx_mod_set_auto_skip_fmv(int enabled);
 int psx_mod_set_bezel_artwork(const char* path);
 
 /*
+ * Board-boot titles ([game] boot = "board", e.g. a Konami System 573 game
+ * that boots from its onboard flash): there is no disc for the launcher to
+ * pick and verify. The title registers the file that stands for its board
+ * data (path, e.g. its prepared flash image) and a check of that data. The
+ * launcher then shows that file with its disc choice locked, and PLAY is lit
+ * when check() returns nonzero; check() may write a short label (shown in
+ * the Serial row). The file is never mounted as a disc. Call from a
+ * constructor or before the launcher opens. (psxrecomp573, 2026-11-23)
+ */
+typedef int (*PSXModBoardMediaCheck)(const char* path, char* label, uint32_t label_size);
+void psx_mod_register_board_media(const char* path, PSXModBoardMediaCheck check);
+
+/*
  * Upper bounds for the two loading-speed knobs below. Both are generous on
  * purpose: games surface them to players as free-form integers, and neither
  * can corrupt guest state (see the notes on each setter). They exist to reject
