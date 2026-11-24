@@ -103,6 +103,11 @@
 #include "psx_openxr.h"
 #include "openxr_color.h"
 #include "present_thread.h"
+#if defined(__ANDROID__)
+#include <EGL/egl.h>
+/* GLES 3.0 core; declared here so the desktop GL headers stay as they are. */
+extern void glInvalidateFramebuffer(unsigned int target, int numAttachments, const unsigned int *attachments);
+#endif
 #include "host_deadline.h"
 
 #include "psx_sdl.h"
@@ -110,6 +115,16 @@
 #include <SDL3/SDL_opengl.h>
 #else
 #include <SDL_opengl.h>
+#endif
+#if defined(__ANDROID__)
+/* Android / Meta Quest (psxrecomp573): OpenGL ES 3.2. The few desktop-only
+ * calls map to their GLES forms; BGRA uploads need a BGRA internal format
+ * there (EXT_texture_format_BGRA8888, which Adreno has). */
+void glClearDepthf(float depth);   /* libGLESv2; not in SDL's desktop GL header */
+#define glClearDepth(d) glClearDepthf((float)(d))
+#define PSXGL_BGRA_INTERNAL 0x80E1   /* GL_BGRA_EXT */
+#else
+#define PSXGL_BGRA_INTERNAL GL_RGBA
 #endif
 #include <limits.h>
 #include <math.h>
@@ -379,7 +394,14 @@ static void APIENTRY gl_bind_fb_redirect(GLenum target, GLuint fb) {
 
 static int load_modern_gl(void) {
     int ok = 1;
+#if defined(__ANDROID__)
+    /* GLES: some entry points carry an EXT suffix; name any that is missing. */
+#define LOAD(p, n) do { p = (void *)SDL_GL_GetProcAddress(n); \
+        if (!p) p = (void *)SDL_GL_GetProcAddress(n "EXT"); \
+        if (!p) { ok = 0; fprintf(stdout, "psxrecomp: GL entry point missing: %s\n", n); } } while (0)
+#else
 #define LOAD(p, n) do { p = (void *)SDL_GL_GetProcAddress(n); if (!p) ok = 0; } while (0)
+#endif
     LOAD(p_glCreateShader, "glCreateShader");   LOAD(p_glShaderSource, "glShaderSource");
     LOAD(p_glCompileShader, "glCompileShader"); LOAD(p_glGetShaderiv, "glGetShaderiv");
     LOAD(p_glGetShaderInfoLog, "glGetShaderInfoLog"); LOAD(p_glDeleteShader, "glDeleteShader");
@@ -2330,14 +2352,53 @@ static const char *STENCIL_FS =
     "void main(){ vec4 c=texelFetch(u_src,ivec2(gl_FragCoord.xy)-u_off,0);\n"
     "  if(c.a<0.5) discard; frag=vec4(0.0); }\n";
 
+#if defined(__ANDROID__)
+/* GLSL 330 -> GLSL ES 3.20: the version line, default precisions, and
+ * noperspective (not in GLSL ES; PlayStation vertices all have w = 1, so
+ * perspective-correct interpolation gives the same values). */
+static char *gles_shader_source(const char *src) {
+    static const char hdr[] =
+        "#version 320 es\n"
+        "#extension GL_EXT_blend_func_extended : enable\n"
+        "#define noperspective\n"
+        "precision highp float;\nprecision highp int;\n"
+        "precision highp sampler2D;\nprecision highp usampler2D;\nprecision highp isampler2D;\n";
+    const char *body = src;
+    if (strncmp(body, "#version", 8) == 0) {
+        const char *nl = strchr(body, '\n');
+        body = nl ? nl + 1 : body + strlen(body);
+    }
+    size_t n = strlen(hdr) + strlen(body) + 1;
+    char *out = (char *)malloc(n);
+    if (out) { memcpy(out, hdr, sizeof hdr - 1); strcpy(out + sizeof hdr - 1, body); }
+    return out;
+}
+#endif
+
 static GLuint compile_shader(GLenum type, const char *src) {
     GLuint s = p_glCreateShader(type);
+#if defined(__ANDROID__)
+    char *es_src = gles_shader_source(src);
+    const char *use = es_src ? es_src : src;
+    p_glShaderSource(s, 1, &use, NULL);
+#else
     p_glShaderSource(s, 1, &src, NULL);
+#endif
     p_glCompileShader(s);
     GLint ok = 0; p_glGetShaderiv(s, PSXGL_COMPILE_STATUS, &ok);
     if (!ok) { char log[1024]; log[0]=0; p_glGetShaderInfoLog(s, sizeof log, NULL, log);
         fprintf(stdout, "psxrecomp: GL shader compile failed: %s\n", log);
-        p_glDeleteShader(s); return 0; }
+#if defined(__ANDROID__)
+        fprintf(stdout, "psxrecomp: --- shader source ---\n%s\n--- end ---\n", use);
+#endif
+        p_glDeleteShader(s);
+#if defined(__ANDROID__)
+        free(es_src);
+#endif
+        return 0; }
+#if defined(__ANDROID__)
+    free(es_src);
+#endif
     return s;
 }
 static GLuint build_program_ex(const char *vs, const char *fs, int dual_source) {
@@ -5882,7 +5943,7 @@ static void upload_present_tex(const uint32_t *pixels, int w, int h, int linear)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     if (w != s_present_w || h != s_present_h) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, PSXGL_BGRA_INTERNAL, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
         s_present_w = w; s_present_h = h;
     } else {
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
@@ -6216,10 +6277,10 @@ static int init_gpu_raster(void) {
     s_pack_prog = build_program(PACK_VS, PACK_FS);
     s_stencil_prog = build_program(PACK_VS, STENCIL_FS);
     if (!s_geo_prog || !s_tex_prog || !s_blit_prog || !s_pack_prog || !s_stencil_prog ||
-        !s_blit_hi_prog) return 0;
+        !s_blit_hi_prog) { fprintf(stdout, "psxrecomp: GL raster init failed at line %d\n", __LINE__); return 0; }
 
     s_conv = (uint32_t *)malloc((size_t)VRAM_W * VRAM_H * sizeof(uint32_t));
-    if (!s_conv) return 0;
+    if (!s_conv) { fprintf(stdout, "psxrecomp: GL raster init failed at line %d\n", __LINE__); return 0; }
 
     s_up_tex      = make_tex(GL_RGBA8, VRAM_W, VRAM_H, GL_RGBA, GL_UNSIGNED_BYTE);
     s_raw_tex     = make_tex(PSXGL_R16UI, VRAM_W, VRAM_H, PSXGL_RED_INTEGER, GL_UNSIGNED_SHORT);
@@ -6243,7 +6304,7 @@ static int init_gpu_raster(void) {
      * allocate it (out of memory, or a limit it under-reported). Only a
      * failure at 1x takes the whole backend down, as before. */
     while (!alloc_hr_targets(s_hr_scale)) {
-        if (s_hr_scale <= 1) return 0;
+        if (s_hr_scale <= 1) { fprintf(stdout, "psxrecomp: GL raster init failed at line %d\n", __LINE__); return 0; }
         fprintf(stdout, "psxrecomp: GL hr surface %dx%d (%dx) failed to allocate; "
                 "retrying at %dx\n", VRAM_W * s_hr_scale, VRAM_H * s_hr_scale,
                 s_hr_scale, s_hr_scale - 1);
@@ -6251,7 +6312,7 @@ static int init_gpu_raster(void) {
         s_out_scale = s_hr_scale;
         s_scale_alloc_retries++;
     }
-    if (!make_fbo(&s_raw_fbo, s_raw_tex, 0)) return 0;
+    if (!make_fbo(&s_raw_fbo, s_raw_tex, 0)) { fprintf(stdout, "psxrecomp: GL raster init failed at line %d\n", __LINE__); return 0; }
     if (s_hiw) {
         /* The window's copy staging; grown on demand (hiw_mirror_copy). */
         s_hiw_scratch_w = s_hiw_scratch_h = HIW_ALIGN;
@@ -6631,6 +6692,11 @@ int gl_renderer_init_context(SDL_Window *win) {
     s_present_h = 0;
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+#if defined(__ANDROID__)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#endif
     s_ctx = SDL_GL_CreateContext(win);
     glcap_forget();
     if (!s_ctx) { fprintf(stdout, "psxrecomp: GL context creation failed (%s)\n", SDL_GetError()); return 0; }
@@ -6687,6 +6753,9 @@ int gl_renderer_init_context(SDL_Window *win) {
                 p_glGetUniformLocation(s_present_prog, "u_scanline_scale");
         } else ok = 0;
     }
+#if defined(__ANDROID__)
+    if (!ok) fprintf(stdout, "psxrecomp: GL init: entry points or the present program failed\n");
+#endif
     if (ok) ok = init_gpu_raster();
     if (!ok) {
         fprintf(stdout, "psxrecomp: GL pipeline init failed — falling back to software renderer\n");
@@ -8713,6 +8782,7 @@ int psx_mod_openxr_enable(int enabled) {
 }
 void psx_mod_openxr_recenter(void) {
     GL_RT_SYNC("openxr_recenter"); psx_openxr_recenter(); }
+void psx_mod_openxr_render_scale(float scale){psx_openxr_set_render_scale(scale);}
 int psx_mod_openxr_quad(double distance,double width,double height) {
     GL_RT_SYNC("openxr_quad");
     if(s_pass_active)return 0;
@@ -8767,6 +8837,12 @@ int psx_mod_openxr_input(PSXModOpenXRInput *input) {
 int psx_mod_openxr_hands(PSXModOpenXRHands *hands) {
     GL_RT_SYNC("openxr_hands");
     return psx_openxr_hands(hands); /* Snapshot only, also safe during replay. */
+}
+int psx_mod_openxr_hand_joints(PSXModOpenXRHandJoints *joints) {
+    return psx_openxr_hand_joints(joints); /* Snapshot only (scene callback). */
+}
+int psx_mod_openxr_hand_mesh(uint32_t hand, PSXModOpenXRHandMesh *mesh) {
+    return psx_openxr_hand_mesh(hand, mesh);
 }
 /* The target stores display-encoded RGB for an sRGB swapchain, or explicitly
  * decoded RGB for a linear-only runtime. Never apply hardware sRGB encoding
@@ -9070,10 +9146,28 @@ static int openxr_copy_scene(uint32_t eye,uint32_t texture,int w,int h) {
     if(ok) {
         e.framebuffer=s_xr_scene_fbo;
         glDisable(GL_SCISSOR_TEST);glDisable(0x8DB9);
-        glViewport(0,0,w,h);
+        {   /* Dynamic resolution: draw into the lower-left part only; the
+             * scissor keeps the clear (and the tiler) off the rest. */
+            const float rs=psx_openxr_render_scale();
+            if(rs<0.999f) {
+                int sw=((int)((float)w*rs+0.5f))&~1,sh=((int)((float)h*rs+0.5f))&~1;
+                if(sw<16)sw=16;if(sh<16)sh=16;
+                e.width=(uint32_t)sw;e.height=(uint32_t)sh;
+                glEnable(GL_SCISSOR_TEST);glScissor(0,0,sw,sh);
+            }
+            psx_openxr_eye_extent(eye,(int)e.width,(int)e.height);
+        }
+        glViewport(0,0,(GLsizei)e.width,(GLsizei)e.height);
         glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glDepthMask(GL_TRUE);
         (void)pass_gl_errors();
         ok=s_scene_draw(&e,s_scene_user)==1;
+#if defined(__ANDROID__)
+        {   /* Tiled GPU: the depth is not needed after the eye is drawn, so
+             * do not write it out to memory (1680x1760 x 4 bytes per eye). */
+            const GLenum discard[1]={PSXGL_DEPTH_STENCIL_ATTACHMENT};
+            glInvalidateFramebuffer(PSXGL_DRAW_FRAMEBUFFER,1,discard);
+        }
+#endif
         glFlush();
         ok=ok && pass_gl_errors()==0;
     }
@@ -9107,7 +9201,25 @@ static double xr_ms_since(Uint64 a, Uint64 b) {
 }
 static int SDLCALL openxr_scene_thread(void *unused) {
     (void)unused;
+#if defined(__ANDROID__)
+    /* EGL lets a window surface be current on one thread only (eglMakeCurrent
+     * EGL_BAD_ACCESS, seen on the Quest 3). This thread never draws to the
+     * window: only to its own FBOs and the XR swapchain, so it runs surfaceless
+     * (EGL_KHR_surfaceless_context; SDL allows a NULL window when it is there). */
+    /* Not through SDL: SDL3's Android backend turns MakeCurrent(NULL,ctx) into
+     * "unbind" and still reports success (Android_GLES_MakeCurrent), which left
+     * this thread with no context at all. SDL's EGL GLContext is the EGLContext. */
+    {   EGLDisplay dpy=eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        if(!eglMakeCurrent(dpy,EGL_NO_SURFACE,EGL_NO_SURFACE,(EGLContext)s_xr_scene_ctx)){
+            fprintf(stdout,"psxrecomp: OpenXR scene thread: eglMakeCurrent failed (0x%04X)\n",(unsigned)eglGetError());
+            return 0;
+        }
+        GLint mj=0,mn=0;glGetIntegerv(0x821B,&mj);glGetIntegerv(0x821C,&mn);
+        fprintf(stdout,"psxrecomp: OpenXR scene thread started (surfaceless EGL context, GL ES %d.%d)\n",(int)mj,(int)mn);
+    }
+#else
     if(SDL_GL_MakeCurrent(s_win,s_xr_scene_ctx)!=0)return 0;
+#endif
     double hitch_ms=22.0;
     {const char *e=getenv("PSX_XR_HITCH_MS");if(e&&*e)hitch_ms=atof(e);}
     while(s_xr_scene_run) {
@@ -9151,7 +9263,11 @@ static int SDLCALL openxr_scene_thread(void *unused) {
     if(s_xr_scene_depth)p_glDeleteRenderbuffers(1,&s_xr_scene_depth);
     s_xr_scene_fbo=s_xr_scene_depth=0;s_xr_scene_depth_w=s_xr_scene_depth_h=0;
     glFinish();
+#if defined(__ANDROID__)
+    eglMakeCurrent(eglGetDisplay(EGL_DEFAULT_DISPLAY),EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
+#else
     SDL_GL_MakeCurrent(s_win,NULL);
+#endif
     return 0;
 }
 
@@ -9351,7 +9467,7 @@ static void gl_draw_osd_image(const uint32_t *px, int ow, int oh,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     if (s_osd_tw != ow || s_osd_th != oh) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ow, oh, 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, PSXGL_BGRA_INTERNAL == GL_RGBA ? GL_RGBA8 : PSXGL_BGRA_INTERNAL, ow, oh, 0,
                      GL_BGRA, GL_UNSIGNED_BYTE, px);
         s_osd_tw = ow;
         s_osd_th = oh;
@@ -9654,7 +9770,14 @@ static int xr_mirror_keep_now(void) {
     int k = atomic_load(&s_xr_mirror_keep);
     if (k < 0) {
         const char *e = getenv("PSX_OPENXR_MIRROR_VSYNC");
+#if defined(__ANDROID__)
+        /* Quest: nobody sees the window behind the headset's picture, and a
+         * swap that waits for the panel kept the XR thread in step with the
+         * game's presents (XR fps = game fps, 2026-11-24). Off unless asked. */
+        int want = e && e[0] == '1';
+#else
         int want = !(e && e[0] == '0');
+#endif
         int expect = -1;
         atomic_compare_exchange_strong(&s_xr_mirror_keep, &expect, want);
         k = atomic_load(&s_xr_mirror_keep);

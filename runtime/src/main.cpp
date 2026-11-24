@@ -2263,6 +2263,17 @@ static void update_adaptive_widescreen() {
  * runtime requirements immediately before every GL window, because launcher
  * teardown resets them and macOS otherwise supplies a legacy 2.1 context. */
 static void configure_core_gl_context_attributes() {
+#if defined(__ANDROID__)
+    /* Android / Meta Quest (psxrecomp573): there is only OpenGL ES. The GL
+     * renderer's GLSL 330 is rewritten to GLSL ES 3.20 at compile time
+     * (gpu_gl_renderer.c compile_shader). */
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+    return;
+#endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     int major = 3, minor = 3;
 #if defined(PSX_OPENXR)
@@ -22664,6 +22675,36 @@ session_reboot:
             g_audio_host_rate = have.freq;
             audio_trace_set_tap_rate(AUDIO_TAP_HOST, (uint32_t)have.freq);
             (void)psx_sdl_audio_resume(sdl_audio_device);
+#if defined(__ANDROID__)
+            /* psxrecomp573 (Quest): the runtime leaves through std::exit()
+             * without closing the device, so static destructors ran while
+             * the AudioTrack/AAudio thread was still in sdl_drc_callback
+             * (FORTIFY: pthread_mutex_lock on a destroyed mutex, signal 6).
+             * Registered after those statics exist, this runs before their
+             * destructors: stop the pull, then close (joins the audio thread). */
+            {
+                static bool s_audio_atexit = false;
+                if (!s_audio_atexit) {
+                    s_audio_atexit = true;
+                    std::atexit([]() {
+                        s_drc_ready = false;
+                        if (sdl_audio_device) {
+                            psx_sdl_audio_close(sdl_audio_device);
+                            sdl_audio_device = 0;
+                        }
+                        /* Every other stream too (the port's cabinet sounds open
+                         * their own): quitting the subsystem closes the AAudio
+                         * stream and joins its callback thread, which otherwise
+                         * outlived exit() and hit a mutex the libraries' own
+                         * static destructors had destroyed (2026-11-24 run 3). */
+                        for (int i = 0; i < 8 && SDL_WasInit(SDL_INIT_AUDIO); i++)
+                            SDL_QuitSubSystem(SDL_INIT_AUDIO);
+                        fprintf(stderr, "psxrecomp: audio closed at exit\n");
+                        fflush(stderr);
+                    });
+                }
+            }
+#endif
         }
     }
     /* Always register: SPU advance is guest-cycle budgeted and must not

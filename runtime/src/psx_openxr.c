@@ -1,5 +1,5 @@
 #include "xr_origin_diagnostics.h"
-/* Opt-in Win32 OpenXR lifecycle. No guest state, console diagnostics or timing
+/* Opt-in Win32 (and, psxrecomp573, Android/Quest) OpenXR lifecycle. No guest state, console diagnostics or timing
  * phases: located poses and projection submission belong to one host frame.
  *
  * THREADING: every entry point runs on the emulation/main thread that owns the
@@ -28,6 +28,16 @@ static uint64_t s_native_frame;
 static double s_quad_distance,s_quad_width,s_quad_height;
 static PSXModOpenXRInput s_input;
 static PSXModOpenXRHands s_hands;
+static PSXModOpenXRHandJoints s_joints;   /* hand tracking, located with s_hands */
+/* Meta's hand mesh per hand (XR_FB_hand_tracking_mesh), fetched once the
+ * trackers exist; never freed while running, so pointers handed out stay good. */
+typedef struct {
+    uint32_t generation,jc,vc,ic;
+    float *bind_p,*bind_q,*pos,*nrm,*uv,*bw;
+    int16_t *bi,*idx;
+} psx_hand_mesh;
+static psx_hand_mesh s_hmesh[2];
+static uint32_t s_hmesh_gen;
 static uint64_t s_hands_sequence, s_hands_sample_ms;
 static void hands_clear(void) {
     memset(&s_hands,0,sizeof s_hands);s_hands.struct_size=sizeof s_hands;
@@ -132,6 +142,22 @@ int psx_openxr_surface_valid(const PSXModOpenXRSurface *v) {
 }
 #if defined(PSX_OPENXR)
 #include "host_time.h"
+#if defined(__ANDROID__)
+/* Android / Meta Quest (psxrecomp573, 2026-11-23): OpenGL ES 3.2 through EGL,
+ * the Khronos loader initialised with the app's Java VM and activity (from
+ * SDL). Everything after session creation is the same as on Win32. */
+#include <EGL/egl.h>
+#include <GLES3/gl32.h>
+#include <jni.h>
+#include <SDL3/SDL_system.h>
+#define XR_USE_PLATFORM_ANDROID
+#define XR_USE_GRAPHICS_API_OPENGL_ES
+#include <openxr/openxr.h>
+#include <openxr/openxr_platform.h>
+typedef XrSwapchainImageOpenGLESKHR psx_xr_image_t;
+#define PSX_XR_IMAGE_TYPE XR_TYPE_SWAPCHAIN_IMAGE_OPENGL_ES_KHR
+#define PSX_XR_GL_EXTENSION XR_KHR_OPENGL_ES_ENABLE_EXTENSION_NAME
+#else
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <unknwn.h>
@@ -140,6 +166,10 @@ int psx_openxr_surface_valid(const PSXModOpenXRSurface *v) {
 #define XR_USE_GRAPHICS_API_OPENGL
 #include <openxr/openxr.h>
 #include <openxr/openxr_platform.h>
+typedef XrSwapchainImageOpenGLKHR psx_xr_image_t;
+#define PSX_XR_IMAGE_TYPE XR_TYPE_SWAPCHAIN_IMAGE_OPENGL_KHR
+#define PSX_XR_GL_EXTENSION XR_KHR_OPENGL_ENABLE_EXTENSION_NAME
+#endif
 
 /* Frame-trace stage helper: perf ticks -> microseconds (CPU submission/wait
  * wall time only, never GPU execution time). */
@@ -152,6 +182,18 @@ static uint64_t xr_trace_us(uint64_t ticks) {
     return (uint64_t)((double)ticks * inv);
 }
 static XrInstance s_instance;
+#if defined(__ANDROID__)
+static int s_fov_on,s_fov_level;
+static int s_ht_on;                       /* XR_EXT_hand_tracking enabled */
+static int s_hm_on;                       /* XR_FB_hand_tracking_mesh enabled */
+static int s_aim_on;                      /* XR_FB_hand_tracking_aim enabled (Meta's palm menu pinch) */
+static int s_ds_on;                       /* XR_EXT_hand_tracking_data_source: bare hands only */
+static int s_sim_on;                      /* XR_META_simultaneous_hands_and_controllers enabled */
+static int s_sim_started;
+static XrHandTrackerEXT s_ht[2];
+static PFN_xrLocateHandJointsEXT s_ht_locate;
+static PFN_xrDestroyHandTrackerEXT s_ht_destroy;
+#endif
 static XrSystemId s_system;
 static XrSession s_session;
 static XrSpace s_space;
@@ -167,7 +209,7 @@ static XrPath s_hand[2];
 static XrTime s_origin_reset_time;
 static unsigned s_origin_inversion_streak;
 static XrSwapchain s_chain[2];
-static XrSwapchainImageOpenGLKHR *s_images[2];
+static psx_xr_image_t *s_images[2];
 static uint32_t s_count[2];
 static int s_w[2],s_h[2],s_origin_valid;
 static XrView s_views[2];
@@ -192,6 +234,9 @@ static int check(XrResult r,const char *stage) {
     s_stats.result=r;
     if(XR_FAILED(r)) {
         s_stats.stage=s_stats.last_failure=stage;s_stats.last_failure_result=r;s_stats.failures++;
+#if defined(__ANDROID__)
+        fprintf(stdout,"psxrecomp: OpenXR %s failed (XrResult %d)\n",stage,(int)r);
+#endif
         if(r==XR_ERROR_SESSION_LOST || r==XR_ERROR_INSTANCE_LOST) {
             s_reset_pending=1;s_reset_stage=r==XR_ERROR_SESSION_LOST?"session_lost":"instance_lost";
         }
@@ -303,24 +348,111 @@ static int input_initialize(void) {
     attach.countActionSets=1; attach.actionSets=&s_actions;
     return check(xrAttachSessionActionSets(s_session,&attach),"attach_actions");
 }
+#if defined(__ANDROID__)
+/* The Khronos loader on Android needs the Java VM and the app context before
+ * any other call (XR_KHR_loader_init_android). */
+static JavaVM *s_jvm;
+static jobject s_activity;
+static int android_loader_init(void) {
+    static int s_done;
+    if (s_done) return s_done > 0;
+    JNIEnv *env = (JNIEnv *)SDL_GetAndroidJNIEnv();
+    s_activity = (jobject)SDL_GetAndroidActivity();
+    if (!env || !s_activity || (*env)->GetJavaVM(env, &s_jvm) != 0 || !s_jvm) {
+        s_stats.stage = "android_jni"; s_done = -1; return 0;
+    }
+    PFN_xrInitializeLoaderKHR init = NULL;
+    if (xrGetInstanceProcAddr(XR_NULL_HANDLE, "xrInitializeLoaderKHR", (PFN_xrVoidFunction *)&init) != XR_SUCCESS || !init) {
+        s_stats.stage = "loader_init_proc"; s_done = -1; return 0;
+    }
+    XrLoaderInitInfoAndroidKHR li = { XR_TYPE_LOADER_INIT_INFO_ANDROID_KHR };
+    li.applicationVM = s_jvm;
+    li.applicationContext = s_activity;
+    if (!check(init((const XrLoaderInitInfoBaseHeaderKHR *)&li), "loader_init")) { s_done = -1; return 0; }
+    s_done = 1;
+    return 1;
+}
+#endif
+
 static int initialize(void) {
     uint32_t count=0;
     XrExtensionProperties *ext=NULL;
+#if defined(__ANDROID__)
+    if(!android_loader_init())return 0;
+#endif
     if(!check(xrEnumerateInstanceExtensionProperties(NULL,0,&count,NULL),"extensions"))return 0;
     ext=calloc(count,sizeof *ext); if(!ext){s_stats.stage="extensions_memory";return 0;}
     for(uint32_t i=0;i<count;i++)ext[i].type=XR_TYPE_EXTENSION_PROPERTIES;
     int supported=0;
+#if defined(__ANDROID__)
+    int fov_have=0;   /* Meta fixed foveated rendering: all three extensions */
+#endif
     if(check(xrEnumerateInstanceExtensionProperties(NULL,count,&count,ext),"extensions"))
-        for(uint32_t i=0;i<count;i++)
-            if(!strcmp(ext[i].extensionName,XR_KHR_OPENGL_ENABLE_EXTENSION_NAME))supported=1;
+        for(uint32_t i=0;i<count;i++) {
+            if(!strcmp(ext[i].extensionName,PSX_XR_GL_EXTENSION))supported=1;
+#if defined(__ANDROID__)
+            if(!strcmp(ext[i].extensionName,XR_FB_SWAPCHAIN_UPDATE_STATE_EXTENSION_NAME))fov_have|=1;
+            if(!strcmp(ext[i].extensionName,XR_FB_FOVEATION_EXTENSION_NAME))fov_have|=2;
+            if(!strcmp(ext[i].extensionName,XR_FB_FOVEATION_CONFIGURATION_EXTENSION_NAME))fov_have|=4;
+            if(!strcmp(ext[i].extensionName,XR_EXT_HAND_TRACKING_EXTENSION_NAME))fov_have|=8;
+            if(!strcmp(ext[i].extensionName,XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME))fov_have|=16;
+            if(!strcmp(ext[i].extensionName,XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME))fov_have|=32;
+            if(!strcmp(ext[i].extensionName,XR_EXT_HAND_TRACKING_DATA_SOURCE_EXTENSION_NAME))fov_have|=64;
+            if(!strcmp(ext[i].extensionName,XR_META_SIMULTANEOUS_HANDS_AND_CONTROLLERS_EXTENSION_NAME))fov_have|=128;
+#endif
+        }
     free(ext);
     if(!supported){s_stats.stage="opengl_extension_missing";return 0;}
-    const char *extensions[]={XR_KHR_OPENGL_ENABLE_EXTENSION_NAME};
+#if defined(__ANDROID__)
+    /* PSX_XR_FOVEATION: 0 off, 1 low, 2 medium, 3 high (default). */
+    {const char *e=getenv("PSX_XR_FOVEATION");s_fov_level=(e&&*e)?atoi(e):3;
+     if(s_fov_level<0)s_fov_level=0;if(s_fov_level>3)s_fov_level=3;}
+    s_fov_on=(fov_have&7)==7 && s_fov_level>0;
+    /* PSX_XR_HAND_TRACKING=0 leaves hand tracking alone. */
+    {const char *e=getenv("PSX_XR_HAND_TRACKING");s_ht_on=(fov_have&8) && !(e&&*e=='0');}
+    const char *extensions_all[12];uint32_t extensions_n=0;
+    extensions_all[extensions_n++]=PSX_XR_GL_EXTENSION;
+    extensions_all[extensions_n++]=XR_KHR_ANDROID_CREATE_INSTANCE_EXTENSION_NAME;
+    if(s_fov_on) {
+        extensions_all[extensions_n++]=XR_FB_SWAPCHAIN_UPDATE_STATE_EXTENSION_NAME;
+        extensions_all[extensions_n++]=XR_FB_FOVEATION_EXTENSION_NAME;
+        extensions_all[extensions_n++]=XR_FB_FOVEATION_CONFIGURATION_EXTENSION_NAME;
+    }
+    if(s_ht_on)extensions_all[extensions_n++]=XR_EXT_HAND_TRACKING_EXTENSION_NAME;
+    s_hm_on=s_ht_on && (fov_have&16);
+    if(s_hm_on)extensions_all[extensions_n++]=XR_FB_HAND_TRACKING_MESH_EXTENSION_NAME;
+    s_aim_on=s_ht_on && (fov_have&32);
+    if(s_aim_on)extensions_all[extensions_n++]=XR_FB_HAND_TRACKING_AIM_EXTENSION_NAME;
+    /* PSX_XR_SIMULTANEOUS=0: no hands + controllers at once. The data source
+     * (bare hands only) goes with it: a hand holding a controller must not
+     * come back as joints made up from the controller. */
+    {const char *e=getenv("PSX_XR_SIMULTANEOUS");
+     s_sim_on=s_ht_on && (fov_have&128) && !(e&&*e=='0');}
+    s_ds_on=s_ht_on && (fov_have&64);
+    if(s_ds_on)extensions_all[extensions_n++]=XR_EXT_HAND_TRACKING_DATA_SOURCE_EXTENSION_NAME;
+    if(s_sim_on)extensions_all[extensions_n++]=XR_META_SIMULTANEOUS_HANDS_AND_CONTROLLERS_EXTENSION_NAME;
+    fprintf(stdout,"psxrecomp: OpenXR hand extensions: tracking %d mesh %d aim %d data-source %d simultaneous %d\n",
+            s_ht_on,s_hm_on,s_aim_on,s_ds_on,s_sim_on);
+    const char *const *extensions=extensions_all;
+    fprintf(stdout,"psxrecomp: OpenXR foveation %s (extensions %s, level %d)\n",s_fov_on?"on":"off",
+            (fov_have&7)==7?"present":"missing",s_fov_level);
+    XrInstanceCreateInfoAndroidKHR aci={XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
+    aci.applicationVM=s_jvm;aci.applicationActivity=s_activity;
+#else
+    const char *extensions[]={PSX_XR_GL_EXTENSION};
+#endif
     XrInstanceCreateInfo ci={XR_TYPE_INSTANCE_CREATE_INFO};
+#if defined(__ANDROID__)
+    ci.next=&aci;
+#endif
     strcpy(ci.applicationInfo.applicationName,"PSXRecomp stereo");
     strcpy(ci.applicationInfo.engineName,"psxrecomp");
     ci.applicationInfo.apiVersion=XR_API_VERSION_1_0;
-    ci.enabledExtensionCount=1;ci.enabledExtensionNames=extensions;
+#if defined(__ANDROID__)
+    ci.enabledExtensionCount=extensions_n;ci.enabledExtensionNames=extensions;
+#else
+    ci.enabledExtensionCount=(uint32_t)(sizeof extensions/sizeof extensions[0]);ci.enabledExtensionNames=extensions;
+#endif
     if(!check(xrCreateInstance(&ci,&s_instance),"instance"))return 0;
     XrInstanceProperties ip={XR_TYPE_INSTANCE_PROPERTIES};
     if(check(xrGetInstanceProperties(s_instance,&ip),"instance_properties"))
@@ -328,21 +460,120 @@ static int initialize(void) {
     s_stats.runtime[sizeof s_stats.runtime-1]=0;
     XrSystemGetInfo si={XR_TYPE_SYSTEM_GET_INFO};si.formFactor=XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
     if(!check(xrGetSystem(s_instance,&si,&s_system),"system"))return 0;
+#if defined(__ANDROID__)
+    PFN_xrGetOpenGLESGraphicsRequirementsKHR requirements=NULL;
+    if(!check(xrGetInstanceProcAddr(s_instance,"xrGetOpenGLESGraphicsRequirementsKHR",
+                                  (PFN_xrVoidFunction*)&requirements),"graphics_requirements_proc"))return 0;
+    XrGraphicsRequirementsOpenGLESKHR req={XR_TYPE_GRAPHICS_REQUIREMENTS_OPENGL_ES_KHR};
+#else
     PFN_xrGetOpenGLGraphicsRequirementsKHR requirements=NULL;
     if(!check(xrGetInstanceProcAddr(s_instance,"xrGetOpenGLGraphicsRequirementsKHR",
                                   (PFN_xrVoidFunction*)&requirements),"graphics_requirements_proc"))return 0;
     XrGraphicsRequirementsOpenGLKHR req={XR_TYPE_GRAPHICS_REQUIREMENTS_OPENGL_KHR};
+#endif
     if(!requirements || !check(requirements(s_instance,s_system,&req),"graphics_requirements"))return 0;
     GLint major=0,minor=0;glGetIntegerv(0x821B,&major);glGetIntegerv(0x821C,&minor);
     XrVersion version=XR_MAKE_VERSION(major,minor,0);
     s_stats.gl_version=version;s_stats.min_gl_version=req.minApiVersionSupported;
     s_stats.max_gl_version=req.maxApiVersionSupported;
     if(version<req.minApiVersionSupported){s_stats.stage="opengl_version";s_stats.failures++;return 0;}
+#if defined(__ANDROID__)
+    XrGraphicsBindingOpenGLESAndroidKHR binding={XR_TYPE_GRAPHICS_BINDING_OPENGL_ES_ANDROID_KHR};
+    binding.display=eglGetCurrentDisplay();binding.context=eglGetCurrentContext();
+    if(binding.display==EGL_NO_DISPLAY || binding.context==EGL_NO_CONTEXT){s_stats.stage="opengl_context";return 0;}
+    {   /* the EGLConfig the current context was made with */
+        EGLint cfg_id=0,n=0;
+        eglQueryContext(binding.display,binding.context,EGL_CONFIG_ID,&cfg_id);
+        const EGLint want[]={EGL_CONFIG_ID,cfg_id,EGL_NONE};
+        if(!eglChooseConfig(binding.display,want,&binding.config,1,&n) || n<1){s_stats.stage="egl_config";return 0;}
+    }
+#else
     XrGraphicsBindingOpenGLWin32KHR binding={XR_TYPE_GRAPHICS_BINDING_OPENGL_WIN32_KHR};
     binding.hDC=wglGetCurrentDC();binding.hGLRC=wglGetCurrentContext();
     if(!binding.hDC || !binding.hGLRC){s_stats.stage="opengl_context";return 0;}
+#endif
     XrSessionCreateInfo sci={XR_TYPE_SESSION_CREATE_INFO};sci.next=&binding;sci.systemId=s_system;
     if(!check(xrCreateSession(s_instance,&sci,&s_session),"session"))return 0;
+#if defined(__ANDROID__)
+    memset(&s_joints,0,sizeof s_joints);
+    if(s_ht_on) {   /* a tracker per hand; a failure only means no hand tracking */
+        XrSystemHandTrackingPropertiesEXT hp={XR_TYPE_SYSTEM_HAND_TRACKING_PROPERTIES_EXT};
+        XrSystemProperties sp={XR_TYPE_SYSTEM_PROPERTIES};sp.next=&hp;
+        PFN_xrCreateHandTrackerEXT create=NULL;
+        int ok=XR_SUCCEEDED(xrGetSystemProperties(s_instance,s_system,&sp)) && hp.supportsHandTracking;
+        if(ok) {
+            xrGetInstanceProcAddr(s_instance,"xrCreateHandTrackerEXT",(PFN_xrVoidFunction*)&create);
+            xrGetInstanceProcAddr(s_instance,"xrLocateHandJointsEXT",(PFN_xrVoidFunction*)&s_ht_locate);
+            xrGetInstanceProcAddr(s_instance,"xrDestroyHandTrackerEXT",(PFN_xrVoidFunction*)&s_ht_destroy);
+            ok=create && s_ht_locate;
+        }
+        for(int h=0;ok && h<2;h++) {
+            XrHandTrackerCreateInfoEXT hc={XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT};
+            hc.hand=h?XR_HAND_RIGHT_EXT:XR_HAND_LEFT_EXT;hc.handJointSet=XR_HAND_JOINT_SET_DEFAULT_EXT;
+            XrHandTrackingDataSourceEXT bare_only[1]={XR_HAND_TRACKING_DATA_SOURCE_UNOBSTRUCTED_EXT};
+            XrHandTrackingDataSourceInfoEXT dsi={XR_TYPE_HAND_TRACKING_DATA_SOURCE_INFO_EXT};
+            dsi.requestedDataSourceCount=1;dsi.requestedDataSources=bare_only;
+            if(s_ds_on)hc.next=&dsi;
+            XrResult r=create(s_session,&hc,&s_ht[h]);
+            if(XR_FAILED(r)){fprintf(stdout,"psxrecomp: OpenXR hand tracker %d failed (%d)\n",h,(int)r);s_ht[h]=XR_NULL_HANDLE;ok=0;}
+        }
+        s_joints.supported=(uint32_t)ok;
+        s_joints.aim_supported=(uint32_t)(ok && s_aim_on);
+        if(s_sim_on) {
+            XrSystemSimultaneousHandsAndControllersPropertiesMETA shp={XR_TYPE_SYSTEM_SIMULTANEOUS_HANDS_AND_CONTROLLERS_PROPERTIES_META};
+            XrSystemProperties sp2={XR_TYPE_SYSTEM_PROPERTIES};sp2.next=&shp;
+            if(!XR_SUCCEEDED(xrGetSystemProperties(s_instance,s_system,&sp2)) || !shp.supportsSimultaneousHandsAndControllers) {
+                fprintf(stdout,"psxrecomp: OpenXR simultaneous hands and controllers: not supported by this system\n");
+                s_sim_on=0;
+            }
+        }
+        s_joints.scale[0]=s_joints.scale[1]=1.0f;
+        /* Meta's hand mesh: ask for the sizes, then the data. */
+        PFN_xrGetHandMeshFB get_mesh=NULL;
+        if(ok && s_hm_on)xrGetInstanceProcAddr(s_instance,"xrGetHandMeshFB",(PFN_xrVoidFunction*)&get_mesh);
+        for(int h=0;get_mesh && h<2;h++) {
+            XrHandTrackingMeshFB hm={XR_TYPE_HAND_TRACKING_MESH_FB};
+            XrResult r=get_mesh(s_ht[h],&hm);
+            if(XR_FAILED(r) || !hm.jointCountOutput || !hm.vertexCountOutput || !hm.indexCountOutput) {
+                fprintf(stdout,"psxrecomp: OpenXR hand mesh %d not available (%d)\n",h,(int)r);continue;
+            }
+            const uint32_t jc=hm.jointCountOutput,vc=hm.vertexCountOutput,ic=hm.indexCountOutput;
+            XrPosef *bp=calloc(jc,sizeof *bp);float *rad=calloc(jc,sizeof *rad);XrHandJointEXT *par=calloc(jc,sizeof *par);
+            XrVector3f *vp=calloc(vc,sizeof *vp),*vn=calloc(vc,sizeof *vn);XrVector2f *vu=calloc(vc,sizeof *vu);
+            XrVector4sFB *vbi=calloc(vc,sizeof *vbi);XrVector4f *vbw=calloc(vc,sizeof *vbw);int16_t *ix=calloc(ic,sizeof *ix);
+            psx_hand_mesh m;memset(&m,0,sizeof m);
+            m.bind_p=calloc(jc*3,sizeof(float));m.bind_q=calloc(jc*4,sizeof(float));
+            m.pos=calloc(vc*3,sizeof(float));m.nrm=calloc(vc*3,sizeof(float));m.uv=calloc(vc*2,sizeof(float));
+            m.bw=calloc(vc*4,sizeof(float));m.bi=calloc(vc*4,sizeof(int16_t));m.idx=ix;
+            if(!bp||!rad||!par||!vp||!vn||!vu||!vbi||!vbw||!ix||!m.bind_p||!m.bind_q||!m.pos||!m.nrm||!m.uv||!m.bw||!m.bi) {
+                fprintf(stdout,"psxrecomp: OpenXR hand mesh %d: out of memory\n",h);continue;
+            }
+            hm.jointCapacityInput=jc;hm.jointBindPoses=bp;hm.jointRadii=rad;hm.jointParents=par;
+            hm.vertexCapacityInput=vc;hm.vertexPositions=vp;hm.vertexNormals=vn;hm.vertexUVs=vu;
+            hm.vertexBlendIndices=vbi;hm.vertexBlendWeights=vbw;hm.indexCapacityInput=ic;hm.indices=ix;
+            r=get_mesh(s_ht[h],&hm);
+            if(XR_FAILED(r)){fprintf(stdout,"psxrecomp: OpenXR hand mesh %d failed (%d)\n",h,(int)r);continue;}
+            for(uint32_t j=0;j<jc;j++) {
+                m.bind_p[j*3]=bp[j].position.x;m.bind_p[j*3+1]=bp[j].position.y;m.bind_p[j*3+2]=bp[j].position.z;
+                m.bind_q[j*4]=bp[j].orientation.x;m.bind_q[j*4+1]=bp[j].orientation.y;
+                m.bind_q[j*4+2]=bp[j].orientation.z;m.bind_q[j*4+3]=bp[j].orientation.w;
+            }
+            for(uint32_t v=0;v<vc;v++) {
+                m.pos[v*3]=vp[v].x;m.pos[v*3+1]=vp[v].y;m.pos[v*3+2]=vp[v].z;
+                m.nrm[v*3]=vn[v].x;m.nrm[v*3+1]=vn[v].y;m.nrm[v*3+2]=vn[v].z;
+                m.uv[v*2]=vu[v].x;m.uv[v*2+1]=vu[v].y;
+                m.bi[v*4]=vbi[v].x;m.bi[v*4+1]=vbi[v].y;m.bi[v*4+2]=vbi[v].z;m.bi[v*4+3]=vbi[v].w;
+                m.bw[v*4]=vbw[v].x;m.bw[v*4+1]=vbw[v].y;m.bw[v*4+2]=vbw[v].z;m.bw[v*4+3]=vbw[v].w;
+            }
+            free(bp);free(rad);free(par);free(vp);free(vn);free(vu);free(vbi);free(vbw);
+            m.jc=jc;m.vc=vc;m.ic=ic;m.generation=++s_hmesh_gen;
+            s_hmesh[h]=m;   /* the old arrays, if any, are left alone: a caller may still hold them */
+            fprintf(stdout,"psxrecomp: OpenXR hand mesh %s ready: %u vertices, %u triangles, %u joints\n",
+                    h?"right":"left",vc,ic/3,jc);
+        }
+        fprintf(stdout,"psxrecomp: OpenXR hand tracking %s\n",ok?"ready":"not available (off in the headset's settings?)");
+    } else fprintf(stdout,"psxrecomp: OpenXR hand tracking off (extension %s)\n",(fov_have&8)?"present":"missing");
+#endif
     if(++s_stats.session_generation==0)s_stats.session_generation=1;
     if(!input_initialize())return 0;
     XrReferenceSpaceCreateInfo space={XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
@@ -364,20 +595,74 @@ static int initialize(void) {
     s_stats.swapchain_format=psx_xr_color_format(formats,formats_n);
     free(formats);
     if(!s_stats.swapchain_format){s_stats.stage="color_format_missing";return 0;}
+#if defined(__ANDROID__)
+    /* PSX_XR_EYE_SCALE (0.5..1.5): the eye images' size against the runtime's
+     * recommended size (Quest 3: 1680x1760). */
+    double eye_scale=1.0;
+    {const char *e=getenv("PSX_XR_EYE_SCALE");if(e&&*e){eye_scale=atof(e);
+     if(eye_scale<0.5)eye_scale=0.5;if(eye_scale>1.5)eye_scale=1.5;}}
+    PFN_xrCreateFoveationProfileFB create_profile=NULL;PFN_xrDestroyFoveationProfileFB destroy_profile=NULL;
+    PFN_xrUpdateSwapchainFB update_swapchain=NULL;
+    if(s_fov_on) {
+        xrGetInstanceProcAddr(s_instance,"xrCreateFoveationProfileFB",(PFN_xrVoidFunction*)&create_profile);
+        xrGetInstanceProcAddr(s_instance,"xrDestroyFoveationProfileFB",(PFN_xrVoidFunction*)&destroy_profile);
+        xrGetInstanceProcAddr(s_instance,"xrUpdateSwapchainFB",(PFN_xrVoidFunction*)&update_swapchain);
+        if(!create_profile||!update_swapchain)s_fov_on=0;
+    }
+    XrFoveationProfileFB profile=XR_NULL_HANDLE;
+#endif
     for(int eye=0;eye<2;eye++) {
         s_w[eye]=config[eye].recommendedImageRectWidth;s_h[eye]=config[eye].recommendedImageRectHeight;
+#if defined(__ANDROID__)
+        if(eye_scale!=1.0){
+            s_w[eye]=((int)(s_w[eye]*eye_scale)+7)&~7;s_h[eye]=((int)(s_h[eye]*eye_scale)+7)&~7;
+            if(s_w[eye]>(int)config[eye].maxImageRectWidth)s_w[eye]=(int)config[eye].maxImageRectWidth;
+            if(s_h[eye]>(int)config[eye].maxImageRectHeight)s_h[eye]=(int)config[eye].maxImageRectHeight;
+        }
+#endif
         XrSwapchainCreateInfo sc={XR_TYPE_SWAPCHAIN_CREATE_INFO};
         sc.usageFlags=XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;sc.format=s_stats.swapchain_format;
         sc.sampleCount=1;sc.width=s_w[eye];sc.height=s_h[eye];sc.faceCount=1;sc.arraySize=1;sc.mipCount=1;
+#if defined(__ANDROID__)
+        /* GLES: foveation through binning (QCOM_texture_foveated) */
+        XrSwapchainCreateInfoFoveationFB fsc={XR_TYPE_SWAPCHAIN_CREATE_INFO_FOVEATION_FB};
+        fsc.flags=XR_SWAPCHAIN_CREATE_FOVEATION_SCALED_BIN_BIT_FB;
+        if(s_fov_on)sc.next=&fsc;
+#endif
         if(!check(xrCreateSwapchain(s_session,&sc,&s_chain[eye]),"swapchain"))return 0;
+#if defined(__ANDROID__)
+        if(s_fov_on) {
+            if(profile==XR_NULL_HANDLE) {
+                XrFoveationLevelProfileCreateInfoFB lp={XR_TYPE_FOVEATION_LEVEL_PROFILE_CREATE_INFO_FB};
+                lp.level=(XrFoveationLevelFB)s_fov_level;lp.verticalOffset=0.0f;lp.dynamic=XR_FOVEATION_DYNAMIC_DISABLED_FB;
+                XrFoveationProfileCreateInfoFB pc={XR_TYPE_FOVEATION_PROFILE_CREATE_INFO_FB};pc.next=&lp;
+                XrResult r=create_profile(s_session,&pc,&profile);
+                if(XR_FAILED(r)){fprintf(stdout,"psxrecomp: OpenXR foveation profile failed (%d)\n",(int)r);profile=XR_NULL_HANDLE;s_fov_on=0;}
+            }
+            if(profile!=XR_NULL_HANDLE) {
+                XrSwapchainStateFoveationFB st={XR_TYPE_SWAPCHAIN_STATE_FOVEATION_FB};st.profile=profile;
+                XrResult r=update_swapchain(s_chain[eye],(const XrSwapchainStateBaseHeaderFB*)&st);
+                if(XR_FAILED(r))fprintf(stdout,"psxrecomp: OpenXR foveation on eye %d failed (%d)\n",eye,(int)r);
+                else if(eye==1)fprintf(stdout,"psxrecomp: OpenXR foveation applied (level %d)\n",s_fov_level);
+            }
+        }
+#endif
         if(!check(xrEnumerateSwapchainImages(s_chain[eye],0,&s_count[eye],NULL),"images"))return 0;
         s_images[eye]=calloc(s_count[eye],sizeof *s_images[eye]);
         if(!s_images[eye]){s_stats.stage="images_memory";return 0;}
-        for(uint32_t i=0;i<s_count[eye];i++)s_images[eye][i].type=XR_TYPE_SWAPCHAIN_IMAGE_OPENGL_KHR;
+        for(uint32_t i=0;i<s_count[eye];i++)s_images[eye][i].type=PSX_XR_IMAGE_TYPE;
         if(!check(xrEnumerateSwapchainImages(s_chain[eye],s_count[eye],&s_count[eye],
                     (XrSwapchainImageBaseHeader*)s_images[eye]),"images"))return 0;
     }
-    s_stats.initialized=1;s_stats.stage="waiting_session";return 1;
+#if defined(__ANDROID__)
+    if(profile!=XR_NULL_HANDLE && destroy_profile)destroy_profile(profile);   /* the swapchains keep their state */
+#endif
+    s_stats.initialized=1;s_stats.stage="waiting_session";
+#if defined(__ANDROID__)
+    fprintf(stdout,"psxrecomp: OpenXR session created (%s), eyes %dx%d, swapchain format 0x%llX\n",
+            s_stats.runtime,s_w[0],s_h[0],(unsigned long long)s_stats.swapchain_format);
+#endif
+    return 1;
 }
 /* Ask for the bound interaction profiles only when the runtime says they
  * changed (plus a few retries at the start while nothing is bound yet), not
@@ -399,6 +684,17 @@ static int events(void) {
                 begin.primaryViewConfigurationType=XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
                 if(!check(xrBeginSession(s_session,&begin),"begin_session"))return 0;
                 s_stats.running=1;
+#if defined(__ANDROID__)
+                if(s_sim_on && !s_sim_started) {   /* hands and controllers at the same time */
+                    PFN_xrResumeSimultaneousHandsAndControllersTrackingMETA resume=NULL;
+                    xrGetInstanceProcAddr(s_instance,"xrResumeSimultaneousHandsAndControllersTrackingMETA",(PFN_xrVoidFunction*)&resume);
+                    XrSimultaneousHandsAndControllersTrackingResumeInfoMETA ri={XR_TYPE_SIMULTANEOUS_HANDS_AND_CONTROLLERS_TRACKING_RESUME_INFO_META};
+                    XrResult rr=resume?resume(s_session,&ri):XR_ERROR_FUNCTION_UNSUPPORTED;
+                    s_sim_started=XR_SUCCEEDED(rr);
+                    s_joints.simultaneous=(uint32_t)s_sim_started;
+                    fprintf(stdout,"psxrecomp: OpenXR simultaneous hands and controllers: %s (%d)\n",s_sim_started?"on":"failed",(int)rr);
+                }
+#endif
             } else if(e->state==XR_SESSION_STATE_STOPPING) {
                 if(!check(xrEndSession(s_session),"end_session"))return 0;
                 s_stats.running=0;
@@ -460,6 +756,55 @@ static void hands_locate(int focused) {
         memcpy(v->orientation_xyzw,q,sizeof q);memcpy(v->position_m,p,sizeof p);
     }
     s_hands=current;s_hands_sample_ms=psx_host_mono_ms();
+#if defined(__ANDROID__)
+    if(s_joints.supported)for(int h=0;h<2;h++) {
+        s_joints.active[h]=0;s_joints.aim_status[h]=0;s_joints.pinch_index[h]=0;s_joints.velocity_valid[h]=0;
+        if(!current.focused || !s_ht[h])continue;
+        XrHandJointLocationEXT jl[XR_HAND_JOINT_COUNT_EXT];
+        XrHandJointLocationsEXT locs={XR_TYPE_HAND_JOINT_LOCATIONS_EXT};
+        locs.jointCount=XR_HAND_JOINT_COUNT_EXT;locs.jointLocations=jl;
+        XrHandTrackingScaleFB hs={XR_TYPE_HAND_TRACKING_SCALE_FB};   /* the player's hand size */
+        hs.currentOutput=1.0f;
+        XrHandTrackingAimStateFB as={XR_TYPE_HAND_TRACKING_AIM_STATE_FB};   /* Meta's pinches and palm menu gesture */
+        XrHandJointVelocityEXT jv[XR_HAND_JOINT_COUNT_EXT];
+        XrHandJointVelocitiesEXT vels={XR_TYPE_HAND_JOINT_VELOCITIES_EXT};
+        vels.jointCount=XR_HAND_JOINT_COUNT_EXT;vels.jointVelocities=jv;
+        {   void *chain=NULL;
+            vels.next=chain;chain=&vels;
+            if(s_aim_on){as.next=chain;chain=&as;}
+            if(s_hm_on){hs.next=chain;chain=&hs;}
+            locs.next=chain; }
+        XrHandJointsLocateInfoEXT li={XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT};
+        li.baseSpace=s_space;li.time=s_time;
+        if(XR_FAILED(s_ht_locate(s_ht[h],&li,&locs)) || !locs.isActive)continue;
+        int palm_ok=0;
+        for(int j=0;j<PSX_MOD_XR_HAND_JOINTS && j<XR_HAND_JOINT_COUNT_EXT;j++) {
+            const XrHandJointLocationEXT *l=&jl[j];
+            int v=(l->locationFlags&3u)==3u;
+            const float q[4]={l->pose.orientation.x,l->pose.orientation.y,l->pose.orientation.z,l->pose.orientation.w};
+            const float p[3]={l->pose.position.x,l->pose.position.y,l->pose.position.z};
+            double norm=0;
+            for(int i=0;i<4;i++){if(!isfinite(q[i]))v=0;norm+=(double)q[i]*q[i];}
+            for(int i=0;i<3;i++)if(!isfinite(p[i]) || fabsf(p[i])>100)v=0;
+            if(norm<.5 || norm>1.5)v=0;
+            s_joints.valid[h][j]=(uint32_t)v;
+            if(!v)continue;
+            memcpy(s_joints.position_m[h][j],p,sizeof p);memcpy(s_joints.orientation_xyzw[h][j],q,sizeof q);
+            s_joints.radius_m[h][j]=isfinite(l->radius)?l->radius:0.01f;
+            if(j==0)palm_ok=1;
+        }
+        s_joints.active[h]=(uint32_t)palm_ok;
+        s_joints.aim_status[h]=s_aim_on?(uint32_t)(as.status & 0xFFFFFFFFu):0u;
+        s_joints.pinch_index[h]=(s_aim_on && isfinite(as.pinchStrengthIndex))?as.pinchStrengthIndex:0.0f;
+        {   const XrHandJointVelocityEXT *pv=&jv[XR_HAND_JOINT_PALM_EXT];
+            int vv=(pv->velocityFlags & XR_SPACE_VELOCITY_LINEAR_VALID_BIT)!=0 &&
+                   isfinite(pv->linearVelocity.x) && isfinite(pv->linearVelocity.y) && isfinite(pv->linearVelocity.z);
+            s_joints.velocity_valid[h]=(uint32_t)vv;
+            if(vv){s_joints.palm_velocity_mps[h][0]=pv->linearVelocity.x;s_joints.palm_velocity_mps[h][1]=pv->linearVelocity.y;
+                   s_joints.palm_velocity_mps[h][2]=pv->linearVelocity.z;} }
+        s_joints.scale[h]=(s_hm_on && isfinite(hs.currentOutput) && hs.currentOutput>0.5f && hs.currentOutput<2.0f)?hs.currentOutput:1.0f;
+    }
+#endif
     /* Which interaction profile the runtime bound to each hand (diagnostic,
      * openxr_stats.hand_profile): on the INTERACTION_PROFILE_CHANGED event,
      * and once a second for the first few seconds until both hands have one. */
@@ -499,6 +844,10 @@ static void xr_destroy(void) {
         if(s_chain[eye])xrDestroySwapchain(s_chain[eye]);
         s_chain[eye]=XR_NULL_HANDLE;free(s_images[eye]);s_images[eye]=NULL;s_count[eye]=0;
     }
+#if defined(__ANDROID__)
+    for(int h=0;h<2;h++){if(s_ht[h] && s_ht_destroy)s_ht_destroy(s_ht[h]);s_ht[h]=XR_NULL_HANDLE;}
+    s_joints.supported=0;s_joints.active[0]=s_joints.active[1]=0;
+#endif
     if(s_space)xrDestroySpace(s_space);s_space=XR_NULL_HANDLE;
     if(s_view_space)xrDestroySpace(s_view_space);s_view_space=XR_NULL_HANDLE;
     if(s_stage_space)xrDestroySpace(s_stage_space);s_stage_space=XR_NULL_HANDLE;
@@ -534,6 +883,21 @@ static int service_loss(void) {
     return 1;
 }
 #endif
+int psx_openxr_hand_mesh(uint32_t hand,PSXModOpenXRHandMesh *out) {
+    if(!out || out->struct_size!=sizeof *out || hand>1)return 0;
+    const psx_hand_mesh *m=&s_hmesh[hand];
+    if(!m->generation || !m->vc || !m->ic)return 0;
+    out->generation=m->generation;out->joint_count=m->jc;out->vertex_count=m->vc;out->index_count=m->ic;
+    out->bind_position=m->bind_p;out->bind_orientation_xyzw=m->bind_q;
+    out->position=m->pos;out->normal=m->nrm;out->uv=m->uv;
+    out->blend_index=m->bi;out->blend_weight=m->bw;out->index=m->idx;
+    return 1;
+}
+int psx_openxr_hand_joints(PSXModOpenXRHandJoints *out) {
+    if(!out || out->struct_size!=sizeof *out)return 0;
+    *out=s_joints;out->struct_size=sizeof *out;
+    return 1;
+}
 int psx_openxr_hands(PSXModOpenXRHands *out) {
     if(!out || out->struct_size!=sizeof *out)return 0;
     if(s_hands_override){*out=s_injected_hands;return 1;}
@@ -706,6 +1070,9 @@ int psx_openxr_begin(int width,int height,double units) {
             s_retry_ms=0;
         }
         if(!initialize()) {
+#if defined(__ANDROID__)
+            fprintf(stdout,"psxrecomp: OpenXR start-up stopped at: %s\n",s_stats.stage?s_stats.stage:"?");
+#endif
             if(s_recovering) {
                 /* The runtime/headset is still gone after a loss. Stay enabled,
                  * release the partial stack and try again later; the failure
@@ -843,9 +1210,24 @@ int psx_openxr_quad(double distance,double width,double height) {
     return 0;
 #endif
 }
+/* Dynamic resolution (psxrecomp573, 2026-11-24): the host scene may draw into
+ * a smaller part of each eye image (psx_openxr_set_render_scale); the copy
+ * reports the part it drew (psx_openxr_eye_extent) and the projection views
+ * hand only that rectangle to the compositor. Full size unless a copy says. */
+static float s_render_scale=1.0f;
+static int s_eye_ext[2][2];
+void psx_openxr_set_render_scale(float scale) {
+    if(!(scale>=0.5f))scale=0.5f;if(scale>1.0f)scale=1.0f;
+    s_render_scale=scale;
+}
+float psx_openxr_render_scale(void){return s_render_scale;}
+void psx_openxr_eye_extent(uint32_t eye,int w,int h) {
+    if(eye<2 && w>0 && h>0){s_eye_ext[eye][0]=w;s_eye_ext[eye][1]=h;}
+}
 int psx_openxr_end(int keep,PSXOpenXRCopy copy) {
 #if defined(PSX_OPENXR)
     if(!s_stats.frame_open)return 0;
+    for(int i=0;i<2;i++){s_eye_ext[i][0]=s_w[i];s_eye_ext[i][1]=s_h[i];}
     /* Defensive open: normally psx_openxr_begin() already opened the record. */
     psx_frame_trace_open();
     uint64_t trace_t;
@@ -889,8 +1271,9 @@ int psx_openxr_end(int keep,PSXOpenXRCopy copy) {
             complete=0;
         }
         pv[eye].pose=s_views[eye].pose;pv[eye].fov=s_views[eye].fov;
-        pv[eye].subImage.swapchain=s_chain[eye];pv[eye].subImage.imageRect.extent.width=s_w[eye];
-        pv[eye].subImage.imageRect.extent.height=s_h[eye];
+        pv[eye].subImage.swapchain=s_chain[eye];
+        pv[eye].subImage.imageRect.extent.width=s_eye_ext[eye][0]<=s_w[eye]?s_eye_ext[eye][0]:s_w[eye];
+        pv[eye].subImage.imageRect.extent.height=s_eye_ext[eye][1]<=s_h[eye]?s_eye_ext[eye][1]:s_h[eye];
     }
     XrCompositionLayerProjection layer={XR_TYPE_COMPOSITION_LAYER_PROJECTION};
     layer.space=s_space;layer.viewCount=2;layer.views=pv;

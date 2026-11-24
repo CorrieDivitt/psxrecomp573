@@ -970,6 +970,10 @@ int psx_mod_openxr_end(int pair_rendered);
  * Dimensions and distance are meters; zero distance restores projection.
  * Requests reset at begin/end and never affect faithful guest rendering. */
 int psx_mod_openxr_quad(double distance_m, double width_m, double height_m);
+/* Dynamic resolution (psxrecomp573): the host scene draws into this fraction
+ * (0.5..1, per side) of each eye image from the next frame on; the scene
+ * callback's width/height are the scaled size. */
+void psx_mod_openxr_render_scale(float scale);
 /* Additive, frame-local LOCAL-space surface. Called between XR begin/end and
  * outside guest replay. Pixels are tightly packed bottom-to-top sRGB RGBA8,
  * straight alpha, copied synchronously; caller retains ownership. IDs 0..1.
@@ -1034,6 +1038,60 @@ typedef struct PSXModOpenXRHands {
     PSXModTrackedPose pose[2][2]; /* [left/right][grip/aim] */
 } PSXModOpenXRHands;
 int psx_mod_openxr_hands(PSXModOpenXRHands *hands);
+/* Hand tracking (XR_EXT_hand_tracking; Meta Quest build): the 26 joints of
+ * each hand, in the same raw LOCAL metres as PSXModOpenXRHands, located with
+ * the same frame. Joint order is OpenXR's: 0 palm, 1 wrist, 2-5 thumb
+ * (metacarpal, proximal, distal, tip), then index 6-10, middle 11-15, ring
+ * 16-20 and little 21-25 (metacarpal, proximal, intermediate, distal, tip).
+ * Palm: -z toward the fingers, +y out of the back of the hand. supported: the
+ * runtime offers hand tracking; active[h]: that hand is tracked right now
+ * (the player has put the controllers down). A snapshot: safe to call from
+ * the scene callback. Returns 0 when XR is compiled out. */
+#define PSX_MOD_XR_HAND_JOINTS 26
+typedef struct PSXModOpenXRHandJoints {
+    uint32_t struct_size, supported;
+    uint32_t active[2];
+    uint32_t valid[2][PSX_MOD_XR_HAND_JOINTS];
+    float position_m[2][PSX_MOD_XR_HAND_JOINTS][3];
+    float orientation_xyzw[2][PSX_MOD_XR_HAND_JOINTS][4];
+    float radius_m[2][PSX_MOD_XR_HAND_JOINTS];
+    float scale[2];   /* the hand's size against Meta's hand mesh (1 = the mesh's own size) */
+    /* XR_FB_hand_tracking_aim (Meta): aim_status[h] = the runtime's
+     * XrHandTrackingAimFlagsFB bits (0x100 menu pressed = the left palm-up
+     * pinch, 0x40 a system gesture is under way, 0x4 index pinching);
+     * pinch_index[h] 0..1. aim_supported: the extension is on. */
+    uint32_t aim_supported;
+    uint32_t aim_status[2];
+    float pinch_index[2];
+    /* XR_EXT_hand_joint velocities of the palm (raw LOCAL m/s), velocity_valid[h]. */
+    uint32_t velocity_valid[2];
+    float palm_velocity_mps[2][3];
+    /* XR_META_simultaneous_hands_and_controllers is running: one hand can hold
+     * a controller while the other is tracked bare. */
+    uint32_t simultaneous;
+} PSXModOpenXRHandJoints;
+#define PSX_MOD_XR_AIM_INDEX_PINCHING 0x004u
+#define PSX_MOD_XR_AIM_SYSTEM_GESTURE 0x040u
+#define PSX_MOD_XR_AIM_MENU_PRESSED   0x100u
+int psx_mod_openxr_hand_joints(PSXModOpenXRHandJoints *joints);
+/* The headset's own hand mesh (XR_FB_hand_tracking_mesh; Meta Quest), in the
+ * hand mesh's space, skinned to the 26 joints above: vertex v follows joint
+ * blend_index[4v+k] with weight blend_weight[4v+k]; joint j's rest pose is
+ * bind_position[3j] / bind_orientation_xyzw[4j]. A joint's skin matrix is
+ * joint pose * scale * inverse(bind pose). Triangles: index_count int16
+ * indices. `generation` changes when the mesh is fetched again. The arrays
+ * stay valid until the next fetch. Returns 0 (nothing filled) when there is
+ * no mesh for that hand. Snapshot: safe to call from the scene callback. */
+typedef struct PSXModOpenXRHandMesh {
+    uint32_t struct_size, generation;
+    uint32_t joint_count, vertex_count, index_count;
+    const float *bind_position, *bind_orientation_xyzw;
+    const float *position, *normal, *uv;
+    const int16_t *blend_index;
+    const float *blend_weight;
+    const int16_t *index;
+} PSXModOpenXRHandMesh;
+int psx_mod_openxr_hand_mesh(uint32_t hand, PSXModOpenXRHandMesh *mesh);
 
 /* Host-drawn scene: the application renders its own world (for example a
  * cabinet the game screen sits in) into the stereo projection layer, once per
